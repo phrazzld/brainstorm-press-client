@@ -1,14 +1,21 @@
 import React from "react";
 
-export const Header = () => {
-    const showCreateForm = () => {
-        console.log("STUB")
-    }
+interface IProps {
+    onNewPostClick: () => void;
+}
+
+export const Header = (props: IProps) => {
+    const { onNewPostClick } = props;
 
     return (
-        <div id="app-header" style={styles.headerContainer as React.CSSProperties}>
+        <div
+            id="app-header"
+            style={styles.headerContainer as React.CSSProperties}
+        >
             <h1 id="app-title">Brainstorm Press</h1>
-            <button style={styles.button} onClick={showCreateForm}>New Post</button>
+            <button style={styles.button} onClick={onNewPostClick}>
+                New Post
+            </button>
         </div>
     );
 };
@@ -21,9 +28,9 @@ const styles = {
         // https://github.com/cssinjs/jss/issues/1344
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
     },
     button: {
-        marginRight: 10
-    }
-}
+        marginRight: 10,
+    },
+};

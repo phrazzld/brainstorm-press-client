@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TPost } from "./Post";
 
 export const usePosts = (): Array<TPost> => {
