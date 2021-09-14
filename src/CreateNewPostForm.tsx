@@ -17,8 +17,8 @@ export const CreateNewPostForm = () => {
         setBodyInputValue(event.target.value);
     };
 
-    const submitNewPost = async (): Promise<void> => {
-        const response = await fetch("/posts", {
+    const submitNewPost = (): void => {
+        fetch("/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -29,8 +29,6 @@ export const CreateNewPostForm = () => {
                 body: bodyInputValue,
             }),
         });
-        const responseJSON = await response.json();
-        console.log("responseJSON:", responseJSON);
     };
 
     return (
