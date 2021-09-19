@@ -5,7 +5,7 @@ export const usePosts = (): Array<TPost> => {
   const [posts, setPosts] = useState<Array<TPost>>([]);
 
   useEffect(() => {
-    fetch("/posts")
+    fetch("/api/posts")
       .then((res) => res.json())
       .then((json) => setPosts(json.data));
   }, []);

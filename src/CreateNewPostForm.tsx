@@ -18,7 +18,7 @@ export const CreateNewPostForm = () => {
     };
 
     const submitNewPost = (): void => {
-        fetch("/posts", {
+        fetch("/api/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export const CreateNewPostForm = () => {
             body: JSON.stringify({
                 title: titleInputValue,
                 author: authorInputValue,
-                body: bodyInputValue,
+                content: bodyInputValue,
             }),
         });
     };

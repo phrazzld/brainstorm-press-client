@@ -2,10 +2,12 @@ import React from "react";
 
 interface IProps {
     onNewPostClick: () => void;
+    onConnectToLndClick: () => void;
 }
 
 export const Header = (props: IProps) => {
-    const { onNewPostClick } = props;
+    const { onConnectToLndClick, onNewPostClick } = props;
+    const connected: boolean = false
 
     return (
         <div
@@ -13,9 +15,16 @@ export const Header = (props: IProps) => {
             style={styles.headerContainer as React.CSSProperties}
         >
             <h1 id="app-title">Brainstorm Press</h1>
-            <button style={styles.button} onClick={onNewPostClick}>
-                New Post
-            </button>
+            {connected && (
+                <button style={styles.button} onClick={onNewPostClick}>
+                    New Post
+                </button>
+            )}
+            {!connected && (
+                <button style={styles.button} onClick={onConnectToLndClick}>
+                    Connect to LND
+                </button>
+            )}
         </div>
     );
 };
