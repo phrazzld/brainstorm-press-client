@@ -1,30 +1,16 @@
 import React from "react";
+import {Link} from 'react-router-dom';
 
-interface IProps {
-    onNewPostClick: () => void;
-    onConnectToLndClick: () => void;
-}
-
-export const Header = (props: IProps) => {
-    const { onConnectToLndClick, onNewPostClick } = props;
-    const connected: boolean = false
-
+export const Header = () => {
     return (
         <div
             id="app-header"
             style={styles.headerContainer as React.CSSProperties}
         >
-            <h1 id="app-title">Brainstorm Press</h1>
-            {connected && (
-                <button style={styles.button} onClick={onNewPostClick}>
-                    New Post
-                </button>
-            )}
-            {!connected && (
-                <button style={styles.button} onClick={onConnectToLndClick}>
-                    Connect to LND
-                </button>
-            )}
+            <nav>
+                <Link to="/">Brainstorm Press</Link>
+                <Link to="/signup">Sign Up</Link>
+            </nav>
         </div>
     );
 };
@@ -38,8 +24,5 @@ const styles = {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-    },
-    button: {
-        marginRight: 10,
     },
 };

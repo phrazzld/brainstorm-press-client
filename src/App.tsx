@@ -1,20 +1,24 @@
-import React, { useState } from "react";
-import { CreateNewPostForm } from "./CreateNewPostForm";
-import { Header } from "./Header";
-import { PostsList } from "./PostsList";
-import { ConnectToLndForm } from './ConnectToLndForm'
+import React from "react";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {Header} from "./Header";
+import {Home} from "./Home";
+import {SignUp} from './SignUp';
 
 function App() {
-    const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
-    const [showConnectToLndForm, setShowConnectToLndForm] = useState<boolean>(false)
-
     return (
-        <div id="app-container" style={styles.appContainer}>
-            <Header onNewPostClick={() => setShowCreateForm(true)} onConnectToLndClick={() => setShowConnectToLndForm(true)} />
-            {showCreateForm && <CreateNewPostForm />}
-            {showConnectToLndForm && <ConnectToLndForm />}
-            <PostsList />
-        </div>
+        <Router>
+            <div id="app-container" style={styles.appContainer}>
+                <Header />
+                <Switch>
+                    <Route path="/signup">
+                        <SignUp />
+                    </Route>
+                    <Route path="/">
+                        <Home />
+                    </Route>
+                </Switch>
+            </div>
+        </Router>
     );
 }
 
