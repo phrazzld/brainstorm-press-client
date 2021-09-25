@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AuthenticateUser } from "./AuthenticateUser";
+import { CreateNewPostForm } from "./CreateNewPostForm";
 import { Header } from "./Header";
 import { Home } from "./Home";
 
@@ -12,6 +13,9 @@ function App() {
                 <Switch>
                     <Route path="/authenticate">
                         <AuthenticateUser authType="SIGNUP" />
+                    </Route>
+                    <Route path="/posts/new">
+                        <CreateNewPostForm />
                     </Route>
                     <Route path="/">
                         <Home />

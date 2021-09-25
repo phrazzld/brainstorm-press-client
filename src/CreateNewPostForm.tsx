@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useStore } from "./store/zstore";
+import { Redirect } from 'react-router-dom'
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>();
     const [authorInputValue, setAuthorInputValue] = useState<string>();
     const [bodyInputValue, setBodyInputValue] = useState<string>();
+    const [submitted, setSubmitted] = useState<boolean>(false)
+
+    const jwt: string = useStore((state) => state.jwt);
 
     const handleTitleInputChange = (event: any): void => {
         setTitleInputValue(event.target.value);
@@ -17,11 +22,12 @@ export const CreateNewPostForm = () => {
         setBodyInputValue(event.target.value);
     };
 
-    const submitNewPost = (): void => {
-        fetch("/api/posts", {
+    const submitNewPost = async (): Promise<void> => {
+        await fetch("/api/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
             },
             body: JSON.stringify({
                 title: titleInputValue,
@@ -29,7 +35,12 @@ export const CreateNewPostForm = () => {
                 content: bodyInputValue,
             }),
         });
+        setSubmitted(true)
     };
+
+    if (submitted) {
+        return <Redirect to="/" />
+    }
 
     return (
         <div id="create-new-post-container">

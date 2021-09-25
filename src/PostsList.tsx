@@ -8,7 +8,7 @@ export const PostsList = () => {
     return (
         <div id="posts-list-container">
             {posts &&
-                posts.map((post: TPost) => <Post key={post.ID} post={post} />)}
+                posts.map((post: TPost) => <Post key={post._id} post={post} />)}
 
             {!posts && <h3>No posts found</h3>}
         </div>

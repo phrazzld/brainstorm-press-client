@@ -10,11 +10,9 @@ export const Header = () => {
             id="app-header"
             style={styles.headerContainer as React.CSSProperties}
         >
-            <nav>
-                <Link to="/">Brainstorm Press</Link>
-                {!jwt && <Link to="/authenticate">Sign Up</Link>}
-                {jwt && <p>Welcome!</p>}
-            </nav>
+            <Link to="/">Brainstorm Press</Link>
+            {!jwt && <Link to="/authenticate">Sign Up</Link>}
+            {jwt && <Link to="/posts/new">New Post</Link>}
         </div>
     );
 };
