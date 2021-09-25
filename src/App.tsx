@@ -1,8 +1,8 @@
 import React from "react";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import {Header} from "./Header";
-import {Home} from "./Home";
-import {SignUp} from './SignUp';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { AuthenticateUser } from "./AuthenticateUser";
+import { Header } from "./Header";
+import { Home } from "./Home";
 
 function App() {
     return (
@@ -10,8 +10,8 @@ function App() {
             <div id="app-container" style={styles.appContainer}>
                 <Header />
                 <Switch>
-                    <Route path="/signup">
-                        <SignUp />
+                    <Route path="/authenticate">
+                        <AuthenticateUser authType="SIGNUP" />
                     </Route>
                     <Route path="/">
                         <Home />

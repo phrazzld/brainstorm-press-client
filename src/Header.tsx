@@ -1,7 +1,10 @@
 import React from "react";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { useStore } from "./store/zstore";
 
 export const Header = () => {
+    const jwt: string = useStore((state) => state.jwt);
+
     return (
         <div
             id="app-header"
@@ -9,7 +12,8 @@ export const Header = () => {
         >
             <nav>
                 <Link to="/">Brainstorm Press</Link>
-                <Link to="/signup">Sign Up</Link>
+                {!jwt && <Link to="/authenticate">Sign Up</Link>}
+                {jwt && <p>Welcome!</p>}
             </nav>
         </div>
     );
