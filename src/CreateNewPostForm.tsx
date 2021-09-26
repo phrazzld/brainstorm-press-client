@@ -3,8 +3,8 @@ import { useStore } from "./store/zstore";
 import { Redirect } from 'react-router-dom'
 
 export const CreateNewPostForm = () => {
-    const [titleInputValue, setTitleInputValue] = useState<string>();
-    const [bodyInputValue, setBodyInputValue] = useState<string>();
+    const [titleInputValue, setTitleInputValue] = useState<string>("");
+    const [bodyInputValue, setBodyInputValue] = useState<string>("");
     const [submitted, setSubmitted] = useState<boolean>(false)
 
     const jwt: string = useStore((state) => state.jwt);
