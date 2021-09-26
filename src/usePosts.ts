@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TPost } from "./Post";
+import { TPost } from "./PostCard";
 import { useStore } from "./store/zstore";
 
 export const usePosts = (): Array<TPost> => {

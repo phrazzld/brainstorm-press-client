@@ -4,7 +4,6 @@ import { Redirect } from 'react-router-dom'
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>();
-    const [authorInputValue, setAuthorInputValue] = useState<string>();
     const [bodyInputValue, setBodyInputValue] = useState<string>();
     const [submitted, setSubmitted] = useState<boolean>(false)
 
@@ -12,10 +11,6 @@ export const CreateNewPostForm = () => {
 
     const handleTitleInputChange = (event: any): void => {
         setTitleInputValue(event.target.value);
-    };
-
-    const handleAuthorInputChange = (event: any): void => {
-        setAuthorInputValue(event.target.value);
     };
 
     const handleBodyInputChange = (event: any): void => {
@@ -31,7 +26,6 @@ export const CreateNewPostForm = () => {
             },
             body: JSON.stringify({
                 title: titleInputValue,
-                author: authorInputValue,
                 content: bodyInputValue,
             }),
         });
@@ -51,16 +45,6 @@ export const CreateNewPostForm = () => {
                     name="title"
                     value={titleInputValue}
                     onChange={handleTitleInputChange}
-                    required
-                />
-            </div>
-            <div id="new-post-author-input-container">
-                <p>Author:</p>
-                <input
-                    type="text"
-                    name="author"
-                    value={authorInputValue}
-                    onChange={handleAuthorInputChange}
                     required
                 />
             </div>

@@ -4,6 +4,7 @@ import { AuthenticateUser } from "./AuthenticateUser";
 import { CreateNewPostForm } from "./CreateNewPostForm";
 import { Header } from "./Header";
 import { Home } from "./Home";
+import { Post } from './Post'
 
 function App() {
     return (
@@ -16,6 +17,9 @@ function App() {
                     </Route>
                     <Route path="/posts/new">
                         <CreateNewPostForm />
+                    </Route>
+                    <Route path="/posts/:postId">
+                        <Post />
                     </Route>
                     <Route path="/">
                         <Home />
