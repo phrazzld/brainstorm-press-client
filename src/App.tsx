@@ -1,10 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AuthenticateUser } from "./AuthenticateUser";
+import { ConnectToLndForm } from "./ConnectToLndForm";
 import { CreateNewPostForm } from "./CreateNewPostForm";
 import { Header } from "./Header";
 import { Home } from "./Home";
-import { Post } from './Post'
+import { Post } from "./Post";
 
 function App() {
     return (
@@ -14,6 +15,9 @@ function App() {
                 <Switch>
                     <Route path="/authenticate">
                         <AuthenticateUser authType="SIGNUP" />
+                    </Route>
+                    <Route path="/connect-to-lnd">
+                        <ConnectToLndForm />
                     </Route>
                     <Route path="/posts/new">
                         <CreateNewPostForm />

@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import { useStore } from "./store/zstore";
 
 export const ConnectToLndForm = () => {
     const [hostInputValue, setHostInputValue] = useState<string>("");
     const [certInputValue, setCertInputValue] = useState<string>("");
     const [macaroonInputValue, setMacaroonInputValue] = useState<string>("");
+
+    const jwt: string = useStore((state) => state.jwt);
+    const setLndToken = useStore((state) => state.setLndToken);
 
     const handleHostInputChange = (event: any): void => {
         setHostInputValue(event.target.value);
@@ -22,6 +26,7 @@ export const ConnectToLndForm = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
             },
             body: JSON.stringify({
                 host: hostInputValue,
@@ -29,8 +34,8 @@ export const ConnectToLndForm = () => {
                 macaroon: macaroonInputValue,
             }),
         });
-        const resJSON = await response.json()
-        console.log("resJSON:", resJSON)
+        const resJSON = await response.json();
+        setLndToken(resJSON.token);
     };
 
     return (
@@ -60,7 +65,10 @@ export const ConnectToLndForm = () => {
                     onChange={handleMacaroonInputChange}
                     rows={3}
                 />
-                <p className="reminder-text">lncli bakemacaroon info:read offchain:read invoices:read invoices:write message:read message:write</p>
+                <p className="reminder-text">
+                    lncli bakemacaroon info:read offchain:read invoices:read
+                    invoices:write message:read message:write
+                </p>
             </div>
             <div id="connect-to-lnd-submit-container">
                 <button onClick={connectToLnd}>Submit</button>

@@ -1,9 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "./store/zstore";
+import { NodeInfo, useNodeInfo } from "./useNodeInfo";
 
 export const Header = () => {
     const jwt: string = useStore((state) => state.jwt);
+
+    const nodeInfo: NodeInfo | null = useNodeInfo();
 
     return (
         <div
@@ -12,7 +15,11 @@ export const Header = () => {
         >
             <Link to="/">Brainstorm Press</Link>
             {!jwt && <Link to="/authenticate">Sign Up</Link>}
+            {!nodeInfo && jwt && (
+                <Link to="/connect-to-lnd">Connect to LND</Link>
+            )}
             {jwt && <Link to="/posts/new">New Post</Link>}
+            {nodeInfo && <p>Balance: {nodeInfo.balance} sats</p>}
         </div>
     );
 };
