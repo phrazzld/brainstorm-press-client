@@ -5,6 +5,7 @@ export type TPost = {
     _id: number;
     title: string;
     content: string;
+    price: number;
 };
 
 interface IProps {
@@ -19,6 +20,7 @@ export const PostCard = (props: IProps) => {
             <h3 className="post-title">
                 <Link to={`/posts/${post._id}`}>{post.title}</Link>
             </h3>
+            <h4>Pay {post.price} sats to read</h4>
             <p className="post-body">{post.content}</p>
         </div>
     );

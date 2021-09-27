@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 import { useStore } from "./store/zstore";
-import { Redirect } from 'react-router-dom'
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>("");
-    const [bodyInputValue, setBodyInputValue] = useState<string>("");
-    const [submitted, setSubmitted] = useState<boolean>(false)
+    const [contentInputValue, setContentInputValue] = useState<string>("");
+    const [priceInputValue, setPriceInputValue] = useState<number>(0);
+    const [submitted, setSubmitted] = useState<boolean>(false);
 
     const jwt: string = useStore((state) => state.jwt);
 
@@ -13,8 +14,12 @@ export const CreateNewPostForm = () => {
         setTitleInputValue(event.target.value);
     };
 
-    const handleBodyInputChange = (event: any): void => {
-        setBodyInputValue(event.target.value);
+    const handleContentInputChange = (event: any): void => {
+        setContentInputValue(event.target.value);
+    };
+
+    const handlePriceInputChange = (event: any): void => {
+        setPriceInputValue(event.target.value);
     };
 
     const submitNewPost = async (): Promise<void> => {
@@ -26,14 +31,15 @@ export const CreateNewPostForm = () => {
             },
             body: JSON.stringify({
                 title: titleInputValue,
-                content: bodyInputValue,
+                content: contentInputValue,
+                price: priceInputValue,
             }),
         });
-        setSubmitted(true)
+        setSubmitted(true);
     };
 
     if (submitted) {
-        return <Redirect to="/" />
+        return <Redirect to="/" />;
     }
 
     return (
@@ -48,12 +54,24 @@ export const CreateNewPostForm = () => {
                     required
                 />
             </div>
-            <div id="new-post-body-input-container">
-                <p>Body:</p>
+            <div id="new-post-content-input-container">
+                <p>Content:</p>
                 <textarea
-                    value={bodyInputValue}
-                    onChange={handleBodyInputChange}
+                    value={contentInputValue}
+                    onChange={handleContentInputChange}
                     rows={3}
+                />
+            </div>
+            <div id="new-post-price-input-container">
+                <p>Price:</p>
+                <input
+                    type="number"
+                    name="price"
+                    value={priceInputValue}
+                    onChange={handlePriceInputChange}
+                    min="0"
+                    max="10000"
+                    required
                 />
             </div>
             <div id="new-post-submit-container">

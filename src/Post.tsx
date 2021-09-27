@@ -16,6 +16,7 @@ export const Post = () => {
 
     const [titleInputValue, setTitleInputValue] = useState<string>("");
     const [contentInputValue, setContentInputValue] = useState<string>("");
+    const [priceInputValue, setPriceInputValue] = useState<number>(0);
 
     useEffect(() => {
         if (post && !titleInputValue && !contentInputValue) {
@@ -45,6 +46,7 @@ export const Post = () => {
             body: JSON.stringify({
                 title: titleInputValue,
                 content: contentInputValue,
+                price: priceInputValue,
             }),
         });
         setEditing(false);
@@ -73,6 +75,10 @@ export const Post = () => {
         setContentInputValue(event.target.value);
     };
 
+    const handlePriceInputChange = (event: any): void => {
+        setPriceInputValue(event.target.value);
+    };
+
     if (redirect) {
         return <Redirect to="/" />;
     }
@@ -86,8 +92,15 @@ export const Post = () => {
                     <div id="post-title-container">
                         <h1 id="post-title">{titleInputValue || post.title}</h1>
                     </div>
+                    <div id="post-price-container">
+                        <h4>
+                            Pay {priceInputValue || post.price} sats to read
+                        </h4>
+                    </div>
                     <div id="post-content-container">
-                        <p id="post-content">{contentInputValue || post.content}</p>
+                        <p id="post-content">
+                            {contentInputValue || post.content}
+                        </p>
                     </div>
                     <div className="post-actions">
                         <button className="delete-post" onClick={deletePost}>
@@ -113,11 +126,23 @@ export const Post = () => {
                         />
                     </div>
                     <div id="edit-post-body-input-container">
-                        <p>Body:</p>
+                        <p>Content:</p>
                         <textarea
                             value={contentInputValue}
                             onChange={handleContentInputChange}
                             rows={3}
+                        />
+                    </div>
+                    <div id="edit-post-price-input-container">
+                        <p>Price:</p>
+                        <input
+                            type="number"
+                            name="price"
+                            value={priceInputValue}
+                            onChange={handlePriceInputChange}
+                            min="0"
+                            max="10000"
+                            required
                         />
                     </div>
                     <div id="new-post-submit-container">

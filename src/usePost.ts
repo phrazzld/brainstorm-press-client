@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
-import {TPost} from "./PostCard";
-import {useStore} from "./store/zstore";
+import { useEffect, useState } from "react";
+import { TPost } from "./PostCard";
+import { useStore } from "./store/zstore";
 
 export const usePost = (postId: string): TPost | null => {
   const [post, setPost] = useState<TPost | null>(null);
