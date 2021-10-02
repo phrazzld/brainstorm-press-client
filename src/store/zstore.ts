@@ -1,16 +1,23 @@
 import create from "zustand";
 
+type User = {
+  name: string;
+  blog: string;
+  jwtToken: string;
+  nodeId: string;
+};
+
 type Store = {
-  jwt: string;
-  setJwt: (jwt: string) => void;
   lndToken: string;
   setLndToken: (lndToken: string) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
 };
 
 export const useStore = create<Store>((set) => ({
-  jwt: "",
-  setJwt: (jwt: string) => set({ jwt: jwt }),
-
   lndToken: "",
   setLndToken: (lndToken: string) => set({ lndToken: lndToken }),
+
+  user: null,
+  setUser: (user: User | null) => set({ user: user }),
 }));

@@ -5,22 +5,24 @@ import { useStore } from "./store/zstore";
 export const usePosts = (): Array<TPost> => {
   const [posts, setPosts] = useState<Array<TPost>>([]);
 
-  const jwt: string = useStore((state) => state.jwt);
+  const user = useStore((state) => state.user)
 
   useEffect(() => {
-    fetch("/api/posts", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
+    if (user) {
+      fetch("/api/posts", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.jwtToken}`,
+        },
+      })
       .then((res) => {
         return res.json();
       })
       .then((json) => {
         setPosts(json);
       });
-  }, [jwt]);
+    }
+  }, [user]);
 
   return posts;
 };

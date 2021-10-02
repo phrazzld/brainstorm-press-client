@@ -27,11 +27,15 @@ export const Post = () => {
     const [priceInputValue, setPriceInputValue] = useState(0);
 
     const createInvoice = async () => {
+        if (!user) {
+            throw new Error("Cannot create invoice without a user.");
+        }
+
         const res = await fetch(`/api/posts/${postId}/invoice`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
+                Authorization: `Bearer ${user.jwtToken}`,
             },
         });
         const resJSON = await res.json();
@@ -42,7 +46,7 @@ export const Post = () => {
         });
     };
 
-    const jwt = useStore((state) => state.jwt);
+    const user = useStore((state) => state.user);
 
     useEffect(() => {
         if (post && !titleInputValue && !contentInputValue) {
@@ -52,10 +56,10 @@ export const Post = () => {
     }, [post, titleInputValue, contentInputValue]);
 
     useEffect(() => {
-        if (jwt && !paid && !invoice) {
+        if (user && !paid && !invoice) {
             createInvoice();
         }
-    }, [jwt, paid, invoice]);
+    }, [user, paid, invoice]);
 
     const editPost = (): void => {
         setEditing(true);
@@ -63,7 +67,11 @@ export const Post = () => {
 
     const submitEdits = async (): Promise<void> => {
         if (!post) {
-            throw new Error("Cannot find post to edit");
+            throw new Error("Cannot find post to edit.");
+        }
+
+        if (!user) {
+            throw new Error("Cannot submit edits without a user.");
         }
 
         const url: string = `/api/posts/${post._id}`;
@@ -71,7 +79,7 @@ export const Post = () => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
+                Authorization: `Bearer ${user.jwtToken}`,
             },
             body: JSON.stringify({
                 title: titleInputValue,
@@ -84,14 +92,18 @@ export const Post = () => {
 
     const deletePost = async (): Promise<void> => {
         if (!post) {
-            throw new Error("Cannot find post to delete");
+            throw new Error("Cannot find post to delete.");
+        }
+
+        if (!user) {
+            throw new Error("Cannot delete post without a user.");
         }
 
         const url: string = `/api/posts/${post._id}`;
         await fetch(url, {
             method: "DELETE",
             headers: {
-                Authorization: `Bearer ${jwt}`,
+                Authorization: `Bearer ${user?.jwtToken}`,
             },
         });
         setRedirect(true);

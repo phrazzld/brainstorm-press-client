@@ -8,7 +8,7 @@ export const CreateNewPostForm = () => {
     const [priceInputValue, setPriceInputValue] = useState<number>(0);
     const [submitted, setSubmitted] = useState<boolean>(false);
 
-    const jwt: string = useStore((state) => state.jwt);
+    const user = useStore((state) => state.user)
 
     const handleTitleInputChange = (event: any): void => {
         setTitleInputValue(event.target.value);
@@ -23,11 +23,15 @@ export const CreateNewPostForm = () => {
     };
 
     const submitNewPost = async (): Promise<void> => {
+        if (!user) {
+            throw new Error("Cannot submit new post without a user.")
+        }
+
         await fetch("/api/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
+                Authorization: `Bearer ${user.jwtToken}`,
             },
             body: JSON.stringify({
                 title: titleInputValue,

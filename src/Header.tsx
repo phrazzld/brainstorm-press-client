@@ -4,7 +4,7 @@ import { useStore } from "./store/zstore";
 import { NodeInfo, useNodeInfo } from "./useNodeInfo";
 
 export const Header = () => {
-    const jwt: string = useStore((state) => state.jwt);
+    const user = useStore((state) => state.user);
 
     const nodeInfo: NodeInfo | null = useNodeInfo();
 
@@ -14,11 +14,11 @@ export const Header = () => {
             style={styles.headerContainer as React.CSSProperties}
         >
             <Link to="/">Brainstorm Press</Link>
-            {!jwt && <Link to="/authenticate">Sign Up</Link>}
-            {!nodeInfo && jwt && (
+            {!user && <Link to="/authenticate">Sign Up</Link>}
+            {!nodeInfo && user && (
                 <Link to="/connect-to-lnd">Connect to LND</Link>
             )}
-            {jwt && <Link to="/posts/new">New Post</Link>}
+            {user && <Link to="/posts/new">New Post</Link>}
             {nodeInfo && <p>Balance: {nodeInfo.balance} sats</p>}
         </div>
     );

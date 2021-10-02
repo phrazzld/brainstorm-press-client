@@ -31,8 +31,8 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
     const [nameInputValue, setNameInputValue] = useState<string>("");
     const [passwordInputValue, setPasswordInputValue] = useState<string>("");
 
-    const jwt: string = useStore((state) => state.jwt);
-    const setJwt: (jwt: string) => void = useStore((state) => state.setJwt);
+    const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
 
     const handleNameInputChange = (event: any): void => {
         setNameInputValue(event.target.value);
@@ -71,7 +71,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
             }),
         });
         const resJSON = await response.json();
-        setJwt(resJSON.jwtToken);
+        setUser(resJSON);
     };
 
     const loginUser = async (): Promise<void> => {
@@ -86,7 +86,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
             }),
         });
         const resJSON = await response.json();
-        setJwt(resJSON.jwtToken);
+        setUser(resJSON);
     };
 
     const submitForm = (): void => {
@@ -97,7 +97,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
         }
     };
 
-    if (jwt) {
+    if (user) {
         return <Redirect to="/" />;
     }
 
