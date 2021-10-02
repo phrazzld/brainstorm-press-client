@@ -3,6 +3,12 @@ import { Redirect, useParams } from "react-router-dom";
 import { useStore } from "./store/zstore";
 import { usePost } from "./usePost";
 
+type Invoice = {
+    payreq: string;
+    hash: string;
+    amount: number;
+};
+
 type PostParams = {
     postId: string;
 };
@@ -11,12 +17,32 @@ export const Post = () => {
     const { postId } = useParams<PostParams>();
     const post = usePost(postId);
 
-    const [editing, setEditing] = useState<boolean>(false);
-    const [redirect, setRedirect] = useState<boolean>(false);
+    const [editing, setEditing] = useState(false);
+    const [redirect, setRedirect] = useState(false);
+    const [paid, setPaid] = useState(false);
+    const [invoice, setInvoice] = useState<Invoice | null>(null);
 
-    const [titleInputValue, setTitleInputValue] = useState<string>("");
-    const [contentInputValue, setContentInputValue] = useState<string>("");
-    const [priceInputValue, setPriceInputValue] = useState<number>(0);
+    const [titleInputValue, setTitleInputValue] = useState("");
+    const [contentInputValue, setContentInputValue] = useState("");
+    const [priceInputValue, setPriceInputValue] = useState(0);
+
+    const createInvoice = async () => {
+        const res = await fetch(`/api/posts/${postId}/invoice`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+        const resJSON = await res.json();
+        setInvoice({
+            payreq: resJSON.payreq,
+            hash: resJSON.hash,
+            amount: resJSON.amount,
+        });
+    };
+
+    const jwt = useStore((state) => state.jwt);
 
     useEffect(() => {
         if (post && !titleInputValue && !contentInputValue) {
@@ -25,7 +51,11 @@ export const Post = () => {
         }
     }, [post, titleInputValue, contentInputValue]);
 
-    const jwt: string = useStore((state) => state.jwt);
+    useEffect(() => {
+        if (jwt && !paid && !invoice) {
+            createInvoice();
+        }
+    }, [jwt, paid, invoice]);
 
     const editPost = (): void => {
         setEditing(true);
@@ -87,7 +117,15 @@ export const Post = () => {
         <div id="post-container">
             {!post && <h1>Loading...</h1>}
 
-            {post && !editing && (
+            {post && !paid && !editing && (
+                <>
+                    <div id="post-title-container">
+                        <h1 id="post-title">{titleInputValue || post.title}</h1>
+                    </div>
+                </>
+            )}
+
+            {post && paid && !editing && (
                 <>
                     <div id="post-title-container">
                         <h1 id="post-title">{titleInputValue || post.title}</h1>
