@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { TPost } from "./PostCard";
+import { Post } from "./PostCard";
 import { useStore } from "./store/zstore";
 
-export const usePost = (postId: string): TPost | null => {
-  const [post, setPost] = useState<TPost | null>(null);
+export const usePost = (postId: string): Post | null => {
+  const [post, setPost] = useState<Post | null>(null);
 
   const user = useStore((state) => state.user)
 

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { TPost } from "./PostCard";
+import { Post } from "./PostCard";
 import { useStore } from "./store/zstore";
 
-export const usePosts = (): Array<TPost> => {
-  const [posts, setPosts] = useState<Array<TPost>>([]);
+export const usePosts = (): Array<Post> => {
+  const [posts, setPosts] = useState<Array<Post>>([]);
 
   const user = useStore((state) => state.user)
 

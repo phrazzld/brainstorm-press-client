@@ -26,6 +26,9 @@ export const Post = () => {
     const [contentInputValue, setContentInputValue] = useState("");
     const [priceInputValue, setPriceInputValue] = useState(0);
 
+    const user = useStore((state) => state.user);
+    const isCreator = post?.userId === user?._id;
+
     const createInvoice = async () => {
         if (!user) {
             throw new Error("Cannot create invoice without a user.");
@@ -46,8 +49,6 @@ export const Post = () => {
         });
     };
 
-    const user = useStore((state) => state.user);
-
     useEffect(() => {
         if (post && !titleInputValue && !contentInputValue) {
             setTitleInputValue(post.title);
@@ -59,7 +60,45 @@ export const Post = () => {
         if (user && !paid && !invoice) {
             createInvoice();
         }
-    }, [user, paid, invoice]);
+    }, [user, paid, invoice, createInvoice]);
+
+    useEffect(() => {
+        fetch(`/api/posts/${postId}/payments`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${user?.jwtToken}`,
+            },
+        })
+            .then((res) => res.json())
+            .then((resJSON) => {
+                if (resJSON.paid) {
+                    setPaid(true);
+                }
+            });
+    }, [postId, user]);
+
+    useEffect(() => {
+        const webSocket = new WebSocket("ws://localhost:4000/api/events");
+        webSocket.onopen = () => {
+            console.debug("Connected to web socket.");
+        };
+        webSocket.onmessage = async (event) => {
+            const eventData = JSON.parse(event.data);
+            if (eventData.type === "invoice-paid") {
+                setPaid(true);
+                fetch(`/api/posts/${postId}/payments`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user?.jwtToken}`,
+                    },
+                    body: JSON.stringify({
+                        hash: eventData.data.hash,
+                    }),
+                });
+            }
+        };
+    }, []);
 
     const editPost = (): void => {
         setEditing(true);
@@ -129,15 +168,25 @@ export const Post = () => {
         <div id="post-container">
             {!post && <h1>Loading...</h1>}
 
-            {post && !paid && !editing && (
+            {post && !isCreator && !paid && invoice && !editing && (
                 <>
                     <div id="post-title-container">
                         <h1 id="post-title">{titleInputValue || post.title}</h1>
                     </div>
+                    <div id="post-paywall-container">
+                        <p>Pay Request:</p>
+                        <textarea
+                            value={invoice.payreq}
+                            rows={3}
+                            readOnly={true}
+                        />
+                        <p>Hash: {invoice.hash}</p>
+                        <p>Amount: {invoice.amount}</p>
+                    </div>
                 </>
             )}
 
-            {post && paid && !editing && (
+            {post && (isCreator || paid) && !editing && (
                 <>
                     <div id="post-title-container">
                         <h1 id="post-title">{titleInputValue || post.title}</h1>
@@ -152,18 +201,23 @@ export const Post = () => {
                             {contentInputValue || post.content}
                         </p>
                     </div>
-                    <div className="post-actions">
-                        <button className="delete-post" onClick={deletePost}>
-                            Delete
-                        </button>
-                        <button className="edit-post" onClick={editPost}>
-                            Edit
-                        </button>
-                    </div>
+                    {isCreator && (
+                        <div className="post-actions">
+                            <button
+                                className="delete-post"
+                                onClick={deletePost}
+                            >
+                                Delete
+                            </button>
+                            <button className="edit-post" onClick={editPost}>
+                                Edit
+                            </button>
+                        </div>
+                    )}
                 </>
             )}
 
-            {editing && (
+            {isCreator && editing && (
                 <div id="edit-post-form">
                     <div id="edit-post-title-input-container">
                         <p>Title:</p>

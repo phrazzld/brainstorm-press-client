@@ -1,15 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export type TPost = {
+export type Post = {
     _id: number;
     title: string;
     content: string;
     price: number;
+    userId: string;
 };
 
 interface IProps {
-    post: TPost;
+    post: Post;
 }
 
 export const PostCard = (props: IProps) => {
