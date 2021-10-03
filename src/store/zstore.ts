@@ -8,7 +8,7 @@ type LndNode = {
   pubkey: string;
 }
 
-type User = {
+export type User = {
   _id: string;
   name: string;
   blog: string;

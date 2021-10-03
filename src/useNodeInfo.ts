@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useStore } from "./store/zstore";
+import { useLndToken } from "./useLndToken";
 
 export type NodeInfo = {
   alias: string;
@@ -10,7 +11,8 @@ export type NodeInfo = {
 export const useNodeInfo = (): NodeInfo | null => {
   const [nodeInfo, setNodeInfo] = useState<NodeInfo | null>(null);
 
-  const lndToken: string = useStore((state) => state.lndToken);
+  const user = useStore((state) => state.user);
+  const lndToken = useLndToken(user);
 
   useEffect(() => {
     if (lndToken) {
