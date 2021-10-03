@@ -1,11 +1,19 @@
 import create from "zustand";
 
+type LndNode = {
+  token: string;
+  host: string;
+  cert: string;
+  macaroon: string;
+  pubkey: string;
+}
+
 type User = {
   _id: string;
   name: string;
   blog: string;
   jwtToken: string;
-  nodeId: string;
+  node: LndNode;
 };
 
 type Store = {
