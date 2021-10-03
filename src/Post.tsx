@@ -27,7 +27,7 @@ export const Post = () => {
     const [priceInputValue, setPriceInputValue] = useState(0);
 
     const user = useStore((state) => state.user);
-    const isCreator = post?.userId === user?._id;
+    const isCreator = post?.user?._id === user?._id;
 
     const createInvoice = async () => {
         if (!user) {
