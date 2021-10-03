@@ -1,5 +1,5 @@
 import React from "react";
-import { PostCard, Post } from "./PostCard";
+import { Post, PostCard } from "./PostCard";
 import { usePosts } from "./usePosts";
 
 export const PostsList = () => {
@@ -7,10 +7,14 @@ export const PostsList = () => {
 
     return (
         <div id="posts-list-container">
-            {posts &&
-                posts.map((post: Post) => <PostCard key={post._id} post={post} />)}
+            {!posts && <h3>Loading...</h3>}
 
-            {!posts && <h3>No posts found</h3>}
+            {posts.length > 0 &&
+                posts.map((post: Post) => (
+                    <PostCard key={post._id} post={post} />
+                ))}
+
+            {posts.length === 0 && <h3>No posts found</h3>}
         </div>
     );
 };
