@@ -8,11 +8,8 @@ export type NodeInfo = {
   pubkey: string;
 };
 
-export const useNodeInfo = (): NodeInfo | null => {
+export const useNodeInfo = (lndToken: string): NodeInfo | null => {
   const [nodeInfo, setNodeInfo] = useState<NodeInfo | null>(null);
-
-  const user = useStore((state) => state.user);
-  const lndToken = useLndToken(user);
 
   useEffect(() => {
     if (lndToken) {
@@ -27,6 +24,8 @@ export const useNodeInfo = (): NodeInfo | null => {
         .then((json) => {
           setNodeInfo(json);
         });
+    } else {
+      setNodeInfo(null)
     }
   }, [lndToken]);
 

@@ -1,12 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useStore } from "./store/zstore";
+import { useLndToken } from "./useLndToken";
 import { NodeInfo, useNodeInfo } from "./useNodeInfo";
 
 export const Header = () => {
     const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
 
-    const nodeInfo: NodeInfo | null = useNodeInfo();
+    const lndToken = useLndToken(user);
+
+    const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
+
+    const logout = (): void => {
+        setUser(null);
+    };
 
     return (
         <div
@@ -19,6 +27,11 @@ export const Header = () => {
                 <Link to="/connect-to-lnd">Connect to LND</Link>
             )}
             {user && <Link to="/posts/new">New Post</Link>}
+            {user && (
+                <a href="#" onClick={logout}>
+                    Logout
+                </a>
+            )}
             {nodeInfo && <p>Balance: {nodeInfo.balance} sats</p>}
         </div>
     );

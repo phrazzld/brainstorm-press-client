@@ -21,6 +21,8 @@ export const useLndToken = (user: User | null): string => {
       })
         .then((res) => res.json())
         .then((json) => setLndToken(json.token));
+    } else {
+      setLndToken("")
     }
   }, [user]);
 
