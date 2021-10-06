@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 import { useStore } from "./store/zstore";
 
 export const ConnectToLndForm = () => {
@@ -7,6 +8,7 @@ export const ConnectToLndForm = () => {
     const [macaroonInputValue, setMacaroonInputValue] = useState<string>("");
 
     const user = useStore((state) => state.user);
+    const lndToken = useStore((state) => state.lndToken);
     const setLndToken = useStore((state) => state.setLndToken);
 
     const handleHostInputChange = (event: any): void => {
@@ -41,6 +43,10 @@ export const ConnectToLndForm = () => {
         const resJSON = await response.json();
         setLndToken(resJSON.token);
     };
+
+    if (lndToken) {
+        return <Redirect to="/settings" />;
+    }
 
     return (
         <div id="connect-to-lnd-form">

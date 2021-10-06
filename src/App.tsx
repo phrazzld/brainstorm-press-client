@@ -6,6 +6,7 @@ import { CreateNewPostForm } from "./CreateNewPostForm";
 import { Header } from "./Header";
 import { Home } from "./Home";
 import { Post } from "./Post";
+import { Settings } from "./Settings";
 
 function App() {
     return (
@@ -18,6 +19,9 @@ function App() {
                     </Route>
                     <Route path="/connect-to-lnd">
                         <ConnectToLndForm />
+                    </Route>
+                    <Route path="/settings">
+                        <Settings />
                     </Route>
                     <Route path="/posts/new">
                         <CreateNewPostForm />
