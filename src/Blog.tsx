@@ -14,6 +14,7 @@ export const Blog = () => {
     // TODO: Fetch user name and blog name, show in title
     return (
         <div id="blog-container">
+            <h1>{posts[0]?.user.blog}</h1>
             <PostsList posts={posts} />
         </div>
     );
