@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useStore } from "./store/zstore";
-import { useLndToken } from "./useLndToken";
 
 export type NodeInfo = {
   alias: string;
@@ -13,11 +11,11 @@ export const useNodeInfo = (lndToken: string): NodeInfo | null => {
 
   useEffect(() => {
     if (lndToken) {
-      fetch(`/api/node/info`, {
+      fetch("/api/node/info", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${lndToken}`,
+          Authorization: lndToken,
         },
       })
         .then((res) => res.json())
@@ -25,7 +23,7 @@ export const useNodeInfo = (lndToken: string): NodeInfo | null => {
           setNodeInfo(json);
         });
     } else {
-      setNodeInfo(null)
+      setNodeInfo(null);
     }
   }, [lndToken]);
 

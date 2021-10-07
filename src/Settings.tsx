@@ -9,10 +9,14 @@ export const Settings = () => {
     const setLndToken = useStore((state) => state.setLndToken);
 
     const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
-    console.log("nodeInfo:", nodeInfo);
 
     const disconnectNode = () => {
-        // TODO: send DELETE request to API
+        fetch("/api/node", {
+            method: "DELETE",
+            headers: {
+                Authorization: lndToken
+            }
+        })
         setLndToken("");
     };
 

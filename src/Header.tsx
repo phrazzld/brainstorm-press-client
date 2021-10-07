@@ -4,11 +4,6 @@ import { useStore } from "./store/zstore";
 
 export const Header = () => {
     const user = useStore((state) => state.user);
-    const setUser = useStore((state) => state.setUser);
-
-    const logout = (): void => {
-        setUser(null);
-    };
 
     return (
         <div
@@ -20,9 +15,9 @@ export const Header = () => {
             {user && <Link to="/posts/new">New Post</Link>}
             {user && <Link to="/settings">Settings</Link>}
             {user && (
-                <a href="#" onClick={logout}>
+                <Link to={{ pathname: "/", state: { logout: true } }}>
                     Logout
-                </a>
+                </Link>
             )}
         </div>
     );
