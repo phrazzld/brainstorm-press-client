@@ -28,7 +28,9 @@ export const PostCard = (props: IProps) => {
                 <Link to={`/posts/${post._id}`}>{post.title}</Link>
             </h3>
             {post.user?.name && (
-                <h4 className="post-author">Written by: {post.user?.name}</h4>
+                <h4 className="post-author">
+                    Written by: <Link to={`/users/${post.user?._id}/blog`}>{post.user?.name}</Link>
+                </h4>
             )}
             <h4>Pay {post.price} sats to read</h4>
         </div>

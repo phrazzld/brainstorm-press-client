@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AuthenticateUser } from "./AuthenticateUser";
+import { Blog } from "./Blog";
 import { ConnectToLndForm } from "./ConnectToLndForm";
 import { CreateNewPostForm } from "./CreateNewPostForm";
 import { Header } from "./Header";
@@ -28,6 +29,9 @@ function App() {
                     </Route>
                     <Route path="/posts/:postId">
                         <Post />
+                    </Route>
+                    <Route path="/users/:userId/blog">
+                        <Blog />
                     </Route>
                     <Route path="/">
                         <Home />

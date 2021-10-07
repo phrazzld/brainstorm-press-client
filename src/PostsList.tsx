@@ -1,9 +1,12 @@
 import React from "react";
 import { Post, PostCard } from "./PostCard";
-import { usePosts } from "./usePosts";
 
-export const PostsList = () => {
-    const posts = usePosts();
+interface Props {
+    posts: Array<Post>;
+}
+
+export const PostsList = (props: Props) => {
+    const { posts } = props;
 
     return (
         <div id="posts-list-container">
