@@ -50,17 +50,18 @@ export const Post = () => {
     };
 
     useEffect(() => {
-        if (post && !titleInputValue && !contentInputValue) {
+        if (post && !titleInputValue && !contentInputValue && !priceInputValue) {
             setTitleInputValue(post.title);
             setContentInputValue(post.content);
+            setPriceInputValue(post.price);
         }
-    }, [post, titleInputValue, contentInputValue]);
+    }, [post, titleInputValue, contentInputValue, priceInputValue]);
 
     useEffect(() => {
-        if (user && !paid && !invoice) {
+        if (post && user && !paid && !invoice && !isCreator) {
             createInvoice();
         }
-    }, [user, paid, invoice, createInvoice]);
+    }, [post, user, paid, invoice, createInvoice]);
 
     useEffect(() => {
         fetch(`/api/posts/${postId}/payments`, {
