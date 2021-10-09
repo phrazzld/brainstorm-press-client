@@ -8,8 +8,8 @@ export const ConnectToLndForm = () => {
     const [macaroonInputValue, setMacaroonInputValue] = useState<string>("");
 
     const accessToken = useStore((state) => state.accessToken);
-    const lndToken = useStore((state) => state.accessToken);
-    const setLndToken = useStore((state) => state.setAccessToken);
+    const lndToken = useStore((state) => state.lndToken);
+    const setLndToken = useStore((state) => state.setLndToken);
 
     const handleHostInputChange = (event: any): void => {
         setHostInputValue(event.target.value);
