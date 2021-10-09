@@ -66,7 +66,7 @@ export const Settings = () => {
             <div id="lnd-container">
                 <div id="lnd-info-container"></div>
                 <div id="lnd-actions-container">
-                    {nodeInfo && <p>Balance: {nodeInfo.balance} sats</p>}
+                    {nodeInfo && <p>Balance: {Number(nodeInfo.balance).toLocaleString()} sats</p>}
                     {!lndToken && (
                         <Link to="/connect-to-lnd">Connect to LND</Link>
                     )}
