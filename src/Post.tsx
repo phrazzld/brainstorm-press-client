@@ -27,6 +27,7 @@ export const Post = () => {
     const [priceInputValue, setPriceInputValue] = useState(0);
 
     const user = useStore((state) => state.user);
+    const accessToken = useStore((state) => state.accessToken);
     const isCreator = post?.user?._id === user?._id;
 
     const createInvoice = async () => {
@@ -38,7 +39,7 @@ export const Post = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${user.jwtToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
         const resJSON = await res.json();
@@ -50,7 +51,12 @@ export const Post = () => {
     };
 
     useEffect(() => {
-        if (post && !titleInputValue && !contentInputValue && !priceInputValue) {
+        if (
+            post &&
+            !titleInputValue &&
+            !contentInputValue &&
+            !priceInputValue
+        ) {
             setTitleInputValue(post.title);
             setContentInputValue(post.content);
             setPriceInputValue(post.price);
@@ -67,7 +73,7 @@ export const Post = () => {
         fetch(`/api/posts/${postId}/payments`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${user?.jwtToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         })
             .then((res) => res.json())
@@ -91,7 +97,7 @@ export const Post = () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${user?.jwtToken}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify({
                         hash: eventData.data.hash,
@@ -119,7 +125,7 @@ export const Post = () => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${user.jwtToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
                 title: titleInputValue,
@@ -143,7 +149,7 @@ export const Post = () => {
         await fetch(url, {
             method: "DELETE",
             headers: {
-                Authorization: `Bearer ${user?.jwtToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
         setRedirect(true);

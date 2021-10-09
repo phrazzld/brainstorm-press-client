@@ -7,9 +7,9 @@ export const ConnectToLndForm = () => {
     const [certInputValue, setCertInputValue] = useState<string>("");
     const [macaroonInputValue, setMacaroonInputValue] = useState<string>("");
 
-    const user = useStore((state) => state.user);
-    const lndToken = useStore((state) => state.lndToken);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const accessToken = useStore((state) => state.accessToken);
+    const lndToken = useStore((state) => state.accessToken);
+    const setLndToken = useStore((state) => state.setAccessToken);
 
     const handleHostInputChange = (event: any): void => {
         setHostInputValue(event.target.value);
@@ -24,15 +24,11 @@ export const ConnectToLndForm = () => {
     };
 
     const connectToLnd = async (): Promise<void> => {
-        if (!user) {
-            throw new Error("Cannot connect to LND without a user.");
-        }
-
         const response = await fetch("/api/connect", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${user.jwtToken}`,
+                Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
                 host: hostInputValue,

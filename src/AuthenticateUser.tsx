@@ -33,6 +33,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
 
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
+    const setAccessToken = useStore((state) => state.setAccessToken)
 
     const handleNameInputChange = (event: any): void => {
         setNameInputValue(event.target.value);
@@ -71,7 +72,8 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
             }),
         });
         const resJSON = await response.json();
-        setUser(resJSON);
+        setAccessToken(resJSON.accessToken)
+        setUser(resJSON.user);
     };
 
     const loginUser = async (): Promise<void> => {
@@ -86,7 +88,8 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
             }),
         });
         const resJSON = await response.json();
-        setUser(resJSON);
+        setAccessToken(resJSON.accessToken)
+        setUser(resJSON.user);
     };
 
     const submitForm = (): void => {

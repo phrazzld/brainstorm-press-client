@@ -8,13 +8,15 @@ export const Home = () => {
     const location = useLocation<{ logout: boolean }>();
     const { logout } = location.state || false;
     const setUser = useStore((state) => state.setUser);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const setAccessToken = useStore((state) => state.setAccessToken);
     const posts = usePosts();
 
     useEffect(() => {
         if (logout) {
             setUser(null);
-            setLndToken("");
+            setAccessToken("");
+            // TODO: Hit logout endpoint to delete refresh token from DB
+            // TODO: Delete refresh token cookie
         }
     }, [logout]);
 

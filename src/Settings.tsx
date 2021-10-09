@@ -5,10 +5,13 @@ import { NodeInfo, useNodeInfo } from "./useNodeInfo";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);
+    const accessToken = useStore((state) => state.accessToken);
     const lndToken = useStore((state) => state.lndToken);
     const setLndToken = useStore((state) => state.setLndToken);
 
-    const [blogInputValue, setBlogInputValue] = useState<string>(user?.blog || "")
+    const [blogInputValue, setBlogInputValue] = useState<string>(
+        user?.blog || ""
+    );
 
     const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
 
@@ -16,28 +19,28 @@ export const Settings = () => {
         fetch("/api/node", {
             method: "DELETE",
             headers: {
-                Authorization: lndToken
-            }
-        })
+                Authorization: lndToken,
+            },
+        });
         setLndToken("");
     };
 
     const handleBlogInputChange = (event: any): void => {
-        setBlogInputValue(event.target.value)
-    }
+        setBlogInputValue(event.target.value);
+    };
 
     const submitEdits = (): void => {
         fetch(`/api/users/${user?._id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${user?.jwtToken}`
+                Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
-                blog: blogInputValue
-            })
-        })
-    }
+                blog: blogInputValue,
+            }),
+        });
+    };
 
     // TODO: enable account deletion
     // TODO: enable editing name and blogname
