@@ -34,6 +34,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken)
+    const setLndToken = useStore((state) => state.setLndToken)
 
     const handleNameInputChange = (event: any): void => {
         setNameInputValue(event.target.value);
@@ -89,7 +90,10 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
         });
         const resJSON = await response.json();
         setAccessToken(resJSON.accessToken)
-        setUser(resJSON.user);
+        setUser(Object.assign(resJSON.user, { refreshToken: resJSON.refreshToken }));
+        if (resJSON.user.node) {
+            setLndToken(resJSON.user.node.token)
+        }
     };
 
     const submitForm = (): void => {

@@ -9,6 +9,7 @@ export const CreateNewPostForm = () => {
     const [submitted, setSubmitted] = useState<boolean>(false);
 
     const accessToken = useStore((state) => state.accessToken);
+    const setAccessToken = useStore((state) => state.setAccessToken)
 
     const handleTitleInputChange = (event: any): void => {
         setTitleInputValue(event.target.value);
@@ -22,8 +23,38 @@ export const CreateNewPostForm = () => {
         setPriceInputValue(event.target.value);
     };
 
-    const submitNewPost = async (): Promise<void> => {
+    const regenerateAccessTokenAndSubmitNewPost = async (): Promise<void> => {
+        console.log("regenerateAccessToken")
+        const response = await fetch("/api/accessToken", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({})
+        })
+        console.log("response:", response)
+        const newAccessToken = await response.json()
+        console.log("res.json (new access token):", newAccessToken)
+        setAccessToken(newAccessToken)
+
         await fetch("/api/posts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${newAccessToken}`,
+            },
+            body: JSON.stringify({
+                title: titleInputValue,
+                content: contentInputValue,
+                price: priceInputValue,
+            }),
+        });
+        setSubmitted(true)
+    }
+
+    const submitNewPost = async (): Promise<void> => {
+        console.log("submitNewPost, accessToken:", accessToken)
+        const response = await fetch("/api/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -35,7 +66,11 @@ export const CreateNewPostForm = () => {
                 price: priceInputValue,
             }),
         });
-        setSubmitted(true);
+        if (response.status === 201) {
+            setSubmitted(true)
+        } else if (response.status === 401) {
+            await regenerateAccessTokenAndSubmitNewPost()
+        }
     };
 
     if (submitted) {

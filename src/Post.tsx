@@ -175,7 +175,7 @@ export const Post = () => {
         <div id="post-container">
             {!post && <h1>Loading...</h1>}
 
-            {post && !isCreator && !paid && invoice && !editing && (
+            {post && !isCreator && !paid && post.price !== 0 && invoice && !editing && (
                 <>
                     <div id="post-title-container">
                         <h1 id="post-title">{titleInputValue || post.title}</h1>
@@ -193,7 +193,7 @@ export const Post = () => {
                 </>
             )}
 
-            {post && (isCreator || paid) && !editing && (
+            {post && (isCreator || paid || post.price === 0) && !editing && (
                 <>
                     <div id="post-title-container">
                         <h1 id="post-title">{titleInputValue || post.title}</h1>
