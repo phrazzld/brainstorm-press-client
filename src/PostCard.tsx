@@ -1,25 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Post } from "./types";
 
-type User = {
-    _id: string;
-    name: string;
-    blog: string;
-};
-
-export type Post = {
-    _id: string;
-    title: string;
-    content: string;
-    price: number;
-    user: User;
-};
-
-interface IProps {
+interface Props {
     post: Post;
 }
 
-export const PostCard = (props: IProps) => {
+export const PostCard = (props: Props) => {
     const { post } = props;
 
     return (
@@ -29,7 +16,10 @@ export const PostCard = (props: IProps) => {
             </h3>
             {post.user?.name && (
                 <h4 className="post-author">
-                    Written by: <Link to={`/users/${post.user?._id}/blog`}>{post.user?.name}</Link>
+                    Written by:{" "}
+                    <Link to={`/users/${post.user?._id}/blog`}>
+                        {post.user?.name}
+                    </Link>
                 </h4>
             )}
             <h4>Pay {post.price} sats to read</h4>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { rtaGetPost } from "./api";
-import { Post } from "./PostCard";
+import { Post } from "./types";
 import { useStore } from "./store/zstore";
 
 export const usePost = (postId: string): Post | null => {

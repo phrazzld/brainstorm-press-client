@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { getNodeInfo } from "./api";
-
-export type NodeInfo = {
-  alias: string;
-  balance: number;
-  pubkey: string;
-};
+import { NodeInfo } from "./types";
 
 export const useNodeInfo = (lndToken: string): NodeInfo | null => {
   const [nodeInfo, setNodeInfo] = useState<NodeInfo | null>(null);

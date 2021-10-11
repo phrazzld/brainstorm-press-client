@@ -8,17 +8,8 @@ import {
     rtaUpdatePost,
 } from "./api";
 import { useStore } from "./store/zstore";
+import { Invoice, PostParams } from "./types";
 import { usePost } from "./usePost";
-
-export type Invoice = {
-    payreq: string;
-    hash: string;
-    amount: number;
-};
-
-type PostParams = {
-    postId: string;
-};
 
 export const Post = () => {
     const { postId } = useParams<PostParams>();

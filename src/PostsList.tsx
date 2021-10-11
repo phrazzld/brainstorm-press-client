@@ -1,5 +1,6 @@
 import React from "react";
-import { Post, PostCard } from "./PostCard";
+import { PostCard } from "./PostCard";
+import { Post } from "./types";
 
 interface Props {
     posts: Array<Post>;

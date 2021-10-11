@@ -1,19 +1,5 @@
 import create from "zustand";
-
-export type LndNode = {
-  token: string;
-  host: string;
-  cert: string;
-  macaroon: string;
-  pubkey: string;
-}
-
-export type User = {
-  _id: string;
-  name: string;
-  blog: string;
-  node: LndNode;
-};
+import { User } from "../types";
 
 type Store = {
   accessToken: string;

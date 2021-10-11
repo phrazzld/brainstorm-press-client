@@ -1,9 +1,21 @@
-import { Invoice } from "./Post";
-import { Post } from "./PostCard";
-import { LndNode, User } from "./store/zstore";
-import { NodeInfo } from "./useNodeInfo";
+import {
+  AuthenticateUserRequestBody,
+  AuthResponse,
+  ConnectToLndBody,
+  CreateUserRequestBody,
+  Invoice,
+  LndNode,
+  LogPaymentRequestBody,
+  NodeInfo,
+  PaymentStatus,
+  Post,
+  PostRequestBody,
+  UserRequestBody,
+} from "./types";
 
 // TODO: Fix up error messages and handling
+// TODO: Extract types to separate module
+// TODO: Refactor retry logic to something reusable
 
 const regenerateAccessToken = async (): Promise<string> => {
   const response = await fetch("/api/accessToken", {
@@ -15,12 +27,6 @@ const regenerateAccessToken = async (): Promise<string> => {
   });
   const accessToken = await response.json();
   return accessToken;
-};
-
-type PostRequestBody = {
-  title: string;
-  content: string;
-  price: number;
 };
 
 const createNewPost = async (
@@ -56,8 +62,8 @@ export const rtaCreateNewPost = async (
   }
 };
 
-export const disconnectNode = (lndToken: string) => {
-  fetch("/api/node", {
+export const disconnectNode = async (lndToken: string): Promise<Response> => {
+  return await fetch("/api/node", {
     method: "DELETE",
     headers: {
       Authorization: lndToken,
@@ -113,12 +119,6 @@ export const rtaGetPost = async (
   return await response.json();
 };
 
-type ConnectToLndBody = {
-  host: string;
-  cert: string;
-  macaroon: string;
-};
-
 const connectToLnd = async (
   body: ConnectToLndBody,
   accessToken: string
@@ -166,10 +166,6 @@ export const getNodeInfo = async (lndToken: string): Promise<NodeInfo> => {
   return await response.json();
 };
 
-type UserRequestBody = {
-  blog: string;
-};
-
 const updateUser = async (
   userId: string,
   body: UserRequestBody,
@@ -204,17 +200,6 @@ export const rtaUpdateUser = async (
   }
 };
 
-type AuthResponse = {
-  user: User;
-  accessToken: string;
-};
-
-type CreateUserRequestBody = {
-  name: string;
-  password: string;
-  blog: string;
-};
-
 export const createUser = async (
   body: CreateUserRequestBody
 ): Promise<AuthResponse> => {
@@ -226,11 +211,6 @@ export const createUser = async (
     body: JSON.stringify(body),
   });
   return await response.json();
-};
-
-type AuthenticateUserRequestBody = {
-  name: string;
-  password: string;
 };
 
 export const loginUser = async (
@@ -293,10 +273,6 @@ const getPayment = async (
   });
 };
 
-type PaymentStatus = {
-  paid: boolean;
-};
-
 export const rtaGetPayment = async (
   postId: string,
   accessToken: string
@@ -317,10 +293,6 @@ export const rtaGetPayment = async (
   }
 
   return await response.json();
-};
-
-type LogPaymentRequestBody = {
-  hash: string;
 };
 
 const logPayment = async (
