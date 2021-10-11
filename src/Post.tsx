@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
+import {
+    rtaCreateInvoice,
+    rtaDeletePost,
+    rtaGetPayment,
+    rtaLogPayment,
+    rtaUpdatePost,
+} from "./api";
 import { useStore } from "./store/zstore";
 import { usePost } from "./usePost";
 
-type Invoice = {
+export type Invoice = {
     payreq: string;
     hash: string;
     amount: number;
@@ -35,18 +42,11 @@ export const Post = () => {
             throw new Error("Cannot create invoice without a user.");
         }
 
-        const res = await fetch(`/api/posts/${postId}/invoice`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-        const resJSON = await res.json();
+        const response = await rtaCreateInvoice(postId, accessToken);
         setInvoice({
-            payreq: resJSON.payreq,
-            hash: resJSON.hash,
-            amount: resJSON.amount,
+            payreq: response.payreq,
+            hash: response.hash,
+            amount: response.amount,
         });
     };
 
@@ -70,18 +70,9 @@ export const Post = () => {
     }, [post, user, paid, invoice, createInvoice]);
 
     useEffect(() => {
-        fetch(`/api/posts/${postId}/payments`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        })
-            .then((res) => res.json())
-            .then((resJSON) => {
-                if (resJSON.paid) {
-                    setPaid(true);
-                }
-            });
+        if (postId && user) {
+            rtaGetPayment(postId, accessToken).then((res) => setPaid(res.paid));
+        }
     }, [postId, user]);
 
     useEffect(() => {
@@ -93,16 +84,10 @@ export const Post = () => {
             const eventData = JSON.parse(event.data);
             if (eventData.type === "invoice-paid") {
                 setPaid(true);
-                fetch(`/api/posts/${postId}/payments`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                    body: JSON.stringify({
-                        hash: eventData.data.hash,
-                    }),
-                });
+                const body = {
+                    hash: eventData.data.hash,
+                };
+                rtaLogPayment(postId, body, accessToken);
             }
         };
     }, []);
@@ -120,19 +105,12 @@ export const Post = () => {
             throw new Error("Cannot submit edits without a user.");
         }
 
-        const url: string = `/api/posts/${post._id}`;
-        await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-                title: titleInputValue,
-                content: contentInputValue,
-                price: priceInputValue,
-            }),
-        });
+        const body = {
+            title: titleInputValue,
+            content: contentInputValue,
+            price: priceInputValue,
+        };
+        await rtaUpdatePost(post._id, body, accessToken);
         setEditing(false);
     };
 
@@ -145,13 +123,7 @@ export const Post = () => {
             throw new Error("Cannot delete post without a user.");
         }
 
-        const url: string = `/api/posts/${post._id}`;
-        await fetch(url, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
+        await rtaDeletePost(post._id, accessToken);
         setRedirect(true);
     };
 
@@ -175,23 +147,30 @@ export const Post = () => {
         <div id="post-container">
             {!post && <h1>Loading...</h1>}
 
-            {post && !isCreator && !paid && post.price !== 0 && invoice && !editing && (
-                <>
-                    <div id="post-title-container">
-                        <h1 id="post-title">{titleInputValue || post.title}</h1>
-                    </div>
-                    <div id="post-paywall-container">
-                        <p>Pay Request:</p>
-                        <textarea
-                            value={invoice.payreq}
-                            rows={3}
-                            readOnly={true}
-                        />
-                        <p>Hash: {invoice.hash}</p>
-                        <p>Amount: {invoice.amount}</p>
-                    </div>
-                </>
-            )}
+            {post &&
+                !isCreator &&
+                !paid &&
+                post.price !== 0 &&
+                invoice &&
+                !editing && (
+                    <>
+                        <div id="post-title-container">
+                            <h1 id="post-title">
+                                {titleInputValue || post.title}
+                            </h1>
+                        </div>
+                        <div id="post-paywall-container">
+                            <p>Pay Request:</p>
+                            <textarea
+                                value={invoice.payreq}
+                                rows={3}
+                                readOnly={true}
+                            />
+                            <p>Hash: {invoice.hash}</p>
+                            <p>Amount: {invoice.amount}</p>
+                        </div>
+                    </>
+                )}
 
             {post && (isCreator || paid || post.price === 0) && !editing && (
                 <>

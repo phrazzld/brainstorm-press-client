@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
+import { rtaConnectToLnd } from "./api";
 import { useStore } from "./store/zstore";
 
 export const ConnectToLndForm = () => {
@@ -24,20 +25,13 @@ export const ConnectToLndForm = () => {
     };
 
     const connectToLnd = async (): Promise<void> => {
-        const response = await fetch("/api/connect", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-                host: hostInputValue,
-                cert: certInputValue,
-                macaroon: macaroonInputValue,
-            }),
-        });
-        const resJSON = await response.json();
-        setLndToken(resJSON.token);
+        const body = {
+            host: hostInputValue,
+            cert: certInputValue,
+            macaroon: macaroonInputValue,
+        };
+        const res = await rtaConnectToLnd(body, accessToken);
+        setLndToken(res.token);
     };
 
     if (lndToken) {

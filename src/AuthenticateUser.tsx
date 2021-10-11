@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
+import { createUser, loginUser } from "./api";
 import { useStore } from "./store/zstore";
 
 interface IFormHeader {
@@ -33,8 +34,8 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
 
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
-    const setAccessToken = useStore((state) => state.setAccessToken)
-    const setLndToken = useStore((state) => state.setLndToken)
+    const setAccessToken = useStore((state) => state.setAccessToken);
+    const setLndToken = useStore((state) => state.setLndToken);
 
     const handleNameInputChange = (event: any): void => {
         setNameInputValue(event.target.value);
@@ -61,38 +62,26 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
     }, [authForm]);
 
     const signupUser = async (): Promise<void> => {
-        const response = await fetch("/api/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: nameInputValue,
-                password: passwordInputValue,
-                blog: `${nameInputValue}'s Blog`,
-            }),
-        });
-        const resJSON = await response.json();
-        setAccessToken(resJSON.accessToken)
-        setUser(resJSON.user);
+        const body = {
+            name: nameInputValue,
+            password: passwordInputValue,
+            blog: `${nameInputValue}'s Blog`,
+        };
+        const response = await createUser(body);
+        setUser(response.user);
+        setAccessToken(response.accessToken);
     };
 
-    const loginUser = async (): Promise<void> => {
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: nameInputValue,
-                password: passwordInputValue,
-            }),
-        });
-        const resJSON = await response.json();
-        setAccessToken(resJSON.accessToken)
-        setUser(Object.assign(resJSON.user, { refreshToken: resJSON.refreshToken }));
-        if (resJSON.user.node) {
-            setLndToken(resJSON.user.node.token)
+    const login = async (): Promise<void> => {
+        const body = {
+            name: nameInputValue,
+            password: passwordInputValue,
+        };
+        const response = await loginUser(body);
+        setUser(response.user);
+        setAccessToken(response.accessToken);
+        if (response.user.node) {
+            setLndToken(response.user.node.token);
         }
     };
 
@@ -100,7 +89,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
         if (authForm === "SIGNUP") {
             signupUser();
         } else if (authForm === "LOGIN") {
-            loginUser();
+            login();
         }
     };
 

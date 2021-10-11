@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getNodeInfo } from "./api";
 
 export type NodeInfo = {
   alias: string;
@@ -11,17 +12,7 @@ export const useNodeInfo = (lndToken: string): NodeInfo | null => {
 
   useEffect(() => {
     if (lndToken) {
-      fetch("/api/node/info", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: lndToken,
-        },
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          setNodeInfo(json);
-        });
+      getNodeInfo(lndToken).then((res) => setNodeInfo(res));
     } else {
       setNodeInfo(null);
     }

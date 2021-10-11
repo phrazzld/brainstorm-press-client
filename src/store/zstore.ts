@@ -1,6 +1,6 @@
 import create from "zustand";
 
-type LndNode = {
+export type LndNode = {
   token: string;
   host: string;
   cert: string;

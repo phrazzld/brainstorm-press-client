@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
+import { getPosts } from "./api";
 import { Post } from "./PostCard";
 
 export const usePosts = (): Array<Post> => {
   const [posts, setPosts] = useState<Array<Post>>([]);
 
   useEffect(() => {
-    fetch("/api/posts", {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((json) => setPosts(json));
+    getPosts().then((res) => setPosts(res));
   }, []);
 
   return posts;

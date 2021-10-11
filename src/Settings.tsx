@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { disconnectNode, rtaUpdateUser } from "./api";
 import { useStore } from "./store/zstore";
 import { NodeInfo, useNodeInfo } from "./useNodeInfo";
 
@@ -15,31 +16,17 @@ export const Settings = () => {
 
     const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
 
-    const disconnectNode = () => {
-        fetch("/api/node", {
-            method: "DELETE",
-            headers: {
-                Authorization: lndToken,
-            },
-        });
-        setLndToken("");
-    };
-
     const handleBlogInputChange = (event: any): void => {
         setBlogInputValue(event.target.value);
     };
 
     const submitEdits = (): void => {
-        fetch(`/api/users/${user?._id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
+        if (user) {
+            const body = {
                 blog: blogInputValue,
-            }),
-        });
+            };
+            rtaUpdateUser(user._id, body, accessToken);
+        }
     };
 
     // TODO: enable account deletion
@@ -66,12 +53,23 @@ export const Settings = () => {
             <div id="lnd-container">
                 <div id="lnd-info-container"></div>
                 <div id="lnd-actions-container">
-                    {nodeInfo && <p>Balance: {Number(nodeInfo.balance).toLocaleString()} sats</p>}
+                    {nodeInfo && (
+                        <p>
+                            Balance: {Number(nodeInfo.balance).toLocaleString()}{" "}
+                            sats
+                        </p>
+                    )}
                     {!lndToken && (
                         <Link to="/connect-to-lnd">Connect to LND</Link>
                     )}
                     {lndToken && (
-                        <a href="#" onClick={disconnectNode}>
+                        <a
+                            href="#"
+                            onClick={() => {
+                                disconnectNode(lndToken);
+                                setLndToken("");
+                            }}
+                        >
                             Disconnect Node
                         </a>
                     )}
