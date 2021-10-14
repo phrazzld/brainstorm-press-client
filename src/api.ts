@@ -10,6 +10,7 @@ import {
   PaymentStatus,
   Post,
   PostRequestBody,
+  User,
   UserRequestBody,
 } from "./types";
 
@@ -109,7 +110,7 @@ export const rtaGetPost = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to get post, even after trying to get a new access token."
       );
     }
 
@@ -145,7 +146,7 @@ export const rtaConnectToLnd = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to connect to LND, even after trying to get a new access token."
       );
     }
 
@@ -194,7 +195,7 @@ export const rtaUpdateUser = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to update user, even after trying to get a new access token."
       );
     }
   }
@@ -226,6 +227,34 @@ export const loginUser = async (
   return await response.json();
 };
 
+const getCurrentUser = async (accessToken: string): Promise<Response> => {
+  return await fetch("/api/users/current", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaGetCurrentUser = async (accessToken: string): Promise<User> => {
+  const response = await getCurrentUser(accessToken);
+
+  if (response.status === 401 || response.status === 403) {
+    const newAccessToken = await regenerateAccessToken();
+    const retryResponse = await getCurrentUser(newAccessToken);
+
+    if (!retryResponse.ok) {
+      throw new Error(
+        "Failed to get current user, even after trying to get a new access token."
+      );
+    }
+
+    return await retryResponse.json();
+  }
+
+  return await response.json();
+};
+
 const createInvoice = async (
   postId: string,
   accessToken: string
@@ -251,7 +280,7 @@ export const rtaCreateInvoice = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to create invoice, even after trying to get a new access token."
       );
     }
 
@@ -285,7 +314,7 @@ export const rtaGetPayment = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to get payment, even after trying to get a new access token."
       );
     }
 
@@ -323,7 +352,7 @@ export const rtaLogPayment = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to log payment, even after trying to get a new access token."
       );
     }
   }
@@ -357,7 +386,7 @@ export const rtaUpdatePost = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to update post, even after trying to get a new access token."
       );
     }
   }
@@ -387,7 +416,7 @@ export const rtaDeletePost = async (
 
     if (!retryResponse.ok) {
       throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
+        "Failed to delete post, even after trying to get a new access token."
       );
     }
   }

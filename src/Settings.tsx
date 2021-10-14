@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { disconnectNode, rtaUpdateUser } from "./api";
 import { useStore } from "./store/zstore";
@@ -30,8 +30,14 @@ export const Settings = () => {
         }
     };
 
+    useEffect(() => {
+        if (!blogInputValue && user?.blog) {
+            setBlogInputValue(user?.blog);
+        }
+    }, [user]);
+
     // TODO: enable account deletion
-    // TODO: enable editing name and blogname
+    // TODO: enable editing name
     // TODO: enable adding email (for account recovery)
     return (
         <div id="settings-container">

@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { rtaGetCurrentUser } from "./api";
 import { useStore } from "./store/zstore";
 
 export const Header = () => {
     const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
+    const accessToken = useStore((state) => state.accessToken);
+    const setLndToken = useStore((state) => state.setLndToken);
+
+    useEffect(() => {
+        if (!user) {
+            rtaGetCurrentUser(accessToken).then((res) => {
+                if (typeof res === "object") {
+                    setUser(res);
+                    setLndToken(res.node.token);
+                }
+            });
+        }
+    }, [user, accessToken]);
 
     return (
         <div
