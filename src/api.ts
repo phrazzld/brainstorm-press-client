@@ -14,8 +14,8 @@ import {
   UserRequestBody,
 } from "./types";
 
-// TODO: Fix up error messages and handling
-// TODO: Extract types to separate module
+const UNAUTHORIZED = [401, 403]
+
 // TODO: Refactor retry logic to something reusable
 
 const regenerateAccessToken = async (): Promise<string> => {
@@ -51,7 +51,7 @@ export const rtaCreateNewPost = async (
 ): Promise<void> => {
   const response = await createNewPost(body, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await createNewPost(body, newAccessToken);
 
@@ -104,7 +104,7 @@ export const rtaGetPost = async (
 ): Promise<Post> => {
   const response = await getPost(id, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await getPost(id, newAccessToken);
 
@@ -140,7 +140,7 @@ export const rtaConnectToLnd = async (
 ): Promise<LndNode> => {
   const response = await connectToLnd(body, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await connectToLnd(body, newAccessToken);
 
@@ -189,7 +189,7 @@ export const rtaUpdateUser = async (
 ): Promise<void> => {
   const response = await updateUser(userId, body, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await updateUser(userId, body, newAccessToken);
 
@@ -236,17 +236,18 @@ const getCurrentUser = async (accessToken: string): Promise<Response> => {
   });
 };
 
-export const rtaGetCurrentUser = async (accessToken: string): Promise<User> => {
+export const rtaGetCurrentUser = async (
+  accessToken: string
+): Promise<User | null> => {
   const response = await getCurrentUser(accessToken);
 
-  if (response.status === 401 || response.status === 403) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await getCurrentUser(newAccessToken);
 
     if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to get current user, even after trying to get a new access token."
-      );
+      // User is not logged in, return null
+      return null;
     }
 
     return await retryResponse.json();
@@ -274,7 +275,7 @@ export const rtaCreateInvoice = async (
 ): Promise<Invoice> => {
   const response = await createInvoice(postId, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await createInvoice(postId, newAccessToken);
 
@@ -308,7 +309,7 @@ export const rtaGetPayment = async (
 ): Promise<PaymentStatus> => {
   const response = await getPayment(postId, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await getPayment(postId, newAccessToken);
 
@@ -346,7 +347,7 @@ export const rtaLogPayment = async (
 ): Promise<void> => {
   const response = await logPayment(postId, body, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await logPayment(postId, body, newAccessToken);
 
@@ -380,7 +381,7 @@ export const rtaUpdatePost = async (
 ): Promise<void> => {
   const response = await updatePost(postId, body, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await updatePost(postId, body, newAccessToken);
 
@@ -410,7 +411,7 @@ export const rtaDeletePost = async (
 ): Promise<void> => {
   const response = await deletePost(postId, accessToken);
 
-  if (response.status === 401) {
+  if (UNAUTHORIZED.includes(response.status)) {
     const newAccessToken = await regenerateAccessToken();
     const retryResponse = await deletePost(postId, newAccessToken);
 
@@ -420,4 +421,10 @@ export const rtaDeletePost = async (
       );
     }
   }
+};
+
+export const deleteRefreshToken = async (): Promise<Response> => {
+  return await fetch("/api/refreshToken", {
+    method: "DELETE",
+  });
 };

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { deleteRefreshToken } from "./api";
 import { PostsList } from "./PostsList";
 import { useStore } from "./store/zstore";
 import { usePosts } from "./usePosts";
@@ -11,12 +12,15 @@ export const Home = () => {
     const setAccessToken = useStore((state) => state.setAccessToken);
     const posts = usePosts();
 
+    const destroySession = async (): Promise<void> => {
+        await deleteRefreshToken();
+        setAccessToken("");
+        setUser(null);
+    };
+
     useEffect(() => {
         if (logout) {
-            setUser(null);
-            setAccessToken("");
-            // TODO: Hit logout endpoint to delete refresh token from DB
-            // TODO: Delete refresh token cookie
+            destroySession();
         }
     }, [logout]);
 

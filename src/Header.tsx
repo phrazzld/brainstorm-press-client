@@ -12,7 +12,7 @@ export const Header = () => {
     useEffect(() => {
         if (!user) {
             rtaGetCurrentUser(accessToken).then((res) => {
-                if (typeof res === "object") {
+                if (res && typeof res === "object") {
                     setUser(res);
                     setLndToken(res.node.token);
                 }
