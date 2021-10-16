@@ -39,6 +39,8 @@ export const Post = () => {
                 post.user.node.toString(),
                 accessToken
             ).then((res) => setPostNodeStatus(res));
+        } else {
+            setPostNodeStatus("Not found.")
         }
     }, [post]);
 

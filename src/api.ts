@@ -17,7 +17,19 @@ import {
 
 const UNAUTHORIZED = [401, 403];
 
-// TODO: Refactor retry logic to something reusable
+// rta = refresh token and
+// Assumes accessToken is the last arg
+const rta = async (fn: any, ...args: any): Promise<any> => {
+  const response = await fn.apply(null, args);
+
+  if (UNAUTHORIZED.includes(response.status)) {
+    const newAccessToken = await regenerateAccessToken();
+
+    return await fn.apply(null, args.slice(0, -1).concat(newAccessToken));
+  }
+
+  return response;
+};
 
 export const regenerateAccessToken = async (): Promise<string> => {
   const response = await fetch("/api/accessToken", {
@@ -45,22 +57,14 @@ const createNewPost = async (
   });
 };
 
-// rta = refresh token and
 export const rtaCreateNewPost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<void> => {
-  const response = await createNewPost(body, accessToken);
+  const res = await rta(createNewPost, body, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await createNewPost(body, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to create new post, even after retrying with a fresh access token."
-      );
-    }
+  if (!res.ok) {
+    throw new Error("Failed to create new post.");
   }
 };
 
@@ -99,22 +103,13 @@ const getDrafts = async (accessToken: string): Promise<Response> => {
 export const rtaGetDrafts = async (
   accessToken: string
 ): Promise<Array<Post>> => {
-  const response = await getDrafts(accessToken);
+  const res = await rta(getDrafts, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await getDrafts(newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to get drafts, even after trying to get a new access token."
-      );
-    }
-
-    return await retryResponse.json();
+  if (!res.ok) {
+    throw new Error("Failed to get drafts.");
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 export const getPost = async (
@@ -133,22 +128,13 @@ export const rtaGetPost = async (
   id: string,
   accessToken: string
 ): Promise<Post> => {
-  const response = await getPost(id, accessToken);
+  const res = await rta(getPost, id, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await getPost(id, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to get post, even after trying to get a new access token."
-      );
-    }
-
-    return await retryResponse.json();
+  if (!res.ok) {
+    throw new Error("Failed to get post.");
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 const connectToLnd = async (
@@ -169,22 +155,13 @@ export const rtaConnectToLnd = async (
   body: ConnectToLndBody,
   accessToken: string
 ): Promise<LndNode> => {
-  const response = await connectToLnd(body, accessToken);
+  const res = await rta(connectToLnd, body, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await connectToLnd(body, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to connect to LND, even after trying to get a new access token."
-      );
-    }
-
-    return await retryResponse.json();
+  if (!res.ok) {
+    throw new Error("Failed to connect to LND.");
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 export const getNodeInfo = async (lndToken: string): Promise<NodeInfo> => {
@@ -214,22 +191,13 @@ export const rtaGetNodeStatus = async (
   id: string,
   accessToken: string
 ): Promise<NodeStatus> => {
-  const response = await getNodeStatus(id, accessToken);
+  const res = await rta(getNodeStatus, id, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await getNodeStatus(id, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to get node status, even after trying to get a new access token."
-      );
-    }
-
-    return await retryResponse.json();
+  if (!res.ok) {
+    throw new Error("Failed to get node status.");
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 const updateUser = async (
@@ -252,17 +220,10 @@ export const rtaUpdateUser = async (
   body: UserRequestBody,
   accessToken: string
 ): Promise<void> => {
-  const response = await updateUser(userId, body, accessToken);
+  const res = await rta(updateUser, userId, body, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await updateUser(userId, body, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to update user, even after trying to get a new access token."
-      );
-    }
+  if (!res.ok) {
+    throw new Error("Failed to update user.");
   }
 };
 
@@ -304,21 +265,14 @@ const getCurrentUser = async (accessToken: string): Promise<Response> => {
 export const rtaGetCurrentUser = async (
   accessToken: string
 ): Promise<User | null> => {
-  const response = await getCurrentUser(accessToken);
+  const res = await rta(getCurrentUser, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await getCurrentUser(newAccessToken);
-
-    if (!retryResponse.ok) {
-      // User is not logged in, return null
-      return null;
-    }
-
-    return await retryResponse.json();
+  if (!res.ok) {
+    // User is not logged in, return null
+    return null;
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 const createInvoice = async (
@@ -338,22 +292,13 @@ export const rtaCreateInvoice = async (
   postId: string,
   accessToken: string
 ): Promise<Invoice> => {
-  const response = await createInvoice(postId, accessToken);
+  const res = await rta(createInvoice, postId, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await createInvoice(postId, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to create invoice, even after trying to get a new access token."
-      );
-    }
-
-    return await retryResponse.json();
+  if (!res.ok) {
+    throw new Error("Failed to create invoice.");
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 const getPayment = async (
@@ -372,23 +317,13 @@ export const rtaGetPayment = async (
   postId: string,
   accessToken: string
 ): Promise<PaymentStatus> => {
-  const response = await getPayment(postId, accessToken);
+  const res = await rta(getPayment, postId, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await getPayment(postId, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to get payment, even after trying to get a new access token."
-      );
-    }
-
-    const retryResponseJSON = await retryResponse.json();
-    return retryResponseJSON;
+  if (!res.ok) {
+    throw new Error("Failed to get payment.");
   }
 
-  return await response.json();
+  return await res.json();
 };
 
 const logPayment = async (
@@ -411,17 +346,10 @@ export const rtaLogPayment = async (
   body: LogPaymentRequestBody,
   accessToken: string
 ): Promise<void> => {
-  const response = await logPayment(postId, body, accessToken);
+  const res = await rta(logPayment, postId, body, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await logPayment(postId, body, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to log payment, even after trying to get a new access token."
-      );
-    }
+  if (!res.ok) {
+    throw new Error("Failed to log payment.");
   }
 };
 
@@ -445,17 +373,10 @@ export const rtaUpdatePost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<void> => {
-  const response = await updatePost(postId, body, accessToken);
+  const res = await rta(updatePost, postId, body, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await updatePost(postId, body, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to update post, even after trying to get a new access token."
-      );
-    }
+  if (!res.ok) {
+    throw new Error("Failed to update post.");
   }
 };
 
@@ -475,17 +396,10 @@ export const rtaDeletePost = async (
   postId: string,
   accessToken: string
 ): Promise<void> => {
-  const response = await deletePost(postId, accessToken);
+  const res = await rta(deletePost, postId, accessToken);
 
-  if (UNAUTHORIZED.includes(response.status)) {
-    const newAccessToken = await regenerateAccessToken();
-    const retryResponse = await deletePost(postId, newAccessToken);
-
-    if (!retryResponse.ok) {
-      throw new Error(
-        "Failed to delete post, even after trying to get a new access token."
-      );
-    }
+  if (!res.ok) {
+    throw new Error("Failed to delete post.");
   }
 };
 
