@@ -3,19 +3,14 @@ import { Redirect, useParams } from "react-router-dom";
 import {
     rtaCreateInvoice,
     rtaDeletePost,
+    rtaGetNodeStatus,
     rtaGetPayment,
     rtaLogPayment,
     rtaUpdatePost,
 } from "./api";
 import { useStore } from "./store/zstore";
-import { Invoice, PostParams } from "./types";
+import { Invoice, NodeStatus, PostParams } from "./types";
 import { usePost } from "./usePost";
-
-const NODE_NOT_FOUND = "Not found.";
-const NODE_CONNECTED = "Connected.";
-const LOOKING = "Looking.";
-
-type NodeStatus = "Not found." | "Connected." | "Looking.";
 
 export const Post = () => {
     const { postId } = useParams<PostParams>();
@@ -34,19 +29,16 @@ export const Post = () => {
     const accessToken = useStore((state) => state.accessToken);
     const isCreator = post?.user?._id === user?._id;
 
-    const [postNodeStatus, setPostNodeStatus] = useState<NodeStatus>(LOOKING);
+    const [postNodeStatus, setPostNodeStatus] = useState<NodeStatus>(
+        "Looking."
+    );
 
     useEffect(() => {
         if (post?.user.node) {
-            // TODO: Refactor into api module, use rta
-            fetch(`/api/nodes/${post.user.node}/status`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            })
-                .then((res) => res.json())
-                .then((json) => setPostNodeStatus(json.status));
+            rtaGetNodeStatus(
+                post.user.node.toString(),
+                accessToken
+            ).then((res) => setPostNodeStatus(res));
         }
     }, [post]);
 
@@ -83,7 +75,7 @@ export const Post = () => {
             !paid &&
             !invoice &&
             !isCreator &&
-            postNodeStatus === NODE_CONNECTED
+            postNodeStatus === "Connected."
         ) {
             createInvoice();
         }
@@ -211,7 +203,7 @@ export const Post = () => {
                 (isCreator ||
                     paid ||
                     post.price === 0 ||
-                    postNodeStatus === NODE_NOT_FOUND) &&
+                    postNodeStatus === "Not found.") &&
                 !editing && (
                     <>
                         <div id="post-title-container">
@@ -220,7 +212,7 @@ export const Post = () => {
                             </h1>
                         </div>
                         <div id="post-price-container">
-                            {postNodeStatus === NODE_CONNECTED && (
+                            {postNodeStatus === "Connected." && (
                                 <h4>
                                     Pay {priceInputValue || post.price} sats to
                                     read

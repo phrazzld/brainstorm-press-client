@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { rtaGetPost } from "./api";
 import { Post } from "./types";
-import { useStore } from "./store/zstore";
+import { useAccessToken } from "./useAccessToken";
 
 export const usePost = (postId: string): Post | null => {
   const [post, setPost] = useState<Post | null>(null);
 
-  const accessToken = useStore((state) => state.accessToken);
+  const accessToken = useAccessToken();
 
   useEffect(() => {
     if (postId && accessToken) {

@@ -7,6 +7,7 @@ import {
   LndNode,
   LogPaymentRequestBody,
   NodeInfo,
+  NodeStatus,
   PaymentStatus,
   Post,
   PostRequestBody,
@@ -18,7 +19,7 @@ const UNAUTHORIZED = [401, 403];
 
 // TODO: Refactor retry logic to something reusable
 
-const regenerateAccessToken = async (): Promise<string> => {
+export const regenerateAccessToken = async (): Promise<string> => {
   const response = await fetch("/api/accessToken", {
     method: "POST",
     headers: {
@@ -197,6 +198,40 @@ export const getNodeInfo = async (lndToken: string): Promise<NodeInfo> => {
   return await response.json();
 };
 
+const getNodeStatus = async (
+  id: string,
+  accessToken: string
+): Promise<Response> => {
+  return await fetch(`/api/nodes/${id}/status`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaGetNodeStatus = async (
+  id: string,
+  accessToken: string
+): Promise<NodeStatus> => {
+  const response = await getNodeStatus(id, accessToken);
+
+  if (UNAUTHORIZED.includes(response.status)) {
+    const newAccessToken = await regenerateAccessToken();
+    const retryResponse = await getNodeStatus(id, newAccessToken);
+
+    if (!retryResponse.ok) {
+      throw new Error(
+        "Failed to get node status, even after trying to get a new access token."
+      );
+    }
+
+    return await retryResponse.json();
+  }
+
+  return await response.json();
+};
+
 const updateUser = async (
   userId: string,
   body: UserRequestBody,
@@ -349,7 +384,8 @@ export const rtaGetPayment = async (
       );
     }
 
-    return await retryResponse.json();
+    const retryResponseJSON = await retryResponse.json();
+    return retryResponseJSON;
   }
 
   return await response.json();

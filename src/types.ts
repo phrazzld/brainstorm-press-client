@@ -1,3 +1,5 @@
+export type NodeStatus = "Not found." | "Connected." | "Looking.";
+
 export type PostRequestBody = {
   title: string;
   content: string;
@@ -40,31 +42,32 @@ export type LogPaymentRequestBody = {
 };
 
 export type Invoice = {
-    payreq: string;
-    hash: string;
-    amount: number;
+  payreq: string;
+  hash: string;
+  amount: number;
 };
 
 export type PostParams = {
-    postId: string;
+  postId: string;
 };
 
 export type Post = {
-    _id: string;
-    title: string;
-    content: string;
-    price: number;
-    published: boolean;
-    user: User;
+  _id: string;
+  title: string;
+  content: string;
+  price: number;
+  published: boolean;
+  user: User;
 };
 
 export type LndNode = {
+  _id: string;
   token: string;
   host: string;
   cert: string;
   macaroon: string;
   pubkey: string;
-}
+};
 
 export type User = {
   _id: string;
