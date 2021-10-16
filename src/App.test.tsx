@@ -1,9 +1,24 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import React from "react";
+import App from "./App";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+describe("<App />", () => {
+    beforeEach(() => {
+        render(<App />);
+    });
+
+    test('renders "Brainstorm Press" link', () => {
+        const linkElement = screen.getByText(/Brainstorm Press/i);
+        expect(linkElement).toBeInTheDocument();
+    });
+
+    test("renders signup link", () => {
+        const linkElement = screen.getByText(/Sign Up/i);
+        expect(linkElement).toBeInTheDocument();
+    });
+
+    test('renders "No posts found" message', () => {
+        const noPostsFound = screen.getByText(/No posts found/i);
+        expect(noPostsFound).toBeInTheDocument();
+    });
 });

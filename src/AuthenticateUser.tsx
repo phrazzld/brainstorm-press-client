@@ -121,7 +121,7 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
                 />
             </div>
             <div id="submit-auth">
-                <button onClick={submitForm}>Submit</button>
+                <button name='Submit' onClick={submitForm}>Submit</button>
             </div>
             {authForm === "SIGNUP" && (
                 <div id="login-redirect">
