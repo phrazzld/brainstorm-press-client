@@ -11,6 +11,12 @@ import { useStore } from "./store/zstore";
 import { Invoice, PostParams } from "./types";
 import { usePost } from "./usePost";
 
+const NODE_NOT_FOUND = "Not found.";
+const NODE_CONNECTED = "Connected.";
+const LOOKING = "Looking.";
+
+type NodeStatus = "Not found." | "Connected." | "Looking.";
+
 export const Post = () => {
     const { postId } = useParams<PostParams>();
     const post = usePost(postId);
@@ -27,6 +33,34 @@ export const Post = () => {
     const user = useStore((state) => state.user);
     const accessToken = useStore((state) => state.accessToken);
     const isCreator = post?.user?._id === user?._id;
+
+    const [postNodeStatus, setPostNodeStatus] = useState<NodeStatus>(LOOKING);
+
+    console.log("post:", post);
+
+    useEffect(() => {
+        if (post?.user.node) {
+            // TODO: Refactor into api module, use rta
+            fetch(`/api/nodes/${post.user.node}/status`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            })
+                .then((res) => {
+                    console.log("res:", res);
+                    return res.json();
+                })
+                .then((json) => {
+                    console.log("json:", json);
+                    setPostNodeStatus(json.status);
+                    console.log(
+                        "json === NODE_NOT_FOUND:",
+                        json.status === NODE_NOT_FOUND
+                    );
+                });
+        }
+    }, [post]);
 
     const createInvoice = async () => {
         if (!user) {
@@ -55,10 +89,17 @@ export const Post = () => {
     }, [post, titleInputValue, contentInputValue, priceInputValue]);
 
     useEffect(() => {
-        if (post && user && !paid && !invoice && !isCreator) {
+        if (
+            post &&
+            user &&
+            !paid &&
+            !invoice &&
+            !isCreator &&
+            postNodeStatus === NODE_CONNECTED
+        ) {
             createInvoice();
         }
-    }, [post, user, paid, invoice, createInvoice]);
+    }, [post, user, paid, invoice, createInvoice, postNodeStatus]);
 
     useEffect(() => {
         if (postId && user) {
@@ -163,36 +204,49 @@ export const Post = () => {
                     </>
                 )}
 
-            {post && (isCreator || paid || post.price === 0) && !editing && (
-                <>
-                    <div id="post-title-container">
-                        <h1 id="post-title">{titleInputValue || post.title}</h1>
-                    </div>
-                    <div id="post-price-container">
-                        <h4>
-                            Pay {priceInputValue || post.price} sats to read
-                        </h4>
-                    </div>
-                    <div id="post-content-container">
-                        <p id="post-content">
-                            {contentInputValue || post.content}
-                        </p>
-                    </div>
-                    {isCreator && (
-                        <div className="post-actions">
-                            <button
-                                className="delete-post"
-                                onClick={deletePost}
-                            >
-                                Delete
-                            </button>
-                            <button className="edit-post" onClick={editPost}>
-                                Edit
-                            </button>
+            {post &&
+                (isCreator ||
+                    paid ||
+                    post.price === 0 ||
+                    postNodeStatus === NODE_NOT_FOUND) &&
+                !editing && (
+                    <>
+                        <div id="post-title-container">
+                            <h1 id="post-title">
+                                {titleInputValue || post.title}
+                            </h1>
                         </div>
-                    )}
-                </>
-            )}
+                        <div id="post-price-container">
+                            {postNodeStatus === NODE_CONNECTED && (
+                                <h4>
+                                    Pay {priceInputValue || post.price} sats to
+                                    read
+                                </h4>
+                            )}
+                        </div>
+                        <div id="post-content-container">
+                            <p id="post-content">
+                                {contentInputValue || post.content}
+                            </p>
+                        </div>
+                        {isCreator && (
+                            <div className="post-actions">
+                                <button
+                                    className="delete-post"
+                                    onClick={deletePost}
+                                >
+                                    Delete
+                                </button>
+                                <button
+                                    className="edit-post"
+                                    onClick={editPost}
+                                >
+                                    Edit
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
 
             {isCreator && editing && (
                 <div id="edit-post-form">

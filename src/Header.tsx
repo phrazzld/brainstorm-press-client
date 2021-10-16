@@ -14,7 +14,7 @@ export const Header = () => {
             rtaGetCurrentUser(accessToken).then((res) => {
                 if (res && typeof res === "object") {
                     setUser(res);
-                    setLndToken(res.node.token);
+                    setLndToken(res.node?.token);
                 }
             });
         }
