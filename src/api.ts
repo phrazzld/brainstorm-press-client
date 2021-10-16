@@ -197,7 +197,8 @@ export const rtaGetNodeStatus = async (
     throw new Error("Failed to get node status.");
   }
 
-  return await res.json();
+  const resJSON = await res.json();
+  return resJSON.status;
 };
 
 const updateUser = async (

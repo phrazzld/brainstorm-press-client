@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { rtaGetCurrentUser } from "./api";
 import { useStore } from "./store/zstore";
+import Button from "@mui/material/Button";
 
 export const Header = () => {
     const user = useStore((state) => state.user);
@@ -25,15 +26,32 @@ export const Header = () => {
             id="app-header"
             style={styles.headerContainer as React.CSSProperties}
         >
-            <Link to="/">Brainstorm Press</Link>
-            {!user && <Link to="/authenticate">Sign Up</Link>}
-            {user && <Link to="/posts/new">New Post</Link>}
-            {user && <Link to="/posts/drafts">Drafts</Link>}
-            {user && <Link to="/settings">Settings</Link>}
-            {user && (
-                <Link to={{ pathname: "/", state: { logout: true } }}>
-                    Logout
+            <Link to="/" style={styles.link}>
+                <Button>Brainstorm Press</Button>
+            </Link>
+            {!user && (
+                <Link to="/authenticate" style={styles.link}>
+                    <Button>Sign Up</Button>
                 </Link>
+            )}
+            {user && (
+                <>
+                    <Link to="/posts/new" style={styles.link}>
+                        <Button>New Post</Button>
+                    </Link>
+                    <Link to="/posts/drafts" style={styles.link}>
+                        <Button>Drafts</Button>
+                    </Link>
+                    <Link to="/settings" style={styles.link}>
+                        <Button>Settings</Button>
+                    </Link>
+                    <Link
+                        to={{ pathname: "/", state: { logout: true } }}
+                        style={styles.link}
+                    >
+                        <Button>Logout</Button>
+                    </Link>
+                </>
             )}
         </div>
     );
@@ -48,5 +66,10 @@ const styles = {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        paddingTop: 10,
+        paddingBottom: 10,
+    },
+    link: {
+        textDecoration: "none",
     },
 };

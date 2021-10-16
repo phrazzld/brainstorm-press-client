@@ -1,3 +1,7 @@
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
@@ -38,9 +42,9 @@ export const Post = () => {
             rtaGetNodeStatus(
                 post.user.node.toString(),
                 accessToken
-            ).then((res) => setPostNodeStatus(res));
+            ).then((res) => setPostNodeStatus(res))
         } else {
-            setPostNodeStatus("Not found.")
+            setPostNodeStatus("Not found.");
         }
     }, [post]);
 
@@ -183,11 +187,9 @@ export const Post = () => {
                 invoice &&
                 !editing && (
                     <>
-                        <div id="post-title-container">
-                            <h1 id="post-title">
-                                {titleInputValue || post.title}
-                            </h1>
-                        </div>
+                        <Typography variant="h1" component="div" gutterBottom>
+                            {titleInputValue || post.title}
+                        </Typography>
                         <div id="post-paywall-container">
                             <p>Pay Request:</p>
                             <textarea
@@ -208,45 +210,37 @@ export const Post = () => {
                     postNodeStatus === "Not found.") &&
                 !editing && (
                     <>
-                        <div id="post-title-container">
-                            <h1 id="post-title">
-                                {titleInputValue || post.title}
-                            </h1>
-                        </div>
-                        <div id="post-price-container">
-                            {postNodeStatus === "Connected." && (
-                                <h4>
-                                    Pay {priceInputValue || post.price} sats to
-                                    read
-                                </h4>
-                            )}
-                        </div>
-                        <div id="post-content-container">
-                            <p id="post-content">
-                                {contentInputValue || post.content}
-                            </p>
-                        </div>
+                        <Typography variant="h1" component="div" gutterBottom>
+                            {titleInputValue || post.title}
+                        </Typography>
+                        <Typography variant="h2" component="div" gutterBottom>
+                            Written By: {post.user.name}
+                        </Typography>
+                        <Typography variant="body1" gutterBottom>
+                            {contentInputValue || post.content}
+                        </Typography>
+
                         {isCreator && (
                             <div className="post-actions">
-                                <button
+                                <Button
                                     className="delete-post"
                                     onClick={deletePost}
                                 >
                                     Delete
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     className="edit-post"
                                     onClick={editPost}
                                 >
                                     Edit
-                                </button>
+                                </Button>
                                 {!post.published && (
-                                    <button
+                                    <Button
                                         className="publish-post"
                                         onClick={publishPost}
                                     >
                                         Publish
-                                    </button>
+                                    </Button>
                                 )}
                             </div>
                         )}
@@ -255,41 +249,57 @@ export const Post = () => {
 
             {isCreator && editing && (
                 <div id="edit-post-form">
-                    <div id="edit-post-title-input-container">
-                        <p>Title:</p>
-                        <input
-                            type="text"
-                            name="title"
-                            value={titleInputValue}
-                            onChange={handleTitleInputChange}
-                            required
-                        />
-                    </div>
-                    <div id="edit-post-body-input-container">
-                        <p>Content:</p>
-                        <textarea
-                            value={contentInputValue}
-                            onChange={handleContentInputChange}
-                            rows={3}
-                        />
-                    </div>
-                    <div id="edit-post-price-input-container">
-                        <p>Price:</p>
-                        <input
-                            type="number"
-                            name="price"
-                            value={priceInputValue}
-                            onChange={handlePriceInputChange}
-                            min="0"
-                            max="10000"
-                            required
-                        />
-                    </div>
-                    <div id="new-post-submit-container">
-                        <button onClick={submitEdits}>Submit</button>
+                    <TextField
+                        id="edit-post-title"
+                        label="Title"
+                        variant="filled"
+                        onChange={handleTitleInputChange}
+                        value={titleInputValue}
+                        style={styles.formField}
+                        fullWidth
+                        required
+                    />
+
+                    <TextField
+                        id="edit-post-content"
+                        label="Content"
+                        multiline
+                        value={contentInputValue}
+                        onChange={handleContentInputChange}
+                        style={styles.formField}
+                        fullWidth
+                        required
+                    />
+
+                    <TextField
+                        id="edit-post-price"
+                        label="Price"
+                        value={priceInputValue}
+                        onChange={handlePriceInputChange}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    sats
+                                </InputAdornment>
+                            ),
+                        }}
+                        style={styles.formField}
+                        required
+                    />
+
+                    <div id="save-button-container" style={styles.formField}>
+                        <Button onClick={submitEdits}>
+                            Save
+                        </Button>
                     </div>
                 </div>
             )}
         </div>
     );
+};
+
+const styles = {
+    formField: {
+        marginTop: 20
+    },
 };
