@@ -22,7 +22,7 @@ export const Post = () => {
     const post = usePost(postId);
 
     const [editing, setEditing] = useState(false);
-    const [redirect, setRedirect] = useState(false);
+    const [redirect, setRedirect] = useState("");
     const [paid, setPaid] = useState(false);
     const [invoice, setInvoice] = useState<Invoice | null>(null);
 
@@ -36,8 +36,6 @@ export const Post = () => {
 
     const [postNodeStatus, setPostNodeStatus] = useState<NodeStatus>(LOOKING);
 
-    console.log("post:", post);
-
     useEffect(() => {
         if (post?.user.node) {
             // TODO: Refactor into api module, use rta
@@ -47,18 +45,8 @@ export const Post = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             })
-                .then((res) => {
-                    console.log("res:", res);
-                    return res.json();
-                })
-                .then((json) => {
-                    console.log("json:", json);
-                    setPostNodeStatus(json.status);
-                    console.log(
-                        "json === NODE_NOT_FOUND:",
-                        json.status === NODE_NOT_FOUND
-                    );
-                });
+                .then((res) => res.json())
+                .then((json) => setPostNodeStatus(json.status));
         }
     }, [post]);
 
@@ -141,9 +129,24 @@ export const Post = () => {
             title: titleInputValue,
             content: contentInputValue,
             price: priceInputValue,
+            published: post.published,
         };
         await rtaUpdatePost(post._id, body, accessToken);
         setEditing(false);
+    };
+
+    const publishPost = async (): Promise<void> => {
+        if (!post) {
+            throw new Error("Cannot find post to publish.");
+        }
+
+        if (!user) {
+            throw new Error("Cannot publish post without a user.");
+        }
+
+        const body = { ...post, published: true };
+        await rtaUpdatePost(post._id, body, accessToken);
+        setRedirect("/posts/drafts");
     };
 
     const deletePost = async (): Promise<void> => {
@@ -156,7 +159,7 @@ export const Post = () => {
         }
 
         await rtaDeletePost(post._id, accessToken);
-        setRedirect(true);
+        setRedirect("/");
     };
 
     const handleTitleInputChange = (event: any): void => {
@@ -243,6 +246,14 @@ export const Post = () => {
                                 >
                                     Edit
                                 </button>
+                                {!post.published && (
+                                    <button
+                                        className="publish-post"
+                                        onClick={publishPost}
+                                    >
+                                        Publish
+                                    </button>
+                                )}
                             </div>
                         )}
                     </>

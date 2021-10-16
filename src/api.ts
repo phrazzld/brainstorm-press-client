@@ -14,7 +14,7 @@ import {
   UserRequestBody,
 } from "./types";
 
-const UNAUTHORIZED = [401, 403]
+const UNAUTHORIZED = [401, 403];
 
 // TODO: Refactor retry logic to something reusable
 
@@ -83,6 +83,36 @@ export const getUserPosts = async (userId: string): Promise<Array<Post>> => {
   const response = await fetch(`/api/users/${userId}/posts`, {
     method: "GET",
   });
+  return await response.json();
+};
+
+const getDrafts = async (accessToken: string): Promise<Response> => {
+  return await fetch("/api/drafts", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaGetDrafts = async (
+  accessToken: string
+): Promise<Array<Post>> => {
+  const response = await getDrafts(accessToken);
+
+  if (UNAUTHORIZED.includes(response.status)) {
+    const newAccessToken = await regenerateAccessToken();
+    const retryResponse = await getDrafts(newAccessToken);
+
+    if (!retryResponse.ok) {
+      throw new Error(
+        "Failed to get drafts, even after trying to get a new access token."
+      );
+    }
+
+    return await retryResponse.json();
+  }
+
   return await response.json();
 };
 
@@ -364,7 +394,7 @@ const updatePost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/post/${postId}`, {
+  return await fetch(`/api/posts/${postId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

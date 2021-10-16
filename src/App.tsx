@@ -4,6 +4,7 @@ import { AuthenticateUser } from "./AuthenticateUser";
 import { Blog } from "./Blog";
 import { ConnectToLndForm } from "./ConnectToLndForm";
 import { CreateNewPostForm } from "./CreateNewPostForm";
+import { Drafts } from "./Drafts";
 import { Header } from "./Header";
 import { Home } from "./Home";
 import { Post } from "./Post";
@@ -26,6 +27,9 @@ function App() {
                     </Route>
                     <Route path="/posts/new">
                         <CreateNewPostForm />
+                    </Route>
+                    <Route path="/posts/drafts">
+                        <Drafts />
                     </Route>
                     <Route path="/posts/:postId">
                         <Post />

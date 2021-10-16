@@ -2,6 +2,7 @@ export type PostRequestBody = {
   title: string;
   content: string;
   price: number;
+  published: boolean;
 };
 
 export type ConnectToLndBody = {
@@ -53,6 +54,7 @@ export type Post = {
     title: string;
     content: string;
     price: number;
+    published: boolean;
     user: User;
 };
 

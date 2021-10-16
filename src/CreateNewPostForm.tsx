@@ -7,7 +7,8 @@ export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>("");
     const [contentInputValue, setContentInputValue] = useState<string>("");
     const [priceInputValue, setPriceInputValue] = useState<number>(0);
-    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [published, setPublished] = useState<boolean>(false);
+    const [saved, setSaved] = useState<boolean>(false);
     const accessToken = useStore((state) => state.accessToken);
 
     const handleTitleInputChange = (event: any): void => {
@@ -27,13 +28,29 @@ export const CreateNewPostForm = () => {
             title: titleInputValue,
             content: contentInputValue,
             price: priceInputValue,
+            published: true,
         };
         await rtaCreateNewPost(body, accessToken);
-        setSubmitted(true);
+        setPublished(true);
     };
 
-    if (submitted) {
+    const saveDraft = async (): Promise<void> => {
+        const body = {
+            title: titleInputValue,
+            content: contentInputValue,
+            price: priceInputValue,
+            published: false,
+        };
+        await rtaCreateNewPost(body, accessToken);
+        setSaved(true);
+    };
+
+    if (published) {
         return <Redirect to="/" />;
+    }
+
+    if (saved) {
+        return <Redirect to="/posts/drafts" />;
     }
 
     return (
@@ -70,6 +87,9 @@ export const CreateNewPostForm = () => {
             </div>
             <div id="new-post-submit-container">
                 <button onClick={submitNewPost}>Submit</button>
+            </div>
+            <div id="new-post-save-draft-container">
+                <button onClick={saveDraft}>Save Draft</button>
             </div>
         </div>
     );

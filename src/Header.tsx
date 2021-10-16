@@ -28,6 +28,7 @@ export const Header = () => {
             <Link to="/">Brainstorm Press</Link>
             {!user && <Link to="/authenticate">Sign Up</Link>}
             {user && <Link to="/posts/new">New Post</Link>}
+            {user && <Link to="/posts/drafts">Drafts</Link>}
             {user && <Link to="/settings">Settings</Link>}
             {user && (
                 <Link to={{ pathname: "/", state: { logout: true } }}>
