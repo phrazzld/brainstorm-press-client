@@ -1,37 +1,48 @@
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { rtaCreateNewPost } from "./api";
-import { useStore } from "./store/zstore";
+import { useAccessToken } from "./useAccessToken";
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>("");
     const [contentInputValue, setContentInputValue] = useState<string>("");
     const [priceInputValue, setPriceInputValue] = useState<number>(0);
-    const [published, setPublished] = useState<boolean>(false);
-    const [saved, setSaved] = useState<boolean>(false);
-    const accessToken = useStore((state) => state.accessToken);
+    const accessToken = useAccessToken();
 
-    const handleTitleInputChange = (event: any): void => {
+    const [redirect, setRedirect] = useState<string>("");
+
+    const handleTitleInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void => {
         setTitleInputValue(event.target.value);
     };
 
-    const handleContentInputChange = (event: any): void => {
+    const handleContentInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void => {
         setContentInputValue(event.target.value);
     };
 
-    const handlePriceInputChange = (event: any): void => {
-        setPriceInputValue(event.target.value);
+    const handlePriceInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void => {
+        const newPrice: number = Number(event.target.value);
+        setPriceInputValue(newPrice);
     };
 
-    const submitNewPost = async (): Promise<void> => {
+    const publishPost = async (): Promise<void> => {
         const body = {
             title: titleInputValue,
             content: contentInputValue,
             price: priceInputValue,
             published: true,
         };
-        await rtaCreateNewPost(body, accessToken);
-        setPublished(true);
+        const newPost = await rtaCreateNewPost(body, accessToken);
+        setRedirect(`/posts/${newPost._id}`);
     };
 
     const saveDraft = async (): Promise<void> => {
@@ -42,55 +53,86 @@ export const CreateNewPostForm = () => {
             published: false,
         };
         await rtaCreateNewPost(body, accessToken);
-        setSaved(true);
+        setRedirect("/posts/drafts");
     };
 
-    if (published) {
-        return <Redirect to="/" />;
-    }
+    const cancelPost = (): void => {
+        setRedirect("/");
+    };
 
-    if (saved) {
-        return <Redirect to="/posts/drafts" />;
+    if (redirect) {
+        return <Redirect to={redirect} />;
     }
 
     return (
-        <div id="create-new-post-container">
-            <div id="new-post-title-input-container">
-                <p>Title:</p>
-                <input
-                    type="text"
-                    name="title"
-                    value={titleInputValue}
-                    onChange={handleTitleInputChange}
-                    required
-                />
-            </div>
-            <div id="new-post-content-input-container">
-                <p>Content:</p>
-                <textarea
-                    value={contentInputValue}
-                    onChange={handleContentInputChange}
-                    rows={3}
-                />
-            </div>
-            <div id="new-post-price-input-container">
-                <p>Price:</p>
-                <input
-                    type="number"
-                    name="price"
-                    value={priceInputValue}
-                    onChange={handlePriceInputChange}
-                    min="0"
-                    max="10000"
-                    required
-                />
-            </div>
-            <div id="new-post-submit-container">
-                <button onClick={submitNewPost}>Submit</button>
-            </div>
-            <div id="new-post-save-draft-container">
-                <button onClick={saveDraft}>Save Draft</button>
+        <div id="edit-post-form">
+            <Typography variant="h2" gutterBottom>
+                Create New Post
+            </Typography>
+            <TextField
+                id="edit-post-title"
+                label="Title"
+                variant="filled"
+                onChange={handleTitleInputChange}
+                value={titleInputValue}
+                style={styles.formField}
+                fullWidth
+                required
+            />
+
+            <TextField
+                id="edit-post-content"
+                label="Content"
+                multiline
+                value={contentInputValue}
+                onChange={handleContentInputChange}
+                style={styles.formField}
+                fullWidth
+                required
+            />
+
+            <TextField
+                id="edit-post-price"
+                label="Price"
+                value={priceInputValue}
+                onChange={handlePriceInputChange}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">sats</InputAdornment>
+                    ),
+                }}
+                style={styles.formField}
+                required
+            />
+
+            <div id="button-container" style={styles.formField}>
+                <Button
+                    variant="contained"
+                    onClick={publishPost}
+                    style={styles.button}
+                >
+                    Publish
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={saveDraft}
+                    style={styles.button}
+                >
+                    Save Draft
+                </Button>
+                <Button onClick={cancelPost} style={styles.button}>
+                    Cancel
+                </Button>
             </div>
         </div>
     );
+};
+
+const styles = {
+    button: {
+        marginRight: 10,
+    },
+    formField: {
+        marginTop: 20,
+    },
 };

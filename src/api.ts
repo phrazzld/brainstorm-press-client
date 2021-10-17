@@ -60,12 +60,14 @@ const createNewPost = async (
 export const rtaCreateNewPost = async (
   body: PostRequestBody,
   accessToken: string
-): Promise<void> => {
+): Promise<Post> => {
   const res = await rta(createNewPost, body, accessToken);
 
   if (!res.ok) {
     throw new Error("Failed to create new post.");
   }
+
+  return await res.json()
 };
 
 export const disconnectNode = async (lndToken: string): Promise<Response> => {
