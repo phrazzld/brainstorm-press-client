@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import React from "react";
 import { PostCard } from "./PostCard";
 import { Post } from "./types";
@@ -11,14 +12,16 @@ export const PostsList = (props: Props) => {
 
     return (
         <div id="posts-list-container">
-            {!posts && <h3>Loading...</h3>}
-
             {posts.length > 0 &&
                 posts.map((post: Post) => (
                     <PostCard key={post._id} post={post} />
                 ))}
 
-            {posts.length === 0 && <h3>No posts found</h3>}
+            {posts.length === 0 && (
+                <Typography variant="body1" gutterBottom>
+                    No posts found
+                </Typography>
+            )}
         </div>
     );
 };
