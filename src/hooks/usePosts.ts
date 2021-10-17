@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getPosts } from "./api";
-import { Post } from "./types";
+import { getPosts } from "../utils/api";
+import { Post } from "../utils/types";
 
 export const usePosts = (): Array<Post> => {
   const [posts, setPosts] = useState<Array<Post>>([]);

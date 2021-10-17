@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
-import {rtaGetDrafts} from "./api";
-import {Post} from "./types";
-import {useAccessToken} from './useAccessToken';
+import { useEffect, useState } from "react";
+import { rtaGetDrafts } from "../utils/api";
+import { Post } from "../utils/types";
+import { useAccessToken } from "./useAccessToken";
 
 export const useDrafts = (): Array<Post> => {
   const [drafts, setDrafts] = useState<Array<Post>>([]);
-  const accessToken = useAccessToken()
+  const accessToken = useAccessToken();
 
   useEffect(() => {
     if (accessToken) {

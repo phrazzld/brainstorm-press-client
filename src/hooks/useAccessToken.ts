@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { regenerateAccessToken } from "./api";
-import { useStore } from "./store/zstore";
+import { regenerateAccessToken } from "../utils/api";
+import { useStore } from "../store/zstore";
 
 export const useAccessToken = (): string => {
   const accessToken = useStore((state) => state.accessToken);

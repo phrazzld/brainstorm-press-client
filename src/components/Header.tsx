@@ -1,8 +1,8 @@
+import Button from "@mui/material/Button";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { rtaGetCurrentUser } from "./api";
-import { useStore } from "./store/zstore";
-import Button from "@mui/material/Button";
+import { useStore } from "../store/zstore";
+import { rtaGetCurrentUser } from "../utils/api";
 
 export const Header = () => {
     const user = useStore((state) => state.user);

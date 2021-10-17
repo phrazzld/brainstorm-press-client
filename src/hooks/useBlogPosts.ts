@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getUserPosts } from "./api";
-import { Post } from "./types";
+import { getUserPosts } from "../utils/api";
+import { Post } from "../utils/types";
 
 export const useBlogPosts = (userId: string): Array<Post> => {
   const [posts, setPosts] = useState<Array<Post>>([]);

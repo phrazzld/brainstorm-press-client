@@ -4,16 +4,16 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { AuthenticateUser } from "./AuthenticateUser";
-import { Blog } from "./Blog";
-import { ConnectToLndForm } from "./ConnectToLndForm";
-import { CreateNewPostForm } from "./CreateNewPostForm";
-import { Drafts } from "./Drafts";
-import { EditPost } from "./EditPost";
-import { Header } from "./Header";
-import { Home } from "./Home";
-import { Post } from "./Post";
-import { Settings } from "./Settings";
+import { Header } from "./components/Header";
+import { AuthenticateUser } from "./pages/AuthenticateUser";
+import { Blog } from "./pages/Blog";
+import { ConnectToLndForm } from "./pages/ConnectToLndForm";
+import { CreateNewPostForm } from "./pages/CreateNewPostForm";
+import { Drafts } from "./pages/Drafts";
+import { EditPost } from "./pages/EditPost";
+import { Home } from "./pages/Home";
+import { Post } from "./pages/Post";
+import { Settings } from "./pages/Settings";
 
 function App() {
     return (

@@ -4,6 +4,9 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
+import { useAccessToken } from "../hooks/useAccessToken";
+import { usePost } from "../hooks/usePost";
+import { useStore } from "../store/zstore";
 import {
     rtaCreateInvoice,
     rtaDeletePost,
@@ -11,11 +14,8 @@ import {
     rtaGetPayment,
     rtaLogPayment,
     rtaUpdatePost,
-} from "./api";
-import { useStore } from "./store/zstore";
-import { Invoice, NodeStatus, PostParams } from "./types";
-import { useAccessToken } from "./useAccessToken";
-import { usePost } from "./usePost";
+} from "../utils/api";
+import { Invoice, NodeStatus, PostParams } from "../utils/types";
 
 export const Post = () => {
     const { postId } = useParams<PostParams>();

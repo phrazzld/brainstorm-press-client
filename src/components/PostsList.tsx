@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import React from "react";
+import { Post } from "../utils/types";
 import { PostCard } from "./PostCard";
-import { Post } from "./types";
 
 interface Props {
     posts: Array<Post>;

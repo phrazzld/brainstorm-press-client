@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { disconnectNode, rtaUpdateUser } from "./api";
-import { useStore } from "./store/zstore";
-import { NodeInfo } from "./types";
-import { useNodeInfo } from "./useNodeInfo";
+import { useNodeInfo } from "../hooks/useNodeInfo";
+import { useStore } from "../store/zstore";
+import { disconnectNode, rtaUpdateUser } from "../utils/api";
+import { NodeInfo } from "../utils/types";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);

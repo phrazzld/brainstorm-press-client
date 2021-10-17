@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { Post } from "./types";
+import { Post } from "../utils/types";
 
 interface Props {
     post: Post;

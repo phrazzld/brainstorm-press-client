@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import { rtaConnectToLnd } from "./api";
-import { useStore } from "./store/zstore";
+import { useStore } from "../store/zstore";
+import { rtaConnectToLnd } from "../utils/api";
 
 export const ConnectToLndForm = () => {
     const [hostInputValue, setHostInputValue] = useState<string>("");

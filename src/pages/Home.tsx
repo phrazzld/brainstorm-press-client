@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { deleteRefreshToken } from "./api";
-import { PostsList } from "./PostsList";
-import { useStore } from "./store/zstore";
-import { usePosts } from "./usePosts";
+import { PostsList } from "../components/PostsList";
+import { usePosts } from "../hooks/usePosts";
+import { useStore } from "../store/zstore";
+import { deleteRefreshToken } from "../utils/api";
 
 export const Home = () => {
     const location = useLocation<{ logout: boolean }>();

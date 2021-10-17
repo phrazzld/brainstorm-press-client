@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { createUser, loginUser } from "./api";
-import { useStore } from "./store/zstore";
+import { useStore } from "../store/zstore";
+import { createUser, loginUser } from "../utils/api";
 
 interface IFormHeader {
     text: string;
@@ -121,7 +121,9 @@ export const AuthenticateUser = (props: IAuthenticateUser) => {
                 />
             </div>
             <div id="submit-auth">
-                <button name='Submit' onClick={submitForm}>Submit</button>
+                <button name="Submit" onClick={submitForm}>
+                    Submit
+                </button>
             </div>
             {authForm === "SIGNUP" && (
                 <div id="login-redirect">

@@ -1,6 +1,6 @@
 import React from "react";
-import { PostsList } from "./PostsList";
-import { useDrafts } from "./useDrafts";
+import { PostsList } from "../components/PostsList";
+import { useDrafts } from "../hooks/useDrafts";
 
 export const Drafts = () => {
     const drafts = useDrafts();
@@ -10,5 +10,5 @@ export const Drafts = () => {
             <h3>Drafts</h3>
             <PostsList posts={drafts} />
         </div>
-    )
+    );
 };

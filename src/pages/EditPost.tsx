@@ -1,19 +1,59 @@
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
+import Skeleton from "@mui/material/Skeleton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
-import { rtaCreateNewPost } from "./api";
-import { useAccessToken } from "./useAccessToken";
+import React, { useEffect, useState } from "react";
+import { Redirect, useParams } from "react-router-dom";
+import { useAccessToken } from "../hooks/useAccessToken";
+import { usePost } from "../hooks/usePost";
+import { rtaUpdatePost } from "../utils/api";
+import { PostParams } from "../utils/types";
 
-export const CreateNewPostForm = () => {
-    const [titleInputValue, setTitleInputValue] = useState<string>("");
-    const [contentInputValue, setContentInputValue] = useState<string>("");
-    const [priceInputValue, setPriceInputValue] = useState<number>(0);
+export const EditPost = () => {
+    const { postId } = useParams<PostParams>();
+    const post = usePost(postId);
+
+    const [editing, setEditing] = useState(true);
+
+    const [titleInputValue, setTitleInputValue] = useState<string>(
+        post?.title || ""
+    );
+    const [contentInputValue, setContentInputValue] = useState<string>(
+        post?.content || ""
+    );
+    const [priceInputValue, setPriceInputValue] = useState<number>(
+        post?.price || 0
+    );
+
     const accessToken = useAccessToken();
 
-    const [redirect, setRedirect] = useState<string>("");
+    useEffect(() => {
+        if (post) {
+            setTitleInputValue(post.title);
+            setContentInputValue(post.content);
+            setPriceInputValue(post.price);
+        }
+    }, [post]);
+
+    const cancelEdits = (): void => {
+        setEditing(false);
+    };
+
+    const submitEdits = async (): Promise<void> => {
+        if (!post) {
+            throw new Error("Cannot find post to edit.");
+        }
+
+        const body = {
+            title: titleInputValue,
+            content: contentInputValue,
+            price: priceInputValue,
+            published: post.published,
+        };
+        await rtaUpdatePost(post._id, body, accessToken);
+        setEditing(false);
+    };
 
     const handleTitleInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -34,41 +74,30 @@ export const CreateNewPostForm = () => {
         setPriceInputValue(newPrice);
     };
 
-    const publishPost = async (): Promise<void> => {
-        const body = {
-            title: titleInputValue,
-            content: contentInputValue,
-            price: priceInputValue,
-            published: true,
-        };
-        const newPost = await rtaCreateNewPost(body, accessToken);
-        setRedirect(`/posts/${newPost._id}`);
-    };
+    if (!post) {
+        return (
+            <>
+                <Typography variant="h1" gutterBottom>
+                    <Skeleton />
+                </Typography>
+                <Typography variant="h2" gutterBottom>
+                    <Skeleton />
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                </Typography>
+            </>
+        );
+    }
 
-    const saveDraft = async (): Promise<void> => {
-        const body = {
-            title: titleInputValue,
-            content: contentInputValue,
-            price: priceInputValue,
-            published: false,
-        };
-        await rtaCreateNewPost(body, accessToken);
-        setRedirect("/posts/drafts");
-    };
-
-    const cancelPost = (): void => {
-        setRedirect("/");
-    };
-
-    if (redirect) {
-        return <Redirect to={redirect} />;
+    if (!editing) {
+        return <Redirect to={`/posts/${post._id}`} />;
     }
 
     return (
         <div id="edit-post-form">
-            <Typography variant="h2" gutterBottom>
-                Create New Post
-            </Typography>
             <TextField
                 id="edit-post-title"
                 label="Title"
@@ -108,19 +137,16 @@ export const CreateNewPostForm = () => {
             <div id="button-container" style={styles.formField}>
                 <Button
                     variant="contained"
-                    onClick={publishPost}
+                    onClick={submitEdits}
                     style={styles.button}
                 >
-                    Publish
+                    Save
                 </Button>
                 <Button
                     variant="outlined"
-                    onClick={saveDraft}
+                    onClick={cancelEdits}
                     style={styles.button}
                 >
-                    Save Draft
-                </Button>
-                <Button onClick={cancelPost} style={styles.button}>
                     Cancel
                 </Button>
             </div>

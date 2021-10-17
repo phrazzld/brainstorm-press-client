@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { PostsList } from "./PostsList";
-import { useBlogPosts } from "./useBlogPosts";
+import { PostsList } from "../components/PostsList";
+import { useBlogPosts } from "../hooks/useBlogPosts";
 
 type BlogParams = {
     userId: string;
