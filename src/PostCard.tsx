@@ -1,5 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import Card from "@mui/material/Card";
+import CardActionArea from "@mui/material/CardActionArea";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
+import { Link, Redirect } from "react-router-dom";
 import { Post } from "./types";
 
 interface Props {
@@ -9,30 +13,41 @@ interface Props {
 export const PostCard = (props: Props) => {
     const { post } = props;
 
+    const [redirect, setRedirect] = useState<string>("");
+
+    const goToPost = (): void => {
+        setRedirect(`/posts/${post._id}`);
+    };
+
+    if (redirect) {
+        return <Redirect to={redirect} />;
+    }
+
     return (
-        <div className="post" style={styles.postContainer}>
-            <h3 className="post-title">
-                <Link to={`/posts/${post._id}`}>{post.title}</Link>
-            </h3>
-            {post.user?.name && (
-                <h4 className="post-author">
-                    Written by:{" "}
-                    <Link to={`/users/${post.user?._id}/blog`}>
-                        {post.user?.name}
-                    </Link>
-                </h4>
-            )}
-            <h4>Pay {post.price} sats to read</h4>
-        </div>
+        <Card style={styles.card}>
+            <CardActionArea onClick={goToPost}>
+                <CardContent>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                        {post.title}
+                    </Typography>
+                    <Typography variant="h6" component="h3" gutterBottom>
+                        Written by:{" "}
+                        <Link to={`/users/${post.user?._id}/blog`}>
+                            {post.user.name}
+                        </Link>
+                    </Typography>
+                    <Typography variant="subtitle1" gutterBottom>
+                        Pay {post.price} sats to read
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+        </Card>
     );
 };
 
 const styles = {
-    postContainer: {
-        border: "1px solid gray",
-        borderRadius: 5,
-        padding: 15,
-        marginTop: 10,
-        marginBottom: 10,
+    card: {
+        marginTop: 20,
+        marginBottom: 20,
     },
 };

@@ -193,6 +193,7 @@ export const Post = () => {
 
     const showPost: boolean = !!(
         post &&
+        postNodeStatus !== "Looking." &&
         (isCreator ||
             paid ||
             post.price === 0 ||
