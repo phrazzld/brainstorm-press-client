@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
+import Paper from "@mui/material/Paper";
+import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
@@ -14,6 +14,7 @@ import {
 } from "./api";
 import { useStore } from "./store/zstore";
 import { Invoice, NodeStatus, PostParams } from "./types";
+import { useAccessToken } from "./useAccessToken";
 import { usePost } from "./usePost";
 
 export const Post = () => {
@@ -25,12 +26,10 @@ export const Post = () => {
     const [paid, setPaid] = useState(false);
     const [invoice, setInvoice] = useState<Invoice | null>(null);
 
-    const [titleInputValue, setTitleInputValue] = useState("");
-    const [contentInputValue, setContentInputValue] = useState("");
-    const [priceInputValue, setPriceInputValue] = useState(0);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const user = useStore((state) => state.user);
-    const accessToken = useStore((state) => state.accessToken);
+    const accessToken = useAccessToken();
     const isCreator = post?.user?._id === user?._id;
 
     const [postNodeStatus, setPostNodeStatus] = useState<NodeStatus>(
@@ -38,12 +37,20 @@ export const Post = () => {
     );
 
     useEffect(() => {
-        if (post?.user.node) {
+        if (post && postNodeStatus !== "Looking.") {
+            setLoading(false);
+        }
+    }, [post, postNodeStatus]);
+
+    useEffect(() => {
+        if (post && post.user.node) {
             rtaGetNodeStatus(
                 post.user.node.toString(),
                 accessToken
-            ).then((res) => setPostNodeStatus(res))
-        } else {
+            ).then((res) => setPostNodeStatus(res));
+        }
+
+        if (post && !post.user.node) {
             setPostNodeStatus("Not found.");
         }
     }, [post]);
@@ -64,19 +71,6 @@ export const Post = () => {
     useEffect(() => {
         if (
             post &&
-            !titleInputValue &&
-            !contentInputValue &&
-            !priceInputValue
-        ) {
-            setTitleInputValue(post.title);
-            setContentInputValue(post.content);
-            setPriceInputValue(post.price);
-        }
-    }, [post, titleInputValue, contentInputValue, priceInputValue]);
-
-    useEffect(() => {
-        if (
-            post &&
             user &&
             !paid &&
             !invoice &&
@@ -88,12 +82,13 @@ export const Post = () => {
     }, [post, user, paid, invoice, createInvoice, postNodeStatus]);
 
     useEffect(() => {
-        if (postId && user) {
+        if (postId && accessToken) {
             rtaGetPayment(postId, accessToken).then((res) => setPaid(res.paid));
         }
-    }, [postId, user]);
+    }, [postId, accessToken]);
 
     useEffect(() => {
+        // TODO: Use wss
         const webSocket = new WebSocket("ws://localhost:4000/api/events");
         webSocket.onopen = () => {
             console.debug("Connected to web socket.");
@@ -111,26 +106,9 @@ export const Post = () => {
     }, []);
 
     const editPost = (): void => {
-        setEditing(true);
-    };
-
-    const submitEdits = async (): Promise<void> => {
-        if (!post) {
-            throw new Error("Cannot find post to edit.");
+        if (isCreator) {
+            setEditing(true);
         }
-
-        if (!user) {
-            throw new Error("Cannot submit edits without a user.");
-        }
-
-        const body = {
-            title: titleInputValue,
-            content: contentInputValue,
-            price: priceInputValue,
-            published: post.published,
-        };
-        await rtaUpdatePost(post._id, body, accessToken);
-        setEditing(false);
     };
 
     const publishPost = async (): Promise<void> => {
@@ -152,154 +130,130 @@ export const Post = () => {
             throw new Error("Cannot find post to delete.");
         }
 
-        if (!user) {
-            throw new Error("Cannot delete post without a user.");
-        }
-
         await rtaDeletePost(post._id, accessToken);
         setRedirect("/");
     };
 
-    const handleTitleInputChange = (event: any): void => {
-        setTitleInputValue(event.target.value);
+    const LoadingPostSkeleton = () => {
+        return (
+            <>
+                <Typography variant="h1" gutterBottom>
+                    <Skeleton />
+                </Typography>
+                <Typography variant="h2" gutterBottom>
+                    <Skeleton />
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                    <Skeleton />
+                    <Skeleton />
+                    <Skeleton />
+                </Typography>
+            </>
+        );
     };
 
-    const handleContentInputChange = (event: any): void => {
-        setContentInputValue(event.target.value);
+    const Paywall = () => {
+        return (
+            <>
+                <Typography variant="h1" component="div" gutterBottom>
+                    {post?.title}
+                </Typography>
+                <Paper elevation={3} style={{ padding: 10 }}>
+                    <Typography
+                        variant="subtitle1"
+                        component="div"
+                        gutterBottom
+                    >
+                        Pay Request:
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        component="div"
+                        style={{ wordWrap: "break-word" }}
+                        gutterBottom
+                    >
+                        {invoice?.payreq}
+                    </Typography>
+                    <Typography variant="body2" component="div" gutterBottom>
+                        {invoice?.amount} sats
+                    </Typography>
+                </Paper>
+            </>
+        );
     };
 
-    const handlePriceInputChange = (event: any): void => {
-        setPriceInputValue(event.target.value);
+    const showPaywall: boolean = !!(
+        post &&
+        !isCreator &&
+        !paid &&
+        post.price !== 0 &&
+        invoice &&
+        !editing
+    );
+
+    const showPost: boolean = !!(
+        post &&
+        (isCreator ||
+            paid ||
+            post.price === 0 ||
+            postNodeStatus === "Not found.") &&
+        !editing
+    );
+
+    const PostContent = () => {
+        return (
+            <>
+                <Typography variant="h1" component="div" gutterBottom>
+                    {post?.title}
+                </Typography>
+                <Typography variant="h2" component="div" gutterBottom>
+                    Written By: {post?.user.name}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                    {post?.content}
+                </Typography>
+            </>
+        );
+    };
+
+    const Actions = () => {
+        return (
+            <div className="post-actions">
+                <Button className="delete-post" onClick={deletePost}>
+                    Delete
+                </Button>
+                <Button className="edit-post" onClick={editPost}>
+                    Edit
+                </Button>
+                {!post?.published && (
+                    <Button className="publish-post" onClick={publishPost}>
+                        Publish
+                    </Button>
+                )}
+            </div>
+        );
     };
 
     if (redirect) {
         return <Redirect to="/" />;
     }
 
+    if (editing) {
+        return <Redirect to={`/posts/${postId}/edit`} />;
+    }
+
     return (
         <div id="post-container">
-            {!post && <h1>Loading...</h1>}
+            {loading && <LoadingPostSkeleton />}
 
-            {post &&
-                !isCreator &&
-                !paid &&
-                post.price !== 0 &&
-                invoice &&
-                !editing && (
-                    <>
-                        <Typography variant="h1" component="div" gutterBottom>
-                            {titleInputValue || post.title}
-                        </Typography>
-                        <div id="post-paywall-container">
-                            <p>Pay Request:</p>
-                            <textarea
-                                value={invoice.payreq}
-                                rows={3}
-                                readOnly={true}
-                            />
-                            <p>Hash: {invoice.hash}</p>
-                            <p>Amount: {invoice.amount}</p>
-                        </div>
-                    </>
-                )}
+            {showPaywall && <Paywall />}
 
-            {post &&
-                (isCreator ||
-                    paid ||
-                    post.price === 0 ||
-                    postNodeStatus === "Not found.") &&
-                !editing && (
-                    <>
-                        <Typography variant="h1" component="div" gutterBottom>
-                            {titleInputValue || post.title}
-                        </Typography>
-                        <Typography variant="h2" component="div" gutterBottom>
-                            Written By: {post.user.name}
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                            {contentInputValue || post.content}
-                        </Typography>
-
-                        {isCreator && (
-                            <div className="post-actions">
-                                <Button
-                                    className="delete-post"
-                                    onClick={deletePost}
-                                >
-                                    Delete
-                                </Button>
-                                <Button
-                                    className="edit-post"
-                                    onClick={editPost}
-                                >
-                                    Edit
-                                </Button>
-                                {!post.published && (
-                                    <Button
-                                        className="publish-post"
-                                        onClick={publishPost}
-                                    >
-                                        Publish
-                                    </Button>
-                                )}
-                            </div>
-                        )}
-                    </>
-                )}
-
-            {isCreator && editing && (
-                <div id="edit-post-form">
-                    <TextField
-                        id="edit-post-title"
-                        label="Title"
-                        variant="filled"
-                        onChange={handleTitleInputChange}
-                        value={titleInputValue}
-                        style={styles.formField}
-                        fullWidth
-                        required
-                    />
-
-                    <TextField
-                        id="edit-post-content"
-                        label="Content"
-                        multiline
-                        value={contentInputValue}
-                        onChange={handleContentInputChange}
-                        style={styles.formField}
-                        fullWidth
-                        required
-                    />
-
-                    <TextField
-                        id="edit-post-price"
-                        label="Price"
-                        value={priceInputValue}
-                        onChange={handlePriceInputChange}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    sats
-                                </InputAdornment>
-                            ),
-                        }}
-                        style={styles.formField}
-                        required
-                    />
-
-                    <div id="save-button-container" style={styles.formField}>
-                        <Button onClick={submitEdits}>
-                            Save
-                        </Button>
-                    </div>
-                </div>
+            {showPost && (
+                <>
+                    <PostContent />
+                    {isCreator && <Actions />}
+                </>
             )}
         </div>
     );
-};
-
-const styles = {
-    formField: {
-        marginTop: 20
-    },
 };

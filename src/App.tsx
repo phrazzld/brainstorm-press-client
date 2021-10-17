@@ -1,3 +1,7 @@
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AuthenticateUser } from "./AuthenticateUser";
@@ -5,15 +9,11 @@ import { Blog } from "./Blog";
 import { ConnectToLndForm } from "./ConnectToLndForm";
 import { CreateNewPostForm } from "./CreateNewPostForm";
 import { Drafts } from "./Drafts";
+import { EditPost } from "./EditPost";
 import { Header } from "./Header";
 import { Home } from "./Home";
 import { Post } from "./Post";
 import { Settings } from "./Settings";
-
-import '@fontsource/roboto/300.css'
-import '@fontsource/roboto/400.css'
-import '@fontsource/roboto/500.css'
-import '@fontsource/roboto/700.css'
 
 function App() {
     return (
@@ -35,6 +35,9 @@ function App() {
                     </Route>
                     <Route path="/posts/drafts">
                         <Drafts />
+                    </Route>
+                    <Route path="/posts/:postId/edit">
+                        <EditPost />
                     </Route>
                     <Route path="/posts/:postId">
                         <Post />
