@@ -5,7 +5,6 @@ import "@fontsource/roboto/700.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Header } from "./components/Header";
-import { AuthenticateUser } from "./pages/AuthenticateUser";
 import { Blog } from "./pages/Blog";
 import { ConnectToLndForm } from "./pages/ConnectToLndForm";
 import { CreateNewPostForm } from "./pages/CreateNewPostForm";
@@ -14,6 +13,8 @@ import { EditPost } from "./pages/EditPost";
 import { Home } from "./pages/Home";
 import { Post } from "./pages/Post";
 import { Settings } from "./pages/Settings";
+import { SignUp } from './pages/SignUp'
+import { LogIn } from './pages/LogIn'
 
 function App() {
     return (
@@ -21,8 +22,11 @@ function App() {
             <div id="app-container" style={styles.appContainer}>
                 <Header />
                 <Switch>
-                    <Route path="/authenticate">
-                        <AuthenticateUser authType="SIGNUP" />
+                    <Route path="/signup">
+                        <SignUp />
+                    </Route>
+                    <Route path="/login">
+                        <LogIn />
                     </Route>
                     <Route path="/connect-to-lnd">
                         <ConnectToLndForm />

@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useStore } from "../store/zstore";
 import { rtaGetCurrentUser } from "../utils/api";
 
@@ -9,6 +9,10 @@ export const Header = () => {
     const setUser = useStore((state) => state.setUser);
     const accessToken = useStore((state) => state.accessToken);
     const setLndToken = useStore((state) => state.setLndToken);
+    const location = useLocation();
+
+    const showSignUp: boolean =
+        !["/signup", "/login"].includes(location.pathname) && !user;
 
     useEffect(() => {
         if (!user) {
@@ -29,8 +33,8 @@ export const Header = () => {
             <Link to="/" style={styles.link}>
                 <Button>Brainstorm Press</Button>
             </Link>
-            {!user && (
-                <Link to="/authenticate" style={styles.link}>
+            {showSignUp && (
+                <Link to="/signup" style={styles.link}>
                     <Button>Sign Up</Button>
                 </Link>
             )}
