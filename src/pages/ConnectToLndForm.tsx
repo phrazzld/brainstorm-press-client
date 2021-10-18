@@ -1,3 +1,6 @@
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useStore } from "../store/zstore";
@@ -11,6 +14,8 @@ export const ConnectToLndForm = () => {
     const accessToken = useStore((state) => state.accessToken);
     const lndToken = useStore((state) => state.lndToken);
     const setLndToken = useStore((state) => state.setLndToken);
+
+    const [redirect, setRedirect] = useState<string>("");
 
     const handleHostInputChange = (event: any): void => {
         setHostInputValue(event.target.value);
@@ -32,47 +37,79 @@ export const ConnectToLndForm = () => {
         };
         const res = await rtaConnectToLnd(body, accessToken);
         setLndToken(res.token);
+        setRedirect("/settings");
     };
 
-    if (lndToken) {
-        return <Redirect to="/settings" />;
+    const cancel = (): void => {
+        setRedirect("/settings");
+    };
+
+    if (redirect) {
+        return <Redirect to={redirect} />;
     }
 
     return (
         <div id="connect-to-lnd-form">
             <div id="host-input-container">
-                <p>LND Host:</p>
-                <input
-                    type="text"
-                    name="host"
-                    value={hostInputValue}
+                <TextField
+                    id="host"
+                    label="Host"
+                    variant="filled"
                     onChange={handleHostInputChange}
+                    value={hostInputValue}
+                    style={styles.formField}
+                    fullWidth
                     required
                 />
             </div>
             <div id="cert-input-container">
-                <p>TLS Certificate:</p>
-                <textarea
+                <TextField
+                    id="tls-hex-cert"
+                    label="TSL Certificate (HEX)"
+                    variant="filled"
                     value={certInputValue}
                     onChange={handleCertInputChange}
-                    rows={3}
+                    style={styles.formField}
+                    multiline
+                    fullWidth
+                    required
                 />
             </div>
             <div id="macaroon-input-container">
-                <p>Macaroon:</p>
-                <textarea
+                <TextField
+                    id="macaroon"
+                    label="Macaroon"
+                    variant="filled"
                     value={macaroonInputValue}
                     onChange={handleMacaroonInputChange}
-                    rows={3}
+                    style={styles.formField}
+                    multiline
+                    fullWidth
+                    required
                 />
-                <p className="reminder-text">
+
+                <Typography variant="subtitle1" gutterBottom>
                     lncli bakemacaroon info:read offchain:read invoices:read
                     invoices:write message:read message:write
-                </p>
+                </Typography>
             </div>
             <div id="connect-to-lnd-submit-container">
-                <button onClick={connectToLnd}>Submit</button>
+                <Button variant="contained" onClick={connectToLnd} style={styles.button}>
+                    Submit
+                </Button>
+                <Button variant="outlined" onClick={cancel} style={styles.button}>
+                    Cancel
+                </Button>
             </div>
         </div>
     );
 };
+
+const styles = {
+    button: {
+        marginRight: 10
+    },
+    formField: {
+        marginTop: 20
+    }
+}
