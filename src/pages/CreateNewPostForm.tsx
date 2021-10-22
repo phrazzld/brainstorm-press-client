@@ -2,6 +2,14 @@ import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import {
+    convertToRaw,
+    DraftHandleValue,
+    Editor,
+    EditorState,
+    RichUtils,
+} from "draft-js";
+import "draft-js/dist/Draft.css";
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
@@ -9,22 +17,23 @@ import { rtaCreateNewPost } from "../utils/api";
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>("");
-    const [contentInputValue, setContentInputValue] = useState<string>("");
     const [priceInputValue, setPriceInputValue] = useState<number>(0);
     const accessToken = useAccessToken();
 
     const [redirect, setRedirect] = useState<string>("");
 
+    const [editorState, setEditorState] = useState(() =>
+        EditorState.createEmpty()
+    );
+    const editor: any = React.useRef(null);
+    const focusEditor = () => {
+        editor?.current?.focus();
+    };
+
     const handleTitleInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ): void => {
         setTitleInputValue(event.target.value);
-    };
-
-    const handleContentInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ): void => {
-        setContentInputValue(event.target.value);
     };
 
     const handlePriceInputChange = (
@@ -37,7 +46,9 @@ export const CreateNewPostForm = () => {
     const publishPost = async (): Promise<void> => {
         const body = {
             title: titleInputValue,
-            content: contentInputValue,
+            content: JSON.stringify(
+                convertToRaw(editorState.getCurrentContent())
+            ),
             price: priceInputValue,
             published: true,
         };
@@ -48,7 +59,9 @@ export const CreateNewPostForm = () => {
     const saveDraft = async (): Promise<void> => {
         const body = {
             title: titleInputValue,
-            content: contentInputValue,
+            content: JSON.stringify(
+                convertToRaw(editorState.getCurrentContent())
+            ),
             price: priceInputValue,
             published: false,
         };
@@ -58,6 +71,21 @@ export const CreateNewPostForm = () => {
 
     const cancelPost = (): void => {
         setRedirect("/");
+    };
+
+    const handleKeyCommand = (
+        command: string,
+        editorState: EditorState,
+        eventTimeStamp: number
+    ): DraftHandleValue => {
+        const newEditorState = RichUtils.handleKeyCommand(editorState, command);
+
+        if (newEditorState) {
+            setEditorState(newEditorState);
+            return "handled";
+        }
+
+        return "not-handled";
     };
 
     if (redirect) {
@@ -80,16 +108,24 @@ export const CreateNewPostForm = () => {
                 required
             />
 
-            <TextField
-                id="edit-post-content"
-                label="Content"
-                multiline
-                value={contentInputValue}
-                onChange={handleContentInputChange}
-                style={styles.formField}
-                fullWidth
-                required
-            />
+            <div
+                style={{
+                    border: "1px solid black",
+                    minHeight: "6em",
+                    cursor: "text",
+                    marginTop: 20,
+                    padding: 10,
+                }}
+                onClick={focusEditor}
+            >
+                <Editor
+                    ref={editor}
+                    editorState={editorState}
+                    onChange={setEditorState}
+                    handleKeyCommand={handleKeyCommand}
+                    placeholder="Write something!"
+                />
+            </div>
 
             <TextField
                 id="edit-post-price"

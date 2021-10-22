@@ -2,6 +2,8 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
+import { convertFromRaw, Editor, EditorState } from "draft-js";
+import "draft-js/dist/Draft.css";
 import React, { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
@@ -35,6 +37,21 @@ export const Post = () => {
     const [postNodeStatus, setPostNodeStatus] = useState<NodeStatus>(
         "Looking."
     );
+
+    const [editorState, setEditorState] = useState(() =>
+        EditorState.createEmpty()
+    );
+    const editor: any = React.useRef(null);
+
+    useEffect(() => {
+        if (post) {
+            setEditorState(
+                EditorState.createWithContent(
+                    convertFromRaw(JSON.parse(post.content))
+                )
+            );
+        }
+    }, [post]);
 
     useEffect(() => {
         if (post && postNodeStatus !== "Looking.") {
@@ -210,8 +227,13 @@ export const Post = () => {
                 <Typography variant="h2" component="div" gutterBottom>
                     Written By: {post?.user.name}
                 </Typography>
-                <Typography variant="body1" gutterBottom>
-                    {post?.content}
+                <Typography variant="body1" component="div" gutterBottom>
+                    <Editor
+                        ref={editor}
+                        editorState={editorState}
+                        onChange={setEditorState}
+                        readOnly={true}
+                    />
                 </Typography>
             </>
         );

@@ -3,6 +3,15 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Skeleton from "@mui/material/Skeleton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import {
+    convertFromRaw,
+    convertToRaw,
+    DraftHandleValue,
+    Editor,
+    EditorState,
+    RichUtils,
+} from "draft-js";
+import "draft-js/dist/Draft.css";
 import React, { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
@@ -16,11 +25,16 @@ export const EditPost = () => {
 
     const [editing, setEditing] = useState(true);
 
+    const [editorState, setEditorState] = useState(() =>
+        EditorState.createEmpty()
+    );
+    const editor: any = React.useRef(null);
+    const focusEditor = () => {
+        editor?.current?.focus();
+    };
+
     const [titleInputValue, setTitleInputValue] = useState<string>(
         post?.title || ""
-    );
-    const [contentInputValue, setContentInputValue] = useState<string>(
-        post?.content || ""
     );
     const [priceInputValue, setPriceInputValue] = useState<number>(
         post?.price || 0
@@ -31,8 +45,12 @@ export const EditPost = () => {
     useEffect(() => {
         if (post) {
             setTitleInputValue(post.title);
-            setContentInputValue(post.content);
             setPriceInputValue(post.price);
+            setEditorState(
+                EditorState.createWithContent(
+                    convertFromRaw(JSON.parse(post.content))
+                )
+            );
         }
     }, [post]);
 
@@ -47,7 +65,9 @@ export const EditPost = () => {
 
         const body = {
             title: titleInputValue,
-            content: contentInputValue,
+            content: JSON.stringify(
+                convertToRaw(editorState.getCurrentContent())
+            ),
             price: priceInputValue,
             published: post.published,
         };
@@ -61,17 +81,26 @@ export const EditPost = () => {
         setTitleInputValue(event.target.value);
     };
 
-    const handleContentInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ): void => {
-        setContentInputValue(event.target.value);
-    };
-
     const handlePriceInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ): void => {
         const newPrice: number = Number(event.target.value);
         setPriceInputValue(newPrice);
+    };
+
+    const handleKeyCommand = (
+        command: string,
+        editorState: EditorState,
+        eventTimeStamp: number
+    ): DraftHandleValue => {
+        const newEditorState = RichUtils.handleKeyCommand(editorState, command);
+
+        if (newEditorState) {
+            setEditorState(newEditorState);
+            return "handled";
+        }
+
+        return "not-handled";
     };
 
     if (!post) {
@@ -109,16 +138,24 @@ export const EditPost = () => {
                 required
             />
 
-            <TextField
-                id="edit-post-content"
-                label="Content"
-                multiline
-                value={contentInputValue}
-                onChange={handleContentInputChange}
-                style={styles.formField}
-                fullWidth
-                required
-            />
+            <div
+                style={{
+                    border: "1px solid black",
+                    minHeight: "6em",
+                    cursor: "text",
+                    marginTop: 20,
+                    padding: 10,
+                }}
+                onClick={focusEditor}
+            >
+                <Editor
+                    ref={editor}
+                    editorState={editorState}
+                    onChange={setEditorState}
+                    handleKeyCommand={handleKeyCommand}
+                    placeholder="Write something!"
+                />
+            </div>
 
             <TextField
                 id="edit-post-price"
