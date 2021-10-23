@@ -117,6 +117,8 @@ const styles = {
         alignItems: "center",
         paddingBottom: 10,
         flexGrow: 1,
+        position: "sticky",
+        top: 0,
     },
     link: {
         textDecoration: "none",
