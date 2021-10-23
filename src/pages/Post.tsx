@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
@@ -5,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { convertFromRaw, Editor, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import React, { useEffect, useState } from "react";
+import QRCode from "react-qr-code";
 import { Redirect, useParams } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
 import { usePost } from "../hooks/usePost";
@@ -175,14 +177,27 @@ export const Post = () => {
                 <Typography variant="h1" component="div" gutterBottom>
                     {post?.title}
                 </Typography>
-                <Paper elevation={3} style={{ padding: 10 }}>
-                    <Typography
-                        variant="subtitle1"
-                        component="div"
-                        gutterBottom
-                    >
-                        Pay Request:
+                <Paper
+                    elevation={3}
+                    style={{
+                        padding: 20,
+                        maxWidth: "500px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                    }}
+                >
+                    <Typography variant="h6" component="div" gutterBottom>
+                        Pay {invoice?.amount} sats to read:
                     </Typography>
+                    <Box
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            margin: 20,
+                        }}
+                    >
+                        <QRCode value={invoice?.payreq || ""} />
+                    </Box>
                     <Typography
                         variant="body1"
                         component="div"
@@ -190,9 +205,6 @@ export const Post = () => {
                         gutterBottom
                     >
                         {invoice?.payreq}
-                    </Typography>
-                    <Typography variant="body2" component="div" gutterBottom>
-                        {invoice?.amount} sats
                     </Typography>
                 </Paper>
             </>
