@@ -13,7 +13,7 @@ import "draft-js/dist/Draft.css";
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
-import { rtaCreateNewPost } from "../utils/api";
+import { rtaCreatePost } from "../utils/api";
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>("");
@@ -52,7 +52,7 @@ export const CreateNewPostForm = () => {
             price: priceInputValue,
             published: true,
         };
-        const newPost = await rtaCreateNewPost(body, accessToken);
+        const newPost = await rtaCreatePost(body, accessToken);
         setRedirect(`/posts/${newPost._id}`);
     };
 
@@ -65,7 +65,7 @@ export const CreateNewPostForm = () => {
             price: priceInputValue,
             published: false,
         };
-        await rtaCreateNewPost(body, accessToken);
+        await rtaCreatePost(body, accessToken);
         setRedirect("/posts/drafts");
     };
 

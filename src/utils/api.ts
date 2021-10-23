@@ -44,7 +44,7 @@ export const regenerateAccessToken = async (): Promise<string> => {
   return accessToken;
 };
 
-const createNewPost = async (
+const createPost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<Response> => {
@@ -58,11 +58,11 @@ const createNewPost = async (
   });
 };
 
-export const rtaCreateNewPost = async (
+export const rtaCreatePost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<Post> => {
-  const res = await rta(createNewPost, body, accessToken);
+  const res = await rta(createPost, body, accessToken);
 
   if (!res.ok) {
     throw new Error("Failed to create new post.");
