@@ -8,7 +8,9 @@ export const useAccessToken = (): string => {
 
   useEffect(() => {
     if (!accessToken) {
-      regenerateAccessToken().then((res) => setAccessToken(res));
+      regenerateAccessToken().then((res) =>
+        setAccessToken(res === "Invalid refresh token." ? "" : res)
+      );
     }
   }, [accessToken]);
 

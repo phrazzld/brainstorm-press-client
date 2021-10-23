@@ -9,7 +9,7 @@ export const usePost = (postId: string): Post | null => {
   const accessToken = useAccessToken();
 
   useEffect(() => {
-    if (postId && accessToken) {
+    if (postId) {
       rtaGetPost(postId, accessToken).then((res) => setPost(res));
     }
   }, [accessToken, postId]);

@@ -75,9 +75,9 @@ export const Post = () => {
     }, [post]);
 
     const createInvoice = async () => {
-        if (!user) {
-            throw new Error("Cannot create invoice without a user.");
-        }
+        //if (!user) {
+        //    throw new Error("Cannot create invoice without a user.");
+        //}
 
         const response = await rtaCreateInvoice(postId, accessToken);
         setInvoice({
@@ -90,7 +90,7 @@ export const Post = () => {
     useEffect(() => {
         if (
             post &&
-            user &&
+            //user &&
             !paid &&
             !invoice &&
             !isCreator &&

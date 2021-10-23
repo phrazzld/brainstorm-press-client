@@ -342,6 +342,10 @@ export const rtaGetPayment = async (
 ): Promise<PaymentStatus> => {
   const res = await rta(getPayment, postId, accessToken);
 
+  if (res.status === 401) {
+    return { paid: false };
+  }
+
   if (!res.ok) {
     throw new Error("Failed to get payment.");
   }
@@ -372,7 +376,7 @@ export const rtaLogPayment = async (
   const res = await rta(logPayment, postId, body, accessToken);
 
   if (!res.ok) {
-    throw new Error("Failed to log payment.");
+    console.warn("Failed to log payment.");
   }
 };
 
