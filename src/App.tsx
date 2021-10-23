@@ -11,16 +11,16 @@ import { CreateNewPostForm } from "./pages/CreateNewPostForm";
 import { Drafts } from "./pages/Drafts";
 import { EditPost } from "./pages/EditPost";
 import { Home } from "./pages/Home";
+import { LogIn } from "./pages/LogIn";
 import { Post } from "./pages/Post";
 import { Settings } from "./pages/Settings";
-import { SignUp } from './pages/SignUp'
-import { LogIn } from './pages/LogIn'
+import { SignUp } from "./pages/SignUp";
 
 function App() {
     return (
         <Router>
+            <Header />
             <div id="app-container" style={styles.appContainer}>
-                <Header />
                 <Switch>
                     <Route path="/signup">
                         <SignUp />

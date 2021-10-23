@@ -1,4 +1,13 @@
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useStore } from "../store/zstore";
@@ -11,7 +20,7 @@ export const Header = () => {
     const setLndToken = useStore((state) => state.setLndToken);
     const location = useLocation();
 
-    const showSignUp: boolean =
+    const showLogin: boolean =
         !["/signup", "/login"].includes(location.pathname) && !user;
 
     useEffect(() => {
@@ -26,38 +35,74 @@ export const Header = () => {
     }, [user, accessToken]);
 
     return (
-        <div
-            id="app-header"
-            style={styles.headerContainer as React.CSSProperties}
-        >
-            <Link to="/" style={styles.link}>
-                <Button>Brainstorm Press</Button>
-            </Link>
-            {showSignUp && (
-                <Link to="/signup" style={styles.link}>
-                    <Button>Sign Up</Button>
-                </Link>
-            )}
-            {user && (
-                <>
-                    <Link to="/posts/new" style={styles.link}>
-                        <Button>New Post</Button>
-                    </Link>
-                    <Link to="/posts/drafts" style={styles.link}>
-                        <Button>Drafts</Button>
-                    </Link>
-                    <Link to="/settings" style={styles.link}>
-                        <Button>Settings</Button>
-                    </Link>
-                    <Link
-                        to={{ pathname: "/", state: { logout: true } }}
-                        style={styles.link}
+        <Box style={styles.headerContainer as React.CSSProperties}>
+            <AppBar position="static">
+                <Toolbar>
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        sx={{ flexGrow: 1 }}
                     >
-                        <Button>Logout</Button>
-                    </Link>
-                </>
-            )}
-        </div>
+                        <Link to="/" style={styles.link}>
+                            Brainstorm Press
+                        </Link>
+                    </Typography>
+                    {user && (
+                        <>
+                            <Link to="/posts/new" style={styles.link}>
+                                <Tooltip title="Create">
+                                    <IconButton
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="new-post"
+                                    >
+                                        <AddCircleOutlineIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </Link>
+                            <Link to="/posts/drafts" style={styles.link}>
+                                <Tooltip title="Drafts">
+                                    <IconButton
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="drafts"
+                                    >
+                                        <FileCopyOutlinedIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </Link>
+                            <Link to="/settings" style={styles.link}>
+                                <Tooltip title="Settings">
+                                    <IconButton
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="settings"
+                                    >
+                                        <SettingsOutlinedIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </Link>
+                        </>
+                    )}
+                    {showLogin && (
+                        <Link to="/login" style={styles.link}>
+                            <Button color="inherit">Login</Button>
+                        </Link>
+                    )}
+                    {user && (
+                        <Link
+                            to={{ pathname: "/", state: { logout: true } }}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                            <Button color="inherit">Logout</Button>
+                        </Link>
+                    )}
+                </Toolbar>
+            </AppBar>
+        </Box>
     );
 };
 
@@ -70,10 +115,12 @@ const styles = {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 10,
         paddingBottom: 10,
+        flexGrow: 1,
     },
     link: {
         textDecoration: "none",
+        color: "inherit",
+        marginRight: 20,
     },
 };
