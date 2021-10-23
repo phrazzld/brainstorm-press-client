@@ -8,12 +8,12 @@ import {
   LogPaymentRequestBody,
   NodeInfo,
   NodeStatus,
+  PaginatedResponse,
   PaymentStatus,
   Post,
   PostRequestBody,
   User,
   UserRequestBody,
-  PaginatedResponse
 } from "./types";
 
 const UNAUTHORIZED = [401, 403];
@@ -68,7 +68,7 @@ export const rtaCreateNewPost = async (
     throw new Error("Failed to create new post.");
   }
 
-  return await res.json()
+  return await res.json();
 };
 
 export const disconnectNode = async (lndToken: string): Promise<Response> => {
@@ -80,21 +80,39 @@ export const disconnectNode = async (lndToken: string): Promise<Response> => {
   });
 };
 
-export const getPosts = async (page: number): Promise<PaginatedResponse> => {
-  const response = await fetch(`/api/posts?page=${page}`, {
-    method: "GET",
-  });
-  return await response.json()
-};
-
-export const getUserPosts = async (userId: string, page: number): Promise<PaginatedResponse> => {
-  const response = await fetch(`/api/users/${userId}/posts?page=${page}`, {
+export const getPosts = async (
+  page: number,
+  free?: boolean
+): Promise<PaginatedResponse> => {
+  let endpoint = `/api/posts?page=${page}`;
+  if (free) {
+    endpoint += `&free=true`;
+  }
+  const response = await fetch(endpoint, {
     method: "GET",
   });
   return await response.json();
 };
 
-const getDrafts = async (page: number, accessToken: string): Promise<Response> => {
+export const getUserPosts = async (
+  userId: string,
+  page: number,
+  free?: boolean
+): Promise<PaginatedResponse> => {
+  let endpoint = `/api/users/${userId}/posts?page=${page}`;
+  if (free) {
+    endpoint += `&free=true`;
+  }
+  const response = await fetch(endpoint, {
+    method: "GET",
+  });
+  return await response.json();
+};
+
+const getDrafts = async (
+  page: number,
+  accessToken: string
+): Promise<Response> => {
   return await fetch(`/api/drafts?page=${page}`, {
     method: "GET",
     headers: {

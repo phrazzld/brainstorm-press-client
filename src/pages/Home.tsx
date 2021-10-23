@@ -1,4 +1,7 @@
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import Pagination from "@mui/material/Pagination";
+import Switch from "@mui/material/Switch";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PostsList } from "../components/PostsList";
@@ -12,8 +15,13 @@ export const Home = () => {
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken);
 
+    const [free, setFree] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
-    const { posts, totalPages } = usePosts(page);
+    const { posts, totalPages } = usePosts(page, free);
+
+    const handleFreeChange = (event: React.ChangeEvent<unknown>): void => {
+        setFree((free: boolean) => !free);
+    };
 
     const destroySession = async (): Promise<void> => {
         await deleteRefreshToken();
@@ -36,6 +44,19 @@ export const Home = () => {
 
     return (
         <>
+            <FormGroup>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={free}
+                            onChange={handleFreeChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                            defaultChecked
+                        />
+                    }
+                    label="Only show free posts"
+                />
+            </FormGroup>
             <PostsList posts={posts} />
             <Pagination
                 count={totalPages}
