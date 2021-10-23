@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { rtaGetDrafts } from "../utils/api";
-import { Post } from "../utils/types";
+import { PaginatedPosts, PaginatedResponse } from "../utils/types";
 import { useAccessToken } from "./useAccessToken";
 
-export const useDrafts = (): Array<Post> => {
-  const [drafts, setDrafts] = useState<Array<Post>>([]);
+export const useDrafts = (page: number): PaginatedPosts => {
+  const [drafts, setDrafts] = useState<PaginatedPosts>({
+    posts: [],
+    totalPages: 0,
+  });
   const accessToken = useAccessToken();
 
   useEffect(() => {
     if (accessToken) {
-      rtaGetDrafts(accessToken).then((res) => setDrafts(res));
+      rtaGetDrafts(page, accessToken).then((res: PaginatedResponse) =>
+        setDrafts({ posts: res.docs, totalPages: res.totalPages })
+      );
     }
-  }, [accessToken]);
+  }, [page, accessToken]);
 
   return drafts;
 };

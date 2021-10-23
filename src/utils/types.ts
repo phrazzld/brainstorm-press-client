@@ -81,3 +81,21 @@ export type NodeInfo = {
   balance: number;
   pubkey: string;
 };
+
+export type PaginatedResponse = {
+  docs: Array<any>;
+  totalDocs: number;
+  offset: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: number | null;
+  nextPage: number | null;
+};
+
+export type PaginatedPosts = {
+  posts: Array<Post>;
+  totalPages: number;
+};

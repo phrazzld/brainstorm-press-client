@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { getUserPosts } from "../utils/api";
-import { Post } from "../utils/types";
+import { PaginatedPosts, PaginatedResponse } from "../utils/types";
 
-export const useBlogPosts = (userId: string): Array<Post> => {
-  const [posts, setPosts] = useState<Array<Post>>([]);
+export const useBlogPosts = (userId: string, page: number): PaginatedPosts => {
+  const [posts, setPosts] = useState<PaginatedPosts>({
+    posts: [],
+    totalPages: 0,
+  });
 
   useEffect(() => {
     if (userId) {
-      getUserPosts(userId).then((res) => setPosts(res));
+      getUserPosts(userId, page).then((res: PaginatedResponse) =>
+        setPosts({ posts: res.docs, totalPages: res.totalPages })
+      );
     }
-  }, [userId]);
+  }, [userId, page]);
 
   return posts;
 };

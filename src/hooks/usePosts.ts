@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import { getPosts } from "../utils/api";
-import { Post } from "../utils/types";
+import { PaginatedPosts, PaginatedResponse } from "../utils/types";
 
-export const usePosts = (): Array<Post> => {
-  const [posts, setPosts] = useState<Array<Post>>([]);
+export const usePosts = (page: number): PaginatedPosts => {
+  const [paginatedPosts, setPaginatedPosts] = useState<PaginatedPosts>({
+    posts: [],
+    totalPages: 0,
+  });
 
   useEffect(() => {
-    getPosts().then((res) => setPosts(res));
-  }, []);
+    getPosts(page).then((res: PaginatedResponse) => {
+      setPaginatedPosts({
+        posts: res.docs,
+        totalPages: res.totalPages,
+      });
+    });
+  }, [page]);
 
-  return posts;
+  return paginatedPosts;
 };

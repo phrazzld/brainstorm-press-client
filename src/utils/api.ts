@@ -13,6 +13,7 @@ import {
   PostRequestBody,
   User,
   UserRequestBody,
+  PaginatedResponse
 } from "./types";
 
 const UNAUTHORIZED = [401, 403];
@@ -79,22 +80,22 @@ export const disconnectNode = async (lndToken: string): Promise<Response> => {
   });
 };
 
-export const getPosts = async (): Promise<Array<Post>> => {
-  const response = await fetch("/api/posts", {
+export const getPosts = async (page: number): Promise<PaginatedResponse> => {
+  const response = await fetch(`/api/posts?page=${page}`, {
+    method: "GET",
+  });
+  return await response.json()
+};
+
+export const getUserPosts = async (userId: string, page: number): Promise<PaginatedResponse> => {
+  const response = await fetch(`/api/users/${userId}/posts?page=${page}`, {
     method: "GET",
   });
   return await response.json();
 };
 
-export const getUserPosts = async (userId: string): Promise<Array<Post>> => {
-  const response = await fetch(`/api/users/${userId}/posts`, {
-    method: "GET",
-  });
-  return await response.json();
-};
-
-const getDrafts = async (accessToken: string): Promise<Response> => {
-  return await fetch("/api/drafts", {
+const getDrafts = async (page: number, accessToken: string): Promise<Response> => {
+  return await fetch(`/api/drafts?page=${page}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -103,9 +104,10 @@ const getDrafts = async (accessToken: string): Promise<Response> => {
 };
 
 export const rtaGetDrafts = async (
+  page: number,
   accessToken: string
-): Promise<Array<Post>> => {
-  const res = await rta(getDrafts, accessToken);
+): Promise<PaginatedResponse> => {
+  const res = await rta(getDrafts, page, accessToken);
 
   if (!res.ok) {
     throw new Error("Failed to get drafts.");
