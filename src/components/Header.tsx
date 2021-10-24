@@ -119,6 +119,7 @@ const styles = {
         flexGrow: 1,
         position: "sticky",
         top: 0,
+        zIndex: 100,
     },
     link: {
         textDecoration: "none",
