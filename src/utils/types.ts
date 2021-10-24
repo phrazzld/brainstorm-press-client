@@ -23,13 +23,14 @@ export type AuthResponse = {
 };
 
 export type CreateUserRequestBody = {
-  name: string;
+  username: string;
+  email: string;
   password: string;
   blog: string;
 };
 
 export type AuthenticateUserRequestBody = {
-  name: string;
+  email: string;
   password: string;
 };
 
@@ -71,7 +72,8 @@ export type LndNode = {
 
 export type User = {
   _id: string;
-  name: string;
+  username: string;
+  email: string;
   blog: string;
   node: LndNode;
 };

@@ -60,7 +60,7 @@ export const Settings = () => {
             </Typography>
 
             <Typography variant="body1" gutterBottom>
-                Welcome {user?.name}
+                Welcome {user?.username}
             </Typography>
 
             <TextField

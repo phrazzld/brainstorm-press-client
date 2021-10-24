@@ -15,19 +15,23 @@ import { createUser } from "../utils/api";
 const theme = createTheme();
 
 export const SignUp = () => {
-    const [nameInputValue, setNameInputValue] = useState<string>("");
+    const [usernameInputValue, setUsernameInputValue] = useState<string>("");
+    const [emailInputValue, setEmailInputValue] = useState<string>("");
     const [passwordInputValue, setPasswordInputValue] = useState<string>("");
 
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-        event.preventDefault()
+    const handleSubmit = async (
+        event: React.FormEvent<HTMLFormElement>
+    ): Promise<void> => {
+        event.preventDefault();
         const body = {
-            name: nameInputValue,
+            username: usernameInputValue,
+            email: emailInputValue,
             password: passwordInputValue,
-            blog: `${nameInputValue}'s Blog`,
+            blog: `${usernameInputValue}'s Blog`,
         };
         const response = await createUser(body);
         setUser(response.user);
@@ -62,15 +66,30 @@ export const SignUp = () => {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
-                                    autoComplete="name"
-                                    name="name"
+                                    autoComplete="username"
+                                    name="username"
                                     required
                                     fullWidth
-                                    id="name"
-                                    label="Name"
-                                    value={nameInputValue}
+                                    id="username"
+                                    label="Username"
+                                    value={usernameInputValue}
                                     onChange={(e) =>
-                                        setNameInputValue(e.target.value)
+                                        setUsernameInputValue(e.target.value)
+                                    }
+                                    autoFocus
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    autoComplete="email"
+                                    name="email"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email"
+                                    value={emailInputValue}
+                                    onChange={(e) =>
+                                        setEmailInputValue(e.target.value)
                                     }
                                     autoFocus
                                 />

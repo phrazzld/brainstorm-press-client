@@ -15,7 +15,7 @@ import { loginUser } from "../utils/api";
 const theme = createTheme();
 
 export const LogIn = () => {
-    const [nameInputValue, setNameInputValue] = useState<string>("");
+    const [emailInputValue, setEmailInputValue] = useState<string>("");
     const [passwordInputValue, setPasswordInputValue] = useState<string>("");
 
     const user = useStore((state) => state.user);
@@ -23,10 +23,12 @@ export const LogIn = () => {
     const setAccessToken = useStore((state) => state.setAccessToken);
     const setLndToken = useStore((state) => state.setLndToken);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-        event.preventDefault()
+    const handleSubmit = async (
+        event: React.FormEvent<HTMLFormElement>
+    ): Promise<void> => {
+        event.preventDefault();
         const body = {
-            name: nameInputValue,
+            email: emailInputValue,
             password: passwordInputValue,
         };
         const response = await loginUser(body);
@@ -66,12 +68,12 @@ export const LogIn = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="name"
-                            label="Name"
-                            name="name"
-                            autoComplete="name"
-                            value={nameInputValue}
-                            onChange={(e) => setNameInputValue(e.target.value)}
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="email"
+                            value={emailInputValue}
+                            onChange={(e) => setEmailInputValue(e.target.value)}
                             autoFocus
                         />
                         <TextField

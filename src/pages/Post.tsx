@@ -237,7 +237,7 @@ export const Post = () => {
                     {post?.title}
                 </Typography>
                 <Typography variant="h2" component="div" gutterBottom>
-                    Written By: {post?.user.name}
+                    Written By: {post?.user.username}
                 </Typography>
                 <Typography variant="body1" component="div" gutterBottom>
                     <Editor
