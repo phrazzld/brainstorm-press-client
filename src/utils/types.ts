@@ -52,6 +52,11 @@ export type PostParams = {
   postId: string;
 };
 
+type PostPayment = {
+  postId: string;
+  userId: string;
+};
+
 export type Post = {
   _id: string;
   title: string;
@@ -59,6 +64,7 @@ export type Post = {
   price: number;
   published: boolean;
   user: User;
+  payments: Array<PostPayment>;
 };
 
 export type LndNode = {
