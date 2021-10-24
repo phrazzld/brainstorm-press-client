@@ -82,11 +82,15 @@ export const disconnectNode = async (lndToken: string): Promise<Response> => {
 
 export const getPosts = async (
   page: number,
-  free?: boolean
+  free?: boolean,
+  search?: string
 ): Promise<PaginatedResponse> => {
   let endpoint = `/api/posts?page=${page}`;
   if (free) {
     endpoint += `&free=true`;
+  }
+  if (search) {
+    endpoint += `&search=${search}`;
   }
   const response = await fetch(endpoint, {
     method: "GET",
