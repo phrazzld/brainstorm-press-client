@@ -7,7 +7,7 @@ import { convertFromRaw, Editor, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import React, { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-import { Redirect, useParams } from "react-router-dom";
+import { Link, Redirect, useParams } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
 import { usePost } from "../hooks/usePost";
 import { useStore } from "../store/zstore";
@@ -75,9 +75,9 @@ export const Post = () => {
     }, [post]);
 
     const createInvoice = async () => {
-        //if (!user) {
-        //    throw new Error("Cannot create invoice without a user.");
-        //}
+        if (!user) {
+            throw new Error("Cannot create invoice without a user.");
+        }
 
         const response = await rtaCreateInvoice(postId, accessToken);
         setInvoice({
@@ -90,7 +90,7 @@ export const Post = () => {
     useEffect(() => {
         if (
             post &&
-            //user &&
+            user &&
             !paid &&
             !invoice &&
             !isCreator &&
@@ -275,6 +275,17 @@ export const Post = () => {
 
     if (editing) {
         return <Redirect to={`/posts/${postId}/edit`} />;
+    }
+
+    if (!user && post && post.price > 0) {
+        return (
+            <Box>
+                <Typography variant="h6" component="div" gutterBottom>
+                    You have to be logged in to read paywalled posts.
+                </Typography>
+                <Link to="/login">Log in</Link>
+            </Box>
+        );
     }
 
     return (
