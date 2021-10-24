@@ -14,6 +14,7 @@ export const Home = () => {
     const { logout } = location.state || false;
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken);
+    const setLndToken = useStore((state) => state.setLndToken);
 
     const [free, setFree] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
@@ -25,6 +26,7 @@ export const Home = () => {
 
     const destroySession = async (): Promise<void> => {
         await deleteRefreshToken();
+        setLndToken("");
         setAccessToken("");
         setUser(null);
     };
