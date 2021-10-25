@@ -1,7 +1,10 @@
+import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Pagination from "@mui/material/Pagination";
 import Switch from "@mui/material/Switch";
+import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { PostsList } from "../components/PostsList";
@@ -31,7 +34,30 @@ export const Blog = () => {
 
     return (
         <div id="blog-container">
-            <h1>{posts[0]?.user.blog}</h1>
+            <Typography variant="h1" component="div" gutterBottom>
+                {posts[0]?.user.blog}
+            </Typography>
+            <Typography variant="h5" component="div" gutterBottom>
+                {posts[0]?.user.username}
+            </Typography>
+            {posts[0]?.user.btcAddress && (
+                <Typography
+                    variant="subtitle1"
+                    component="div"
+                    style={{ display: "flex", alignItems: "center" }}
+                    gutterBottom
+                >
+                    <FontAwesomeIcon
+                        style={{
+                            fontSize: 30,
+                            marginRight: 10,
+                            color: "#f2a900",
+                        }}
+                        icon={faBitcoin}
+                    />
+                    {posts[0]?.user.btcAddress}
+                </Typography>
+            )}
             <FormGroup>
                 <FormControlLabel
                     control={

@@ -8,6 +8,7 @@ import { useNodeInfo } from "../hooks/useNodeInfo";
 import { useStore } from "../store/zstore";
 import { disconnectNode, rtaUpdateUser } from "../utils/api";
 import { NodeInfo } from "../utils/types";
+import { validate } from "bitcoin-address-validation";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);
@@ -20,6 +21,12 @@ export const Settings = () => {
     const [blogInputValue, setBlogInputValue] = useState<string>(
         user?.blog || ""
     );
+    const [btcAddressInputValue, setBtcAddressInputValue] = useState<string>(
+        user?.btcAddress || ""
+    );
+    const [btcAddressInputInvalid, setBtcAddressInputInvalid] = useState<
+        boolean
+    >(false);
 
     const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
 
@@ -27,12 +34,23 @@ export const Settings = () => {
         setBlogInputValue(event.target.value);
     };
 
+    const handleBtcAddressInputChange = (event: any): void => {
+        setBtcAddressInputValue(event.target.value);
+    };
+
     const submitEdits = (): void => {
         if (user) {
-            const body = {
-                blog: blogInputValue,
-            };
-            rtaUpdateUser(user._id, body, accessToken);
+            // Validate input
+            if (validate(btcAddressInputValue)) {
+                setBtcAddressInputInvalid(false);
+                const body = {
+                    blog: blogInputValue,
+                    btcAddress: btcAddressInputValue,
+                };
+                rtaUpdateUser(user._id, body, accessToken);
+            } else {
+                setBtcAddressInputInvalid(true);
+            }
         }
     };
 
@@ -59,18 +77,50 @@ export const Settings = () => {
                 Settings
             </Typography>
 
-            <Typography variant="body1" gutterBottom>
+            <Typography
+                variant="body1"
+                component="div"
+                style={{ marginBottom: 20 }}
+                gutterBottom
+            >
                 Welcome {user?.username}
             </Typography>
 
             <TextField
                 id="edit-blog-title"
                 label="Blog"
-                variant="filled"
+                variant="outlined"
                 onChange={handleBlogInputChange}
                 value={blogInputValue}
-                required
+                fullWidth
             />
+
+            <br />
+            <br />
+
+            {btcAddressInputInvalid && (
+                <TextField
+                    error
+                    id="edit-btc-address-invalid"
+                    label="BTC Address"
+                    variant="outlined"
+                    onChange={handleBtcAddressInputChange}
+                    value={btcAddressInputValue}
+                    helperText="Invalid BTC address"
+                    fullWidth
+                />
+            )}
+
+            {!btcAddressInputInvalid && (
+                <TextField
+                    id="edit-btc-address"
+                    label="BTC Address"
+                    variant="outlined"
+                    onChange={handleBtcAddressInputChange}
+                    value={btcAddressInputValue}
+                    fullWidth
+                />
+            )}
 
             <br />
             <br />

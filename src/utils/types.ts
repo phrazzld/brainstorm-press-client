@@ -75,6 +75,7 @@ export type User = {
   username: string;
   email: string;
   blog: string;
+  btcAddress?: string;
   node: LndNode;
 };
 
