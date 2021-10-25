@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { PostsFilter } from "../components/PostsFilter";
 import { PostsList } from "../components/PostsList";
 import { useBlogPosts } from "../hooks/useBlogPosts";
+import { usePublicUserInfo } from "../hooks/usePublicUserInfo";
 
 type BlogParams = {
     userId: string;
@@ -14,6 +15,7 @@ type BlogParams = {
 
 export const Blog = () => {
     const { userId } = useParams<BlogParams>();
+    const publicUserInfo = usePublicUserInfo(userId);
     const [page, setPage] = useState<number>(1);
 
     const [search, setSearch] = useState<string>("");
@@ -30,12 +32,12 @@ export const Blog = () => {
     return (
         <div id="blog-container">
             <Typography variant="h1" component="div" gutterBottom>
-                {posts[0]?.user.blog}
+                {publicUserInfo?.blog}
             </Typography>
             <Typography variant="h5" component="div" gutterBottom>
-                {posts[0]?.user.username}
+                {publicUserInfo?.username}
             </Typography>
-            {posts[0]?.user.btcAddress && (
+            {publicUserInfo?.btcAddress && (
                 <Typography
                     variant="subtitle1"
                     component="div"
@@ -50,7 +52,7 @@ export const Blog = () => {
                         }}
                         icon={faBitcoin}
                     />
-                    {posts[0]?.user.btcAddress}
+                    {publicUserInfo?.btcAddress}
                 </Typography>
             )}
             <PostsFilter onFreeChanged={setFree} onSearchChanged={setSearch} />

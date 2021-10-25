@@ -284,6 +284,31 @@ export const loginUser = async (
   return await response.json();
 };
 
+const getUser = async (
+  userId: string,
+  accessToken: string
+): Promise<Response> => {
+  return await fetch(`/api/users/${userId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaGetUser = async (
+  userId: string,
+  accessToken: string
+): Promise<User> => {
+  const res = await rta(getUser, userId, accessToken);
+
+  if (!res.ok) {
+    throw new Error("Failed to get user.");
+  }
+
+  return await res.json();
+};
+
 const getCurrentUser = async (accessToken: string): Promise<Response> => {
   return await fetch("/api/users/current", {
     method: "GET",
