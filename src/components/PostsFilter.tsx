@@ -94,7 +94,6 @@ export const PostsFilter = (props: Props) => {
                             checked={free}
                             onChange={handleFreeChange}
                             inputProps={{ "aria-label": "controlled" }}
-                            defaultChecked
                         />
                     }
                     label="Free"
