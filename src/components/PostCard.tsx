@@ -1,14 +1,12 @@
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
-import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { useStore } from "../store/zstore";
 import { Post } from "../utils/types";
+import { PriceChip } from "./PriceChip";
 
 interface Props {
     post: Post;
@@ -17,10 +15,10 @@ interface Props {
 export const PostCard = (props: Props) => {
     const { post } = props;
     const user = useStore((state) => state.user);
-    const paid =
-        user &&
+    const paid: boolean =
+        !!user &&
         post.price > 0 &&
-        post.payments.find((payment) => payment.userId === user._id);
+        !!post.payments.find((payment) => payment.userId === user._id);
 
     const [redirect, setRedirect] = useState<string>("");
 
@@ -46,25 +44,7 @@ export const PostCard = (props: Props) => {
                         <Typography variant="h5" component="h2" gutterBottom>
                             {post.title}
                         </Typography>
-                        {post.price === 0 && (
-                            <Chip
-                                label="Free"
-                                color="success"
-                                variant="outlined"
-                            />
-                        )}
-                        {post.price > 0 && !paid && (
-                            <LockOutlinedIcon
-                                color="warning"
-                                style={{ marginRight: 13 }}
-                            />
-                        )}
-                        {post.price > 0 && paid && (
-                            <LockOpenOutlinedIcon
-                                color="success"
-                                style={{ marginRight: 13 }}
-                            />
-                        )}
+                        <PriceChip price={post.price} paid={paid} />
                     </div>
                     <Typography variant="h6" component="h3" gutterBottom>
                         Written by:{" "}
