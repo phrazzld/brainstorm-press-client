@@ -1,12 +1,10 @@
 import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
 import Pagination from "@mui/material/Pagination";
-import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { PostsFilter } from "../components/PostsFilter";
 import { PostsList } from "../components/PostsList";
 import { useBlogPosts } from "../hooks/useBlogPosts";
 
@@ -18,12 +16,9 @@ export const Blog = () => {
     const { userId } = useParams<BlogParams>();
     const [page, setPage] = useState<number>(1);
 
+    const [search, setSearch] = useState<string>("");
     const [free, setFree] = useState<boolean>(false);
-    const { posts, totalPages } = useBlogPosts(userId, page, free);
-
-    const handleFreeChange = (event: React.ChangeEvent<unknown>): void => {
-        setFree((free: boolean) => !free);
-    };
+    const { posts, totalPages } = useBlogPosts(userId, page, free, search);
 
     const handlePaginationChange = (
         event: React.ChangeEvent<unknown>,
@@ -58,19 +53,7 @@ export const Blog = () => {
                     {posts[0]?.user.btcAddress}
                 </Typography>
             )}
-            <FormGroup>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={free}
-                            onChange={handleFreeChange}
-                            inputProps={{ "aria-label": "controlled" }}
-                            defaultChecked
-                        />
-                    }
-                    label="Only show free posts"
-                />
-            </FormGroup>
+            <PostsFilter onFreeChanged={setFree} onSearchChanged={setSearch} />
             <PostsList posts={posts} />
             <Pagination
                 count={totalPages}

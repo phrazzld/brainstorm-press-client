@@ -5,7 +5,8 @@ import { PaginatedPosts, PaginatedResponse } from "../utils/types";
 export const useBlogPosts = (
   userId: string,
   page: number,
-  free?: boolean
+  free?: boolean,
+  search?: string
 ): PaginatedPosts => {
   const [posts, setPosts] = useState<PaginatedPosts>({
     posts: [],
@@ -14,11 +15,11 @@ export const useBlogPosts = (
 
   useEffect(() => {
     if (userId) {
-      getUserPosts(userId, page, free).then((res: PaginatedResponse) =>
+      getUserPosts(userId, page, free, search).then((res: PaginatedResponse) =>
         setPosts({ posts: res.docs, totalPages: res.totalPages })
       );
     }
-  }, [userId, page, free]);
+  }, [userId, page, free, search]);
 
   return posts;
 };

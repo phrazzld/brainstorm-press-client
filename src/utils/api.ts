@@ -101,11 +101,15 @@ export const getPosts = async (
 export const getUserPosts = async (
   userId: string,
   page: number,
-  free?: boolean
+  free?: boolean,
+  search?: string
 ): Promise<PaginatedResponse> => {
   let endpoint = `/api/users/${userId}/posts?page=${page}`;
   if (free) {
     endpoint += `&free=true`;
+  }
+  if (search) {
+    endpoint += `&search=${search}`;
   }
   const response = await fetch(endpoint, {
     method: "GET",
