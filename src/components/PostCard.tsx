@@ -48,7 +48,10 @@ export const PostCard = (props: Props) => {
                     </div>
                     <Typography variant="h6" component="h3" gutterBottom>
                         Written by:{" "}
-                        <Link to={`/users/${post.user?._id}/blog`}>
+                        <Link
+                            to={`/users/${post.user?._id}/blog`}
+                            style={{ textDecoration: "none" }}
+                        >
                             {post.user.username}
                         </Link>
                     </Typography>
