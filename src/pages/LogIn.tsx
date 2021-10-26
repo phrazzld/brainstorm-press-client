@@ -11,12 +11,15 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useStore } from "../store/zstore";
 import { loginUser } from "../utils/api";
+import { Colors } from "../utils/Colors";
 
 const theme = createTheme();
 
 export const LogIn = () => {
-    const [emailInputValue, setEmailInputValue] = useState<string>("");
-    const [passwordInputValue, setPasswordInputValue] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const [formError, setFormError] = useState<string>("");
 
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
@@ -28,14 +31,19 @@ export const LogIn = () => {
     ): Promise<void> => {
         event.preventDefault();
         const body = {
-            email: emailInputValue,
-            password: passwordInputValue,
+            email: email,
+            password: password,
         };
         const response = await loginUser(body);
-        setUser(response.user);
-        setAccessToken(response.accessToken);
-        if (response.user.node) {
-            setLndToken(response.user.node.token);
+        if ("error" in response) {
+            setFormError(response.error);
+        } else {
+            setFormError("");
+            setUser(response.user);
+            setAccessToken(response.accessToken);
+            if (response.user.node) {
+                setLndToken(response.user.node.token);
+            }
         }
     };
 
@@ -72,8 +80,9 @@ export const LogIn = () => {
                             label="Email"
                             name="email"
                             autoComplete="email"
-                            value={emailInputValue}
-                            onChange={(e) => setEmailInputValue(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={!!formError}
                             autoFocus
                         />
                         <TextField
@@ -85,11 +94,21 @@ export const LogIn = () => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                            value={passwordInputValue}
-                            onChange={(e) =>
-                                setPasswordInputValue(e.target.value)
-                            }
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            error={!!formError}
                         />
+
+                        {formError && (
+                            <Typography
+                                variant="subtitle1"
+                                component="div"
+                                style={{ color: Colors.errorRed }}
+                                gutterBottom
+                            >
+                                Invalid credentials.
+                            </Typography>
+                        )}
                         <Button
                             type="submit"
                             fullWidth

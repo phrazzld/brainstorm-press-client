@@ -11,31 +11,58 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useStore } from "../store/zstore";
 import { createUser } from "../utils/api";
+import { Colors } from "../utils/Colors";
 
 const theme = createTheme();
 
 export const SignUp = () => {
-    const [usernameInputValue, setUsernameInputValue] = useState<string>("");
-    const [emailInputValue, setEmailInputValue] = useState<string>("");
-    const [passwordInputValue, setPasswordInputValue] = useState<string>("");
+    const [username, setUsername] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const [invalidUsername, setInvalidUsername] = useState<string>("");
+    const [invalidEmail, setInvalidEmail] = useState<string>("");
+    const [invalidPassword, setInvalidPassword] = useState<string>("");
+    const [formError, setFormError] = useState<string>("");
 
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken);
+
+    const clearErrors = (): void => {
+        setInvalidUsername("");
+        setInvalidEmail("");
+        setInvalidPassword("");
+        setFormError("");
+    };
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
     ): Promise<void> => {
         event.preventDefault();
         const body = {
-            username: usernameInputValue,
-            email: emailInputValue,
-            password: passwordInputValue,
-            blog: `${usernameInputValue}'s Blog`,
+            username: username,
+            email: email,
+            password: password,
+            blog: `${username}'s Blog`,
         };
         const response = await createUser(body);
-        setUser(response.user);
-        setAccessToken(response.accessToken);
+        if ("error" in response) {
+            switch (response.error) {
+                case "Username taken.":
+                    setInvalidUsername("Username not available.");
+                    break;
+                case "Email taken.":
+                    setInvalidEmail("Email already in use. Please log in.");
+                    break;
+                default:
+                    setFormError(response.error);
+            }
+        } else {
+            clearErrors();
+            setUser(response.user);
+            setAccessToken(response.accessToken);
+        }
     };
 
     if (user) {
@@ -72,10 +99,12 @@ export const SignUp = () => {
                                     fullWidth
                                     id="username"
                                     label="Username"
-                                    value={usernameInputValue}
+                                    value={username}
                                     onChange={(e) =>
-                                        setUsernameInputValue(e.target.value)
+                                        setUsername(e.target.value)
                                     }
+                                    error={!!invalidUsername || !!formError}
+                                    helperText={invalidUsername}
                                     autoFocus
                                 />
                             </Grid>
@@ -87,10 +116,10 @@ export const SignUp = () => {
                                     fullWidth
                                     id="email"
                                     label="Email"
-                                    value={emailInputValue}
-                                    onChange={(e) =>
-                                        setEmailInputValue(e.target.value)
-                                    }
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    error={!!invalidEmail || !!formError}
+                                    helperText={invalidEmail}
                                     autoFocus
                                 />
                             </Grid>
@@ -103,12 +132,26 @@ export const SignUp = () => {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
-                                    value={passwordInputValue}
+                                    value={password}
                                     onChange={(e) =>
-                                        setPasswordInputValue(e.target.value)
+                                        setPassword(e.target.value)
                                     }
+                                    error={!!invalidPassword || !!formError}
+                                    helperText={invalidPassword}
                                 />
                             </Grid>
+                            {formError && (
+                                <Grid item xs={12}>
+                                    <Typography
+                                        variant="subtitle1"
+                                        component="div"
+                                        style={{ color: Colors.errorRed }}
+                                        gutterBottom
+                                    >
+                                        {formError}
+                                    </Typography>
+                                </Grid>
+                            )}
                         </Grid>
                         <Button
                             type="submit"

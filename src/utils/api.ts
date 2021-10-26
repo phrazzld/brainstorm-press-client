@@ -1,4 +1,5 @@
 import {
+  ApiError,
   AuthenticateUserRequestBody,
   AuthResponse,
   ConnectToLndBody,
@@ -260,7 +261,7 @@ export const rtaUpdateUser = async (
 
 export const createUser = async (
   body: CreateUserRequestBody
-): Promise<AuthResponse> => {
+): Promise<AuthResponse | ApiError> => {
   const response = await fetch("/api/users", {
     method: "POST",
     headers: {
@@ -273,7 +274,7 @@ export const createUser = async (
 
 export const loginUser = async (
   body: AuthenticateUserRequestBody
-): Promise<AuthResponse> => {
+): Promise<AuthResponse | ApiError> => {
   const response = await fetch("/api/login", {
     method: "POST",
     headers: {

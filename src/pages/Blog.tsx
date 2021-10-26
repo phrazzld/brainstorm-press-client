@@ -8,6 +8,7 @@ import { PostsFilter } from "../components/PostsFilter";
 import { PostsList } from "../components/PostsList";
 import { useBlogPosts } from "../hooks/useBlogPosts";
 import { usePublicUserInfo } from "../hooks/usePublicUserInfo";
+import { Colors } from "../utils/Colors";
 
 type BlogParams = {
     userId: string;
@@ -48,7 +49,7 @@ export const Blog = () => {
                         style={{
                             fontSize: 30,
                             marginRight: 10,
-                            color: "#f2a900",
+                            color: Colors.btcOrange,
                         }}
                         icon={faBitcoin}
                     />

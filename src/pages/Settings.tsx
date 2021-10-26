@@ -69,8 +69,6 @@ export const Settings = () => {
     }
 
     // TODO: enable account deletion
-    // TODO: enable editing name
-    // TODO: enable adding email (for account recovery)
     return (
         <div id="settings-container">
             <Typography variant="h1" gutterBottom>

@@ -22,6 +22,10 @@ export type AuthResponse = {
   accessToken: string;
 };
 
+export type ApiError = {
+  error: string;
+};
+
 export type CreateUserRequestBody = {
   username: string;
   email: string;
