@@ -11,17 +11,17 @@ import { usePublicUserInfo } from "../hooks/usePublicUserInfo";
 import { Colors } from "../utils/Colors";
 
 type BlogParams = {
-    userId: string;
+    username: string;
 };
 
 export const Blog = () => {
-    const { userId } = useParams<BlogParams>();
-    const publicUserInfo = usePublicUserInfo(userId);
+    const { username } = useParams<BlogParams>();
+    const publicUserInfo = usePublicUserInfo(username);
     const [page, setPage] = useState<number>(1);
 
     const [search, setSearch] = useState<string>("");
     const [free, setFree] = useState<boolean>(false);
-    const { posts, totalPages } = useBlogPosts(userId, page, free, search);
+    const { posts, totalPages } = useBlogPosts(username, page, free, search);
 
     const handlePaginationChange = (
         event: React.ChangeEvent<unknown>,

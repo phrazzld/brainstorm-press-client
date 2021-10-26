@@ -36,6 +36,10 @@ export const SignUp = () => {
         setFormError("");
     };
 
+    const handleUsernameChange = (e: any): void => {
+        setUsername(e.target.value.replace(/[^a-zA-Z0-9_-]/gi, ""));
+    };
+
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
     ): Promise<void> => {
@@ -49,6 +53,11 @@ export const SignUp = () => {
         const response = await createUser(body);
         if ("error" in response) {
             switch (response.error) {
+                case "Invalid username.":
+                    setInvalidUsername(
+                        "Invalid username. Usernames may only contain letters, numbers, hyphens, and underscores."
+                    );
+                    break;
                 case "Username taken.":
                     setInvalidUsername("Username not available.");
                     break;
@@ -100,9 +109,7 @@ export const SignUp = () => {
                                     id="username"
                                     label="Username"
                                     value={username}
-                                    onChange={(e) =>
-                                        setUsername(e.target.value)
-                                    }
+                                    onChange={handleUsernameChange}
                                     error={!!invalidUsername || !!formError}
                                     helperText={invalidUsername}
                                     autoFocus

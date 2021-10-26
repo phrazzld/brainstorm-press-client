@@ -3,7 +3,7 @@ import { getUserPosts } from "../utils/api";
 import { PaginatedPosts, PaginatedResponse } from "../utils/types";
 
 export const useBlogPosts = (
-  userId: string,
+  username: string,
   page: number,
   free?: boolean,
   search?: string
@@ -14,12 +14,17 @@ export const useBlogPosts = (
   });
 
   useEffect(() => {
-    if (userId) {
-      getUserPosts(userId, page, free, search).then((res: PaginatedResponse) =>
+    if (username) {
+      getUserPosts(
+        username,
+        page,
+        free,
+        search
+      ).then((res: PaginatedResponse) =>
         setPosts({ posts: res.docs, totalPages: res.totalPages })
       );
     }
-  }, [userId, page, free, search]);
+  }, [username, page, free, search]);
 
   return posts;
 };

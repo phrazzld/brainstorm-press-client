@@ -46,7 +46,7 @@ function App() {
                     <Route path="/posts/:postId">
                         <Post />
                     </Route>
-                    <Route path="/users/:userId/blog">
+                    <Route path="/users/:username/blog">
                         <Blog />
                     </Route>
                     <Route path="/">

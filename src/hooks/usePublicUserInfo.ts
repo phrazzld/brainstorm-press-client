@@ -3,16 +3,16 @@ import { rtaGetUser } from "../utils/api";
 import { User } from "../utils/types";
 import { useAccessToken } from "./useAccessToken";
 
-export const usePublicUserInfo = (userId: string): User | null => {
+export const usePublicUserInfo = (username: string): User | null => {
   const [publicUser, setPublicUser] = useState<User | null>(null);
 
   const accessToken = useAccessToken();
 
   useEffect(() => {
-    if (userId) {
-      rtaGetUser(userId, accessToken).then((res) => setPublicUser(res));
+    if (username) {
+      rtaGetUser(username, accessToken).then((res) => setPublicUser(res));
     }
-  }, [accessToken, userId]);
+  }, [accessToken, username]);
 
   return publicUser;
 };

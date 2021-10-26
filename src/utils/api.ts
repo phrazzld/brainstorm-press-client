@@ -100,12 +100,12 @@ export const getPosts = async (
 };
 
 export const getUserPosts = async (
-  userId: string,
+  username: string,
   page: number,
   free?: boolean,
   search?: string
 ): Promise<PaginatedResponse> => {
-  let endpoint = `/api/users/${userId}/posts?page=${page}`;
+  let endpoint = `/api/users/${username}/posts?page=${page}`;
   if (free) {
     endpoint += `&free=true`;
   }
@@ -286,10 +286,10 @@ export const loginUser = async (
 };
 
 const getUser = async (
-  userId: string,
+  username: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/users/${userId}`, {
+  return await fetch(`/api/users/${username}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -298,10 +298,10 @@ const getUser = async (
 };
 
 export const rtaGetUser = async (
-  userId: string,
+  username: string,
   accessToken: string
 ): Promise<User> => {
-  const res = await rta(getUser, userId, accessToken);
+  const res = await rta(getUser, username, accessToken);
 
   if (!res.ok) {
     throw new Error("Failed to get user.");
