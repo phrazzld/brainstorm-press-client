@@ -13,6 +13,7 @@ import {
   PaymentStatus,
   Post,
   PostRequestBody,
+  ResetPasswordBody,
   User,
   UserRequestBody,
 } from "./types";
@@ -467,5 +468,31 @@ export const rtaDeletePost = async (
 export const deleteRefreshToken = async (): Promise<Response> => {
   return await fetch("/api/refreshToken", {
     method: "DELETE",
+  });
+};
+
+export const sendResetPasswordEmail = async (
+  email: string
+): Promise<Response> => {
+  return await fetch("/api/password-reset/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+};
+
+export const resetPassword = async (
+  body: ResetPasswordBody,
+  userId: string,
+  token: string
+): Promise<Response> => {
+  return await fetch(`/api/password-reset/${userId}/${token}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
   });
 };

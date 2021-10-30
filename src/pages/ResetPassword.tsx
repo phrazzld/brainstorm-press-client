@@ -2,54 +2,45 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
-import { useStore } from "../store/zstore";
-import { loginUser } from "../utils/api";
+import { Redirect, useParams } from "react-router-dom";
+import { resetPassword } from "../utils/api";
 import { Colors } from "../utils/Colors";
 
 const theme = createTheme();
 
-export const LogIn = () => {
-    const [email, setEmail] = useState<string>("");
+type ResetPasswordParams = {
+    userId: string;
+    token: string;
+};
+
+export const ResetPassword = () => {
+    const { userId, token } = useParams<ResetPasswordParams>();
     const [password, setPassword] = useState<string>("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState<string>(
+        ""
+    );
 
     const [redirect, setRedirect] = useState<string>("");
     const [formError, setFormError] = useState<string>("");
-
-    const setUser = useStore((state) => state.setUser);
-    const setAccessToken = useStore((state) => state.setAccessToken);
-    const setLndToken = useStore((state) => state.setLndToken);
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
     ): Promise<void> => {
         event.preventDefault();
-        const body = {
-            email: email,
-            password: password,
-        };
-        const response = await loginUser(body);
-        if ("error" in response) {
-            setFormError(response.error);
+        if (password !== passwordConfirmation) {
+            setFormError("Passwords do not match.");
         } else {
+            const body = {
+                password: password,
+            };
+            await resetPassword(body, userId, token);
             setFormError("");
-            setUser(response.user);
-            setAccessToken(response.accessToken);
-            if (response.user.node) {
-                setLndToken(response.user.node.token);
-            }
-            setRedirect("/");
+            setRedirect("/login");
         }
-    };
-
-    const handleForgotPassword = async (): Promise<void> => {
-        setRedirect("/reset-password");
     };
 
     if (redirect) {
@@ -69,7 +60,7 @@ export const LogIn = () => {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Log in
+                        Choose a new password
                     </Typography>
                     <Box
                         component="form"
@@ -81,12 +72,13 @@ export const LogIn = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email"
-                            name="email"
-                            autoComplete="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            id="password"
+                            label="Password"
+                            name="password"
+                            autoComplete="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             error={!!formError}
                             autoFocus
                         />
@@ -94,13 +86,14 @@ export const LogIn = () => {
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
-                            label="Password"
+                            name="password-confirmation"
+                            label="Confirm Password"
                             type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            id="password-confirmation"
+                            value={passwordConfirmation}
+                            onChange={(e) =>
+                                setPasswordConfirmation(e.target.value)
+                            }
                             error={!!formError}
                         />
 
@@ -111,7 +104,7 @@ export const LogIn = () => {
                                 style={{ color: Colors.errorRed }}
                                 gutterBottom
                             >
-                                Invalid credentials.
+                                {formError}
                             </Typography>
                         )}
                         <Button
@@ -120,24 +113,8 @@ export const LogIn = () => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Log In
+                            Reset Password
                         </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Link
-                                    href="#"
-                                    variant="body2"
-                                    onClick={handleForgotPassword}
-                                >
-                                    Forgot password?
-                                </Link>
-                            </Grid>
-                            <Grid item>
-                                <Link href="/signup" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
-                            </Grid>
-                        </Grid>
                     </Box>
                 </Box>
             </Container>

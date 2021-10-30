@@ -13,6 +13,8 @@ import { EditPost } from "./pages/EditPost";
 import { Home } from "./pages/Home";
 import { LogIn } from "./pages/LogIn";
 import { Post } from "./pages/Post";
+import { ResetPassword } from "./pages/ResetPassword";
+import { SendResetPasswordEmail } from "./pages/SendResetPasswordEmail";
 import { Settings } from "./pages/Settings";
 import { SignUp } from "./pages/SignUp";
 
@@ -27,6 +29,12 @@ function App() {
                     </Route>
                     <Route path="/login">
                         <LogIn />
+                    </Route>
+                    <Route path="/reset-password/:userId/:token">
+                        <ResetPassword />
+                    </Route>
+                    <Route path="/reset-password">
+                        <SendResetPasswordEmail />
                     </Route>
                     <Route path="/connect-to-lnd">
                         <ConnectToLndForm />

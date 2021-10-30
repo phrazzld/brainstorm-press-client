@@ -112,3 +112,7 @@ export type PaginatedPosts = {
   posts: Array<Post>;
   totalPages: number;
 };
+
+export type ResetPasswordBody = {
+  password: string;
+};
