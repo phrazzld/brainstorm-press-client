@@ -45,7 +45,7 @@ function App() {
                     <Route path="/posts/new">
                         <CreateNewPostForm />
                     </Route>
-                    <Route path="/posts/drafts">
+                    <Route path="/drafts">
                         <Drafts />
                     </Route>
                     <Route path="/posts/:postId/edit">

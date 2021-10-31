@@ -61,7 +61,7 @@ export const Header = () => {
                                     </IconButton>
                                 </Tooltip>
                             </Link>
-                            <Link to="/posts/drafts" style={styles.link}>
+                            <Link to="/drafts" style={styles.link}>
                                 <Tooltip title="Drafts">
                                     <IconButton
                                         size="large"

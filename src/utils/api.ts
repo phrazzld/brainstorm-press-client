@@ -35,7 +35,7 @@ const rta = async (fn: any, ...args: any): Promise<any> => {
 };
 
 export const regenerateAccessToken = async (): Promise<string> => {
-  const response = await fetch("/api/accessToken", {
+  const response = await fetch("/api/tokens/access", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -74,7 +74,7 @@ export const rtaCreatePost = async (
 };
 
 export const disconnectNode = async (lndToken: string): Promise<Response> => {
-  return await fetch("/api/node", {
+  return await fetch("/api/nodes", {
     method: "DELETE",
     headers: {
       Authorization: lndToken,
@@ -106,7 +106,7 @@ export const getUserPosts = async (
   free?: boolean,
   search?: string
 ): Promise<PaginatedResponse> => {
-  let endpoint = `/api/users/${username}/posts?page=${page}`;
+  let endpoint = `/api/posts/users/${username}?page=${page}`;
   if (free) {
     endpoint += `&free=true`;
   }
@@ -120,10 +120,11 @@ export const getUserPosts = async (
 };
 
 const getDrafts = async (
+  username: string,
   page: number,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/drafts?page=${page}`, {
+  return await fetch(`/api/posts/users/${username}/drafts?page=${page}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -132,10 +133,11 @@ const getDrafts = async (
 };
 
 export const rtaGetDrafts = async (
+  username: string,
   page: number,
   accessToken: string
 ): Promise<PaginatedResponse> => {
-  const res = await rta(getDrafts, page, accessToken);
+  const res = await rta(getDrafts, username, page, accessToken);
 
   if (!res.ok) {
     throw new Error("Failed to get drafts.");
@@ -173,7 +175,7 @@ const connectToLnd = async (
   body: ConnectToLndBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch("/api/connect", {
+  return await fetch("/api/nodes", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -197,7 +199,7 @@ export const rtaConnectToLnd = async (
 };
 
 export const getNodeInfo = async (lndToken: string): Promise<NodeInfo> => {
-  const response = await fetch("/api/node/info", {
+  const response = await fetch("/api/nodes", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -211,7 +213,7 @@ const getNodeStatus = async (
   id: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/nodes/${id}/status`, {
+  return await fetch(`/api/nodes/${id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -276,7 +278,7 @@ export const createUser = async (
 export const loginUser = async (
   body: AuthenticateUserRequestBody
 ): Promise<AuthResponse | ApiError> => {
-  const response = await fetch("/api/login", {
+  const response = await fetch("/api/users/session", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -466,7 +468,7 @@ export const rtaDeletePost = async (
 };
 
 export const deleteRefreshToken = async (): Promise<Response> => {
-  return await fetch("/api/refreshToken", {
+  return await fetch("/api/tokens/refresh", {
     method: "DELETE",
   });
 };
@@ -474,7 +476,7 @@ export const deleteRefreshToken = async (): Promise<Response> => {
 export const sendResetPasswordEmail = async (
   email: string
 ): Promise<Response> => {
-  return await fetch("/api/password-reset/", {
+  return await fetch("/api/reset-password/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -488,7 +490,7 @@ export const resetPassword = async (
   userId: string,
   token: string
 ): Promise<Response> => {
-  return await fetch(`/api/password-reset/${userId}/${token}`, {
+  return await fetch(`/api/reset-password/${userId}/${token}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

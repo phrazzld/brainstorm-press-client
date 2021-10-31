@@ -1,3 +1,4 @@
+import { useStore } from "../store/zstore";
 import { useEffect, useState } from "react";
 import { rtaGetDrafts } from "../utils/api";
 import { PaginatedPosts, PaginatedResponse } from "../utils/types";
@@ -8,15 +9,20 @@ export const useDrafts = (page: number): PaginatedPosts => {
     posts: [],
     totalPages: 0,
   });
+  const user = useStore((state) => state.user);
   const accessToken = useAccessToken();
 
   useEffect(() => {
-    if (accessToken) {
-      rtaGetDrafts(page, accessToken).then((res: PaginatedResponse) =>
+    if (accessToken && user) {
+      rtaGetDrafts(
+        user.username,
+        page,
+        accessToken
+      ).then((res: PaginatedResponse) =>
         setDrafts({ posts: res.docs, totalPages: res.totalPages })
       );
     }
-  }, [page, accessToken]);
+  }, [page, accessToken, user]);
 
   return drafts;
 };
