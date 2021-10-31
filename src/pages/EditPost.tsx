@@ -140,7 +140,6 @@ export const EditPost = () => {
 
             <div
                 style={{
-                    border: "1px solid black",
                     minHeight: "6em",
                     cursor: "text",
                     marginTop: 20,
