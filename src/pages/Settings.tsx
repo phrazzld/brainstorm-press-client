@@ -1,18 +1,25 @@
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { validate } from "bitcoin-address-validation";
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useNodeInfo } from "../hooks/useNodeInfo";
 import { useStore } from "../store/zstore";
-import { disconnectNode, rtaUpdateUser } from "../utils/api";
+import { disconnectNode, rtaDeleteUser, rtaUpdateUser } from "../utils/api";
 import { NodeInfo } from "../utils/types";
-import { validate } from "bitcoin-address-validation";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
     const accessToken = useAccessToken();
+    const setAccessToken = useStore((state) => state.setAccessToken);
     const lndToken = useStore((state) => state.lndToken);
     const setLndToken = useStore((state) => state.setLndToken);
 
@@ -28,6 +35,10 @@ export const Settings = () => {
         boolean
     >(false);
 
+    const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState<
+        boolean
+    >(false);
+
     const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
 
     const handleBlogInputChange = (event: any): void => {
@@ -36,6 +47,22 @@ export const Settings = () => {
 
     const handleBtcAddressInputChange = (event: any): void => {
         setBtcAddressInputValue(event.target.value);
+    };
+
+    const confirmAccountDeletion = (): void => {
+        setShowDeleteAccountDialog(true);
+    };
+
+    const deleteAccount = async (): Promise<void> => {
+        if (!user) {
+            throw new Error("Cannot delete user if no user is present.");
+        }
+
+        await rtaDeleteUser(user._id, accessToken);
+        setUser(null);
+        setAccessToken("");
+        setLndToken("");
+        setRedirect("/");
     };
 
     const submitEdits = (): void => {
@@ -68,7 +95,6 @@ export const Settings = () => {
         return <Redirect to={redirect} />;
     }
 
-    // TODO: enable account deletion
     return (
         <div id="settings-container">
             <Typography variant="h1" gutterBottom>
@@ -154,6 +180,41 @@ export const Settings = () => {
                     Disconnect LND Node
                 </Button>
             )}
+
+            <br />
+            <br />
+
+            <Button
+                variant="outlined"
+                color="error"
+                onClick={confirmAccountDeletion}
+            >
+                Delete Account
+            </Button>
+
+            <Dialog
+                open={showDeleteAccountDialog}
+                onClose={() => setShowDeleteAccountDialog(false)}
+            >
+                <DialogTitle>
+                    Are you sure you want to delete your account?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Deleting your account permanently deletes all of your
+                        user data, including your posts, Lightning node data,
+                        and all transaction records.
+                    </DialogContentText>
+                    <DialogActions>
+                        <Button
+                            onClick={() => setShowDeleteAccountDialog(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button onClick={deleteAccount}>Delete Account</Button>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

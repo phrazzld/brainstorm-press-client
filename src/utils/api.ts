@@ -496,3 +496,26 @@ export const resetPassword = async (
     body: JSON.stringify(body),
   });
 };
+
+const deleteUser = async (
+  userId: string,
+  accessToken: string
+): Promise<Response> => {
+  return await fetch(`/api/users/${userId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaDeleteUser = async (
+  userId: string,
+  accessToken: string
+): Promise<void> => {
+  const res = await rta(deleteUser, userId, accessToken);
+
+  if (!res.ok) {
+    throw new Error("Failed to delete user.");
+  }
+};
