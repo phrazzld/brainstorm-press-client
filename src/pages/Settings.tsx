@@ -25,15 +25,12 @@ export const Settings = () => {
 
     const [redirect, setRedirect] = useState<string>("");
 
-    const [blogInputValue, setBlogInputValue] = useState<string>(
-        user?.blog || ""
-    );
-    const [btcAddressInputValue, setBtcAddressInputValue] = useState<string>(
+    const [email, setEmail] = useState<string>(user?.email || "");
+    const [blogTitle, setBlogTitle] = useState<string>(user?.blog || "");
+    const [btcAddress, setBtcAddress] = useState<string>(
         user?.btcAddress || ""
     );
-    const [btcAddressInputInvalid, setBtcAddressInputInvalid] = useState<
-        boolean
-    >(false);
+    const [btcAddressInvalid, setBtcAddressInvalid] = useState<boolean>(false);
 
     const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState<
         boolean
@@ -41,12 +38,16 @@ export const Settings = () => {
 
     const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
 
+    const handleEmailChange = (event: any): void => {
+        setEmail(event.target.value);
+    };
+
     const handleBlogInputChange = (event: any): void => {
-        setBlogInputValue(event.target.value);
+        setBlogTitle(event.target.value);
     };
 
     const handleBtcAddressInputChange = (event: any): void => {
-        setBtcAddressInputValue(event.target.value);
+        setBtcAddress(event.target.value);
     };
 
     const confirmAccountDeletion = (): void => {
@@ -67,25 +68,34 @@ export const Settings = () => {
 
     const submitEdits = (): void => {
         if (user) {
-            // Validate input
-            if (validate(btcAddressInputValue)) {
-                setBtcAddressInputInvalid(false);
+            if (btcAddress && !validate(btcAddress)) {
+                setBtcAddressInvalid(true);
+            } else if (btcAddress && validate(btcAddress)) {
+                setBtcAddressInvalid(false);
                 const body = {
-                    blog: blogInputValue,
-                    btcAddress: btcAddressInputValue,
+                    email: email,
+                    blog: blogTitle,
+                    btcAddress: btcAddress,
                 };
                 rtaUpdateUser(user._id, body, accessToken);
             } else {
-                setBtcAddressInputInvalid(true);
+                const body = {
+                    email: email,
+                    blog: blogTitle,
+                };
+                rtaUpdateUser(user._id, body, accessToken);
             }
         }
     };
 
     useEffect(() => {
-        if (!blogInputValue && user?.blog) {
-            setBlogInputValue(user?.blog);
+        if (!blogTitle && user?.blog) {
+            setBlogTitle(user?.blog);
         }
-    }, [user, blogInputValue]);
+        if (!email && user?.email) {
+            setEmail(user?.email);
+        }
+    }, [user, blogTitle, email]);
 
     const goToConnectToLND = (): void => {
         setRedirect("/connect-to-lnd");
@@ -111,37 +121,49 @@ export const Settings = () => {
             </Typography>
 
             <TextField
-                id="edit-blog-title"
-                label="Blog"
+                id="edit-email"
+                label="Email"
                 variant="outlined"
-                onChange={handleBlogInputChange}
-                value={blogInputValue}
+                onChange={handleEmailChange}
+                value={email}
                 fullWidth
             />
 
             <br />
             <br />
 
-            {btcAddressInputInvalid && (
+            <TextField
+                id="edit-blog-title"
+                label="Blog"
+                variant="outlined"
+                onChange={handleBlogInputChange}
+                value={blogTitle}
+                fullWidth
+            />
+
+            <br />
+            <br />
+
+            {btcAddressInvalid && (
                 <TextField
                     error
                     id="edit-btc-address-invalid"
                     label="BTC Address"
                     variant="outlined"
                     onChange={handleBtcAddressInputChange}
-                    value={btcAddressInputValue}
+                    value={btcAddress}
                     helperText="Invalid BTC address"
                     fullWidth
                 />
             )}
 
-            {!btcAddressInputInvalid && (
+            {!btcAddressInvalid && (
                 <TextField
                     id="edit-btc-address"
                     label="BTC Address"
                     variant="outlined"
                     onChange={handleBtcAddressInputChange}
-                    value={btcAddressInputValue}
+                    value={btcAddress}
                     fullWidth
                 />
             )}
