@@ -314,7 +314,7 @@ export const rtaGetUser = async (
 };
 
 const getCurrentUser = async (accessToken: string): Promise<Response> => {
-  return await fetch("/api/users/current", {
+  return await fetch("/api/users", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
