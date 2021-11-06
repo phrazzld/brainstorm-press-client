@@ -1,4 +1,5 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AppBar from "@mui/material/AppBar";
@@ -70,6 +71,18 @@ export const Header = () => {
                                         aria-label="drafts"
                                     >
                                         <FileCopyOutlinedIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </Link>
+                            <Link to="/subscriptions" style={styles.link}>
+                                <Tooltip title="Subscriptions">
+                                    <IconButton
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="subscriptions"
+                                    >
+                                        <BookmarkBorderIcon />
                                     </IconButton>
                                 </Tooltip>
                             </Link>

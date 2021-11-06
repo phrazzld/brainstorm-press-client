@@ -14,6 +14,7 @@ import {
   Post,
   PostRequestBody,
   ResetPasswordBody,
+  Subscription,
   User,
   UserRequestBody,
 } from "./types";
@@ -141,6 +142,31 @@ export const rtaGetDrafts = async (
 
   if (!res.ok) {
     throw new Error("Failed to get drafts.");
+  }
+
+  return await res.json();
+};
+
+const getPostsFromSubs = async (
+  page: number,
+  accessToken: string
+): Promise<Response> => {
+  return fetch(`/api/posts/subscriptions?page=${page}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaGetPostsFromSubs = async (
+  page: number,
+  accessToken: string
+): Promise<PaginatedResponse> => {
+  const res = await rta(getPostsFromSubs, page, accessToken);
+
+  if (!res.ok) {
+    throw new Error("Failed to get posts from subs.");
   }
 
   return await res.json();
@@ -519,5 +545,77 @@ export const rtaDeleteUser = async (
 
   if (!res.ok) {
     throw new Error("Failed to delete user.");
+  }
+};
+
+const getSubs = async (accessToken: string): Promise<Response> => {
+  return fetch("/api/subscriptions", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaGetSubs = async (
+  accessToken: string
+): Promise<Array<Subscription>> => {
+  const res = await rta(getSubs, accessToken);
+
+  if (!res.ok) {
+    throw new Error("Could not get subs.");
+  }
+
+  return await res.json();
+};
+
+const subscribe = async (
+  authorId: string,
+  accessToken: string
+): Promise<Response> => {
+  return await fetch("/api/subscriptions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ authorId }),
+  });
+};
+
+export const rtaSubscribe = async (
+  authorId: string,
+  accessToken: string
+): Promise<Subscription> => {
+  const res = await rta(subscribe, authorId, accessToken);
+
+  if (!res.ok) {
+    throw new Error("Failed to subscribe.");
+  }
+
+  return await res.json();
+};
+
+const unsubscribe = async (
+  subId: string,
+  accessToken: string
+): Promise<Response> => {
+  return await fetch(`/api/subscriptions/${subId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const rtaUnsubscribe = async (
+  subId: string,
+  accessToken: string
+): Promise<void> => {
+  const res = await rta(unsubscribe, subId, accessToken);
+
+  if (!res.ok) {
+    throw new Error("Failed to unsubscribe.");
   }
 };

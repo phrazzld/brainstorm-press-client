@@ -87,6 +87,13 @@ export type User = {
   blog: string;
   btcAddress?: string;
   node: LndNode;
+  subs: Array<Subscription>;
+};
+
+export type Subscription = {
+  _id: string;
+  reader: string;
+  author: string;
 };
 
 export type NodeInfo = {

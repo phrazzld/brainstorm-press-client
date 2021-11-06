@@ -17,6 +17,7 @@ import { ResetPassword } from "./pages/ResetPassword";
 import { SendResetPasswordEmail } from "./pages/SendResetPasswordEmail";
 import { Settings } from "./pages/Settings";
 import { SignUp } from "./pages/SignUp";
+import { Subs } from "./pages/Subs";
 
 function App() {
     return (
@@ -41,6 +42,9 @@ function App() {
                     </Route>
                     <Route path="/settings">
                         <Settings />
+                    </Route>
+                    <Route path="/subscriptions">
+                        <Subs />
                     </Route>
                     <Route path="/posts/new">
                         <CreateNewPostForm />
