@@ -14,6 +14,9 @@ import { useNodeInfo } from "../hooks/useNodeInfo";
 import { useStore } from "../store/zstore";
 import { disconnectNode, rtaDeleteUser, rtaUpdateUser } from "../utils/api";
 import { NodeInfo } from "../utils/types";
+import Snackbar from "@mui/material/Snackbar";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);
@@ -23,6 +26,8 @@ export const Settings = () => {
     const lndToken = useStore((state) => state.lndToken);
     const setLndToken = useStore((state) => state.setLndToken);
 
+    const [saved, setSaved] = useState(false);
+
     const [redirect, setRedirect] = useState<string>("");
 
     const [email, setEmail] = useState<string>(user?.email || "");
@@ -30,6 +35,10 @@ export const Settings = () => {
     const [btcAddress, setBtcAddress] = useState<string>(
         user?.btcAddress || ""
     );
+    const [subscriptionPrice, setSubscriptionPrice] = useState<number>(
+        user?.subscriptionPrice || 0
+    );
+
     const [btcAddressInvalid, setBtcAddressInvalid] = useState<boolean>(false);
 
     const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState<
@@ -50,6 +59,11 @@ export const Settings = () => {
         setBtcAddress(event.target.value);
     };
 
+    const handleSubscriptionPriceChange = (event: any): void => {
+        const newPrice: number = parseInt(event.target.value, 10) || 0;
+        setSubscriptionPrice(newPrice);
+    };
+
     const confirmAccountDeletion = (): void => {
         setShowDeleteAccountDialog(true);
     };
@@ -67,6 +81,7 @@ export const Settings = () => {
     };
 
     const submitEdits = (): void => {
+        let res;
         if (user) {
             if (btcAddress && !validate(btcAddress)) {
                 setBtcAddressInvalid(true);
@@ -75,16 +90,21 @@ export const Settings = () => {
                 const body = {
                     email: email,
                     blog: blogTitle,
+                    subscriptionPrice: subscriptionPrice,
                     btcAddress: btcAddress,
                 };
-                rtaUpdateUser(user._id, body, accessToken);
+                res = rtaUpdateUser(user._id, body, accessToken);
             } else {
                 const body = {
                     email: email,
                     blog: blogTitle,
+                    subscriptionPrice: subscriptionPrice,
                 };
-                rtaUpdateUser(user._id, body, accessToken);
+                res = rtaUpdateUser(user._id, body, accessToken);
             }
+        }
+        if (res) {
+            setSaved(true);
         }
     };
 
@@ -95,11 +115,24 @@ export const Settings = () => {
         if (!email && user?.email) {
             setEmail(user?.email);
         }
-    }, [user, blogTitle, email]);
+        if (!subscriptionPrice && user?.subscriptionPrice) {
+            setSubscriptionPrice(user?.subscriptionPrice);
+        }
+    }, [user, blogTitle, email, subscriptionPrice]);
 
     const goToConnectToLND = (): void => {
         setRedirect("/connect-to-lnd");
     };
+
+    const closeSnackbarAction = (
+        <IconButton
+            size="small"
+            onClick={() => setSaved(false)}
+            color="inherit"
+        >
+            <CloseIcon fontSize="small" />
+        </IconButton>
+    );
 
     if (redirect) {
         return <Redirect to={redirect} />;
@@ -138,6 +171,18 @@ export const Settings = () => {
                 variant="outlined"
                 onChange={handleBlogInputChange}
                 value={blogTitle}
+                fullWidth
+            />
+
+            <br />
+            <br />
+
+            <TextField
+                id="edit-subscription-price"
+                label="Monthly Subscription Price (sats)"
+                variant="outlined"
+                onChange={handleSubscriptionPriceChange}
+                value={subscriptionPrice}
                 fullWidth
             />
 
@@ -213,6 +258,14 @@ export const Settings = () => {
             >
                 Delete Account
             </Button>
+
+            <Snackbar
+                open={saved}
+                autoHideDuration={3000}
+                onClose={() => setSaved(false)}
+                message="Saved changes successfully."
+                action={closeSnackbarAction}
+            />
 
             <Dialog
                 open={showDeleteAccountDialog}

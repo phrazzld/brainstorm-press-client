@@ -88,6 +88,7 @@ export type User = {
   btcAddress?: string;
   node: LndNode;
   subs: Array<Subscription>;
+  subscriptionPrice: number;
 };
 
 export type Subscription = {
