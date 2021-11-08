@@ -4,7 +4,6 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { useStore } from "../store/zstore";
 import { Post } from "../utils/types";
 import { PriceChip } from "./PriceChip";
 
@@ -14,11 +13,6 @@ interface Props {
 
 export const PostCard = (props: Props) => {
     const { post } = props;
-    const user = useStore((state) => state.user);
-    const paid: boolean =
-        !!user &&
-        post.price > 0 &&
-        !!post.payments.find((payment) => payment.userId === user._id);
 
     const [redirect, setRedirect] = useState<string>("");
 
@@ -44,7 +38,7 @@ export const PostCard = (props: Props) => {
                         <Typography variant="h5" component="h2" gutterBottom>
                             {post.title}
                         </Typography>
-                        <PriceChip price={post.price} paid={paid} />
+                        <PriceChip premium={post.premium} />
                     </div>
                     <Typography variant="h6" component="h3" gutterBottom>
                         Written by:{" "}

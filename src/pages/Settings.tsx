@@ -1,9 +1,12 @@
+import CloseIcon from "@mui/icons-material/Close";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { validate } from "bitcoin-address-validation";
@@ -14,9 +17,6 @@ import { useNodeInfo } from "../hooks/useNodeInfo";
 import { useStore } from "../store/zstore";
 import { disconnectNode, rtaDeleteUser, rtaUpdateUser } from "../utils/api";
 import { NodeInfo } from "../utils/types";
-import Snackbar from "@mui/material/Snackbar";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);

@@ -12,10 +12,10 @@ import { useAccessToken } from "../hooks/useAccessToken";
 import { usePost } from "../hooks/usePost";
 import { useStore } from "../store/zstore";
 import {
+    rtaCheckPremiumAccess,
     rtaCreateInvoice,
     rtaDeletePost,
     rtaGetNodeStatus,
-    rtaGetPayment,
     rtaLogPayment,
     rtaUpdatePost,
 } from "../utils/api";
@@ -29,6 +29,7 @@ export const Post = () => {
     const [redirect, setRedirect] = useState("");
     const [paid, setPaid] = useState(false);
     const [invoice, setInvoice] = useState<Invoice | null>(null);
+    const [checkedAccess, setCheckedAccess] = useState(false);
 
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -94,35 +95,53 @@ export const Post = () => {
             !paid &&
             !invoice &&
             !isCreator &&
-            postNodeStatus === "Connected."
+            postNodeStatus === "Connected." &&
+            checkedAccess
         ) {
             createInvoice();
         }
-    }, [post, user, paid, invoice, createInvoice, postNodeStatus]);
+    }, [
+        post,
+        user,
+        paid,
+        invoice,
+        createInvoice,
+        postNodeStatus,
+        checkedAccess,
+    ]);
 
     useEffect(() => {
-        if (postId && accessToken) {
-            rtaGetPayment(postId, accessToken).then((res) => setPaid(res.paid));
+        if (post && accessToken) {
+            rtaCheckPremiumAccess(post.user._id, accessToken).then((res) => {
+                setPaid(res.paid);
+                setCheckedAccess(true);
+            });
         }
-    }, [postId, accessToken]);
+    }, [post, accessToken]);
 
     useEffect(() => {
-        // TODO: Use wss
-        const webSocket = new WebSocket("ws://localhost:4000/api/events");
-        webSocket.onopen = () => {
-            console.debug("Connected to web socket.");
-        };
-        webSocket.onmessage = async (event) => {
-            const eventData = JSON.parse(event.data);
-            if (eventData.type === "invoice-paid") {
-                setPaid(true);
-                const body = {
-                    hash: eventData.data.hash,
-                };
-                rtaLogPayment(postId, body, accessToken);
-            }
-        };
-    }, []);
+        if (post) {
+            // TODO: Use wss
+            const webSocket = new WebSocket("ws://localhost:4000/api/events");
+            webSocket.onopen = () => {
+                console.debug("Connected to web socket.");
+            };
+            webSocket.onmessage = async (event) => {
+                console.log("ws onmessage, post:", post);
+                const eventData = JSON.parse(event.data);
+                if (eventData.type === "invoice-paid") {
+                    if (!post) {
+                        throw new Error("Cannot log payment without a post.");
+                    }
+                    setPaid(true);
+                    const body = {
+                        hash: eventData.data.hash,
+                    };
+                    rtaLogPayment(post.user._id, body, accessToken);
+                }
+            };
+        }
+    }, [post]);
 
     const editPost = (): void => {
         if (isCreator) {
@@ -186,8 +205,12 @@ export const Post = () => {
                         marginRight: "auto",
                     }}
                 >
+                    <Typography variant="h5" component="div" gutterBottom>
+                        This is a premium post.
+                    </Typography>
                     <Typography variant="h6" component="div" gutterBottom>
-                        Pay {invoice?.amount} sats to read:
+                        Pay {invoice?.amount} sats to get access to all of{" "}
+                        {post?.user.username}'s premium posts for thirty days.
                     </Typography>
                     <Box
                         style={{
@@ -215,7 +238,7 @@ export const Post = () => {
         post &&
         !isCreator &&
         !paid &&
-        post.price !== 0 &&
+        post.premium &&
         invoice &&
         !editing
     );
@@ -225,7 +248,7 @@ export const Post = () => {
         postNodeStatus !== "Looking." &&
         (isCreator ||
             paid ||
-            post.price === 0 ||
+            !post.premium ||
             postNodeStatus === "Not found.") &&
         !editing
     );
@@ -277,7 +300,7 @@ export const Post = () => {
         return <Redirect to={`/posts/${postId}/edit`} />;
     }
 
-    if (!user && post && post.price > 0) {
+    if (!user && post && post.premium) {
         return (
             <Box>
                 <Typography variant="h6" component="div" gutterBottom>

@@ -18,6 +18,9 @@ import { useAccessToken } from "../hooks/useAccessToken";
 import { usePost } from "../hooks/usePost";
 import { rtaUpdatePost } from "../utils/api";
 import { PostParams } from "../utils/types";
+import Switch from "@mui/material/Switch";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 export const EditPost = () => {
     const { postId } = useParams<PostParams>();
@@ -36,16 +39,14 @@ export const EditPost = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>(
         post?.title || ""
     );
-    const [priceInputValue, setPriceInputValue] = useState<number>(
-        post?.price || 0
-    );
+    const [premium, setPremium] = useState<boolean>(post?.premium || false);
 
     const accessToken = useAccessToken();
 
     useEffect(() => {
         if (post) {
             setTitleInputValue(post.title);
-            setPriceInputValue(post.price);
+            setPremium(post.premium);
             setEditorState(
                 EditorState.createWithContent(
                     convertFromRaw(JSON.parse(post.content))
@@ -68,7 +69,7 @@ export const EditPost = () => {
             content: JSON.stringify(
                 convertToRaw(editorState.getCurrentContent())
             ),
-            price: priceInputValue,
+            premium: premium,
             published: post.published,
         };
         await rtaUpdatePost(post._id, body, accessToken);
@@ -79,13 +80,6 @@ export const EditPost = () => {
         event: React.ChangeEvent<HTMLInputElement>
     ): void => {
         setTitleInputValue(event.target.value);
-    };
-
-    const handlePriceInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ): void => {
-        const newPrice: number = Number(event.target.value);
-        setPriceInputValue(newPrice);
     };
 
     const handleKeyCommand = (
@@ -156,19 +150,21 @@ export const EditPost = () => {
                 />
             </div>
 
-            <TextField
-                id="edit-post-price"
-                label="Price"
-                value={priceInputValue}
-                onChange={handlePriceInputChange}
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">sats</InputAdornment>
-                    ),
-                }}
-                style={styles.formField}
-                required
-            />
+            <FormGroup>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={premium}
+                            onChange={(event) =>
+                                setPremium(event.target.checked)
+                            }
+                            name="premium"
+                            color="primary"
+                        />
+                    }
+                    label="Premium"
+                />
+            </FormGroup>
 
             <div id="button-container" style={styles.formField}>
                 <Button

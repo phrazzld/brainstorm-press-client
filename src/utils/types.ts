@@ -3,7 +3,7 @@ export type NodeStatus = "Not found." | "Connected." | "Looking.";
 export type PostRequestBody = {
   title: string;
   content: string;
-  price: number;
+  premium: boolean;
   published: boolean;
 };
 
@@ -14,7 +14,10 @@ export type ConnectToLndBody = {
 };
 
 export type UserRequestBody = {
+  email: string;
   blog: string;
+  subscriptionPrice: number;
+  btcAddress?: string;
 };
 
 export type AuthResponse = {
@@ -65,10 +68,10 @@ export type Post = {
   _id: string;
   title: string;
   content: string;
-  price: number;
   published: boolean;
   user: User;
   payments: Array<PostPayment>;
+  premium: boolean;
 };
 
 export type LndNode = {

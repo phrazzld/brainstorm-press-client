@@ -1,5 +1,7 @@
 import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import {
@@ -17,7 +19,7 @@ import { rtaCreatePost } from "../utils/api";
 
 export const CreateNewPostForm = () => {
     const [titleInputValue, setTitleInputValue] = useState<string>("");
-    const [priceInputValue, setPriceInputValue] = useState<number>(0);
+    const [premium, setPremium] = useState<boolean>(false);
     const accessToken = useAccessToken();
 
     const [redirect, setRedirect] = useState<string>("");
@@ -36,20 +38,13 @@ export const CreateNewPostForm = () => {
         setTitleInputValue(event.target.value);
     };
 
-    const handlePriceInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ): void => {
-        const newPrice: number = Number(event.target.value);
-        setPriceInputValue(newPrice);
-    };
-
     const publishPost = async (): Promise<void> => {
         const body = {
             title: titleInputValue,
             content: JSON.stringify(
                 convertToRaw(editorState.getCurrentContent())
             ),
-            price: priceInputValue,
+            premium: premium,
             published: true,
         };
         const newPost = await rtaCreatePost(body, accessToken);
@@ -62,7 +57,7 @@ export const CreateNewPostForm = () => {
             content: JSON.stringify(
                 convertToRaw(editorState.getCurrentContent())
             ),
-            price: priceInputValue,
+            premium: premium,
             published: false,
         };
         await rtaCreatePost(body, accessToken);
@@ -126,19 +121,21 @@ export const CreateNewPostForm = () => {
                 />
             </div>
 
-            <TextField
-                id="edit-post-price"
-                label="Price"
-                value={priceInputValue}
-                onChange={handlePriceInputChange}
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">sats</InputAdornment>
-                    ),
-                }}
-                style={styles.formField}
-                required
-            />
+            <FormGroup>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={premium}
+                            onChange={(event) =>
+                                setPremium(event.target.checked)
+                            }
+                            name="premium"
+                            color="primary"
+                        />
+                    }
+                    label="Premium"
+                />
+            </FormGroup>
 
             <div id="button-container" style={styles.formField}>
                 <Button

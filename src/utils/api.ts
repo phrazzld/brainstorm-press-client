@@ -215,7 +215,10 @@ export const rtaConnectToLnd = async (
   body: ConnectToLndBody,
   accessToken: string
 ): Promise<LndNode> => {
+  console.log("rtaConnectToLnd, body:", body);
+  console.log("accessToken:", accessToken);
   const res = await rta(connectToLnd, body, accessToken);
+  console.log("res:", res);
 
   if (!res.ok) {
     throw new Error("Failed to connect to LND.");
@@ -416,12 +419,42 @@ export const rtaGetPayment = async (
   return await res.json();
 };
 
+// Check if current user has paid for access to premium content
+const checkPremiumAccess = async (
+  authorId: string,
+  accessToken: string
+): Promise<Response> => {
+  return await fetch(`/api/users/${authorId}/access`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const rtaCheckPremiumAccess = async (
+  authorId: string,
+  accessToken: string
+): Promise<PaymentStatus> => {
+  const res = await rta(checkPremiumAccess, authorId, accessToken);
+
+  if (UNAUTHORIZED.includes(res.status)) {
+    return { paid: false };
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to check premium access.");
+  }
+
+  return await res.json();
+};
+
 const logPayment = async (
-  postId: string,
+  userId: string,
   body: LogPaymentRequestBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/${postId}/payments`, {
+  return await fetch(`/api/users/${userId}/payments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -432,11 +465,11 @@ const logPayment = async (
 };
 
 export const rtaLogPayment = async (
-  postId: string,
+  userId: string,
   body: LogPaymentRequestBody,
   accessToken: string
 ): Promise<void> => {
-  const res = await rta(logPayment, postId, body, accessToken);
+  const res = await rta(logPayment, userId, body, accessToken);
 
   if (!res.ok) {
     console.warn("Failed to log payment.");
