@@ -72,6 +72,8 @@ export type Post = {
   user: User;
   payments: Array<PostPayment>;
   premium: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type LndNode = {
@@ -81,6 +83,8 @@ export type LndNode = {
   cert: string;
   macaroon: string;
   pubkey: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type User = {
@@ -92,12 +96,16 @@ export type User = {
   node?: LndNode;
   subs: Array<Subscription>;
   subscriptionPrice: number;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type Subscription = {
   _id: string;
   reader: string;
   author: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type NodeInfo = {

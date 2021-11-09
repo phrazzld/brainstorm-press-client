@@ -20,6 +20,8 @@ import {
     rtaUpdatePost,
 } from "../utils/api";
 import { Invoice, NodeStatus, PostParams } from "../utils/types";
+import { formatDateString } from "../utils/time";
+import EventIcon from "@mui/icons-material/Event";
 
 export const Post = () => {
     const { postId } = useParams<PostParams>();
@@ -254,14 +256,40 @@ export const Post = () => {
     );
 
     const PostContent = () => {
+        if (!post) {
+            return <></>;
+        }
+
         return (
             <>
                 <Typography variant="h1" component="div" gutterBottom>
-                    {post?.title}
+                    {post.title}
                 </Typography>
                 <Typography variant="h2" component="div" gutterBottom>
-                    Written By: {post?.user.username}
+                    Written By: {post.user.username}
                 </Typography>
+                <div
+                    style={{
+                        display: "flex",
+                        flex: 1,
+                        alignItems: "center",
+                        marginBottom: 30,
+                    }}
+                >
+                    <EventIcon
+                        style={{
+                            color: "rgba(0, 0, 0, 0.6)",
+                            marginRight: 10,
+                        }}
+                    />
+                    <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                    >
+                        {formatDateString(post.createdAt.toString())}
+                    </Typography>
+                </div>
                 <Typography variant="body1" component="div" gutterBottom>
                     <Editor
                         ref={editor}
