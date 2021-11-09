@@ -595,6 +595,10 @@ export const rtaGetSubs = async (
 ): Promise<Array<Subscription>> => {
   const res = await rta(getSubs, accessToken);
 
+  if (UNAUTHORIZED.includes(res.status)) {
+    return [];
+  }
+
   if (!res.ok) {
     throw new Error("Could not get subs.");
   }

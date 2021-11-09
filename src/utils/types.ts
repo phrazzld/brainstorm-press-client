@@ -89,7 +89,7 @@ export type User = {
   email: string;
   blog: string;
   btcAddress?: string;
-  node: LndNode;
+  node?: LndNode;
   subs: Array<Subscription>;
   subscriptionPrice: number;
 };

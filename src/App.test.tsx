@@ -12,8 +12,8 @@ describe("<App />", () => {
         expect(linkElement).toBeInTheDocument();
     });
 
-    test("renders signup link", () => {
-        const linkElement = screen.getByText(/Sign Up/i);
+    test("renders login link", () => {
+        const linkElement = screen.getByText(/Login/i);
         expect(linkElement).toBeInTheDocument();
     });
 
