@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
 import React from "react";
+import { MemoryRouter } from "react-router-dom";
+import { formatDateString } from "../utils/time";
 import { Post } from "../utils/types";
 import { PostCard } from "./PostCard";
 
@@ -20,6 +21,8 @@ describe("<PostCard />", () => {
         },
         payments: [],
         premium: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
     };
 
     beforeEach(() => {
@@ -36,6 +39,12 @@ describe("<PostCard />", () => {
 
     test("renders post author", () => {
         expect(screen.getByText(post.user.username)).toBeInTheDocument();
+    });
+
+    test("renders post createdAt formatted", () => {
+        expect(
+            screen.getByText(formatDateString(post.createdAt.toString()))
+        ).toBeInTheDocument();
     });
 
     test("renders post author as a link", () => {
