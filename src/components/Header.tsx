@@ -108,7 +108,7 @@ export const Header = () => {
                     {user && (
                         <Link
                             to={{ pathname: "/", state: { logout: true } }}
-                            style={{ textDecoration: "none", color: "inherit" }}
+                            style={styles.link}
                         >
                             <Button color="inherit">Logout</Button>
                         </Link>
