@@ -145,6 +145,7 @@ export const SignUp = () => {
                                     }
                                     error={!!invalidPassword || !!formError}
                                     helperText={invalidPassword}
+                                    inputProps={{ "data-testid": "password" }}
                                 />
                             </Grid>
                             {formError && (
