@@ -34,28 +34,28 @@ describe("<PostCard />", () => {
         );
     });
 
-    test("renders post title", () => {
+    it("should render post title", () => {
         expect(screen.getByText(post.title)).toBeInTheDocument();
     });
 
-    test("renders post author", () => {
+    it("should render post author", () => {
         expect(screen.getByText(post.user.username)).toBeInTheDocument();
     });
 
-    test("renders post createdAt formatted", () => {
+    it("should render post createdAt formatted", () => {
         expect(
             screen.getByText(formatDateString(post.createdAt.toString()))
         ).toBeInTheDocument();
     });
 
-    test("renders post author as a link", () => {
+    it("should render post author as a link", () => {
         expect(screen.getByText(post.user.username)).toHaveAttribute(
             "href",
             `/users/${post.user.username}/blog`
         );
     });
 
-    test("renders 'Free' when post is not premium", () => {
+    it("should render 'Free' when post is not premium", () => {
         expect(screen.getByText("Free")).toBeInTheDocument();
     });
 });

@@ -12,7 +12,7 @@ describe("<Header />", () => {
         );
     });
 
-    test('renders "Login" link', () => {
+    it('should render "Login" link', () => {
         expect(screen.getByText(/login/i)).toBeInTheDocument();
     });
 });

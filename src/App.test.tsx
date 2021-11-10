@@ -7,17 +7,17 @@ describe("<App />", () => {
         render(<App />);
     });
 
-    test('renders "Brainstorm Press" link', () => {
+    it('should render "Brainstorm Press" link', () => {
         const linkElement = screen.getByText(/Brainstorm Press/i);
         expect(linkElement).toBeInTheDocument();
     });
 
-    test("renders login link", () => {
+    it("should render login link", () => {
         const linkElement = screen.getByText(/Login/i);
         expect(linkElement).toBeInTheDocument();
     });
 
-    test('renders "No posts found" message', () => {
+    it('should render "No posts found" message', () => {
         const noPostsFound = screen.getByText(/No posts found/i);
         expect(noPostsFound).toBeInTheDocument();
     });

@@ -9,11 +9,11 @@ describe("<PostsFilter />", () => {
         );
     });
 
-    test("render search bar", () => {
+    it("should render search bar", () => {
         expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
     });
 
-    test("render filter for free posts", () => {
+    it("should render filter for free posts", () => {
         expect(screen.getByText("Free")).toBeInTheDocument();
     });
 });
