@@ -59,18 +59,12 @@ export type PostParams = {
   postId: string;
 };
 
-type PostPayment = {
-  postId: string;
-  userId: string;
-};
-
 export type Post = {
   _id: string;
   title: string;
   content: string;
   published: boolean;
   user: User;
-  payments: Array<PostPayment>;
   premium: boolean;
   createdAt: Date;
   updatedAt: Date;
