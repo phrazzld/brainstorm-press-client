@@ -102,6 +102,7 @@ export const LogIn = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             error={!!formError}
+                            inputProps={{ "data-testid": "password" }}
                         />
 
                         {formError && (

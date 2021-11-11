@@ -12,6 +12,7 @@ import { Redirect } from "react-router-dom";
 import { useStore } from "../store/zstore";
 import { createUser } from "../utils/api";
 import { Colors } from "../utils/Colors";
+import { isValidEmail } from "../utils/validation";
 
 const theme = createTheme();
 
@@ -44,33 +45,37 @@ export const SignUp = () => {
         event: React.FormEvent<HTMLFormElement>
     ): Promise<void> => {
         event.preventDefault();
-        const body = {
-            username: username,
-            email: email,
-            password: password,
-            blog: `${username}'s Blog`,
-        };
-        const response = await createUser(body);
-        if ("error" in response) {
-            switch (response.error) {
-                case "Invalid username.":
-                    setInvalidUsername(
-                        "Invalid username. Usernames may only contain letters, numbers, hyphens, and underscores."
-                    );
-                    break;
-                case "Username taken.":
-                    setInvalidUsername("Username not available.");
-                    break;
-                case "Email taken.":
-                    setInvalidEmail("Email already in use. Please log in.");
-                    break;
-                default:
-                    setFormError(response.error);
+        if (isValidEmail(email)) {
+            const body = {
+                username: username,
+                email: email,
+                password: password,
+                blog: `${username}'s Blog`,
+            };
+            const response = await createUser(body);
+            if ("error" in response) {
+                switch (response.error) {
+                    case "Invalid username.":
+                        setInvalidUsername(
+                            "Invalid username. Usernames may only contain letters, numbers, hyphens, and underscores."
+                        );
+                        break;
+                    case "Username taken.":
+                        setInvalidUsername("Username not available.");
+                        break;
+                    case "Email taken.":
+                        setInvalidEmail("Email already in use. Please log in.");
+                        break;
+                    default:
+                        setFormError(response.error);
+                }
+            } else {
+                clearErrors();
+                setUser(response.user);
+                setAccessToken(response.accessToken);
             }
         } else {
-            clearErrors();
-            setUser(response.user);
-            setAccessToken(response.accessToken);
+            setInvalidEmail("Please enter a valid email address.");
         }
     };
 
