@@ -65,7 +65,7 @@ export const ConnectToLndForm = () => {
             <div id="cert-input-container">
                 <TextField
                     id="tls-hex-cert"
-                    label="TSL Certificate (HEX)"
+                    label="TLS Certificate (HEX)"
                     variant="filled"
                     value={certInputValue}
                     onChange={handleCertInputChange}
@@ -94,10 +94,18 @@ export const ConnectToLndForm = () => {
                 </Typography>
             </div>
             <div id="connect-to-lnd-submit-container">
-                <Button variant="contained" onClick={connectToLnd} style={styles.button}>
+                <Button
+                    variant="contained"
+                    onClick={connectToLnd}
+                    style={styles.button}
+                >
                     Submit
                 </Button>
-                <Button variant="outlined" onClick={cancel} style={styles.button}>
+                <Button
+                    variant="outlined"
+                    onClick={cancel}
+                    style={styles.button}
+                >
                     Cancel
                 </Button>
             </div>
@@ -107,9 +115,9 @@ export const ConnectToLndForm = () => {
 
 const styles = {
     button: {
-        marginRight: 10
+        marginRight: 10,
     },
     formField: {
-        marginTop: 20
-    }
-}
+        marginTop: 20,
+    },
+};
