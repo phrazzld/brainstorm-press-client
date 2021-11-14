@@ -21,7 +21,7 @@ import {
 
 const UNAUTHORIZED = [401, 403];
 
-// rta = refresh token and
+// rta = regenerate token and
 // Assumes accessToken is the last arg
 const rta = async (fn: any, ...args: any): Promise<any> => {
   const response = await fn.apply(null, args);
