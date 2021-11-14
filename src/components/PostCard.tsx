@@ -27,7 +27,7 @@ export const PostCard = (props: Props) => {
     }
 
     return (
-        <Card style={styles.card}>
+        <Card className="post-card" style={styles.card}>
             <CardActionArea onClick={goToPost}>
                 <CardContent>
                     <div
