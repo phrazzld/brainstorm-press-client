@@ -68,11 +68,11 @@ export const PostsFilter = (props: Props) => {
 
     useEffect(() => {
         onFreeChanged(free);
-    }, [free]);
+    }, [free, onFreeChanged]);
 
     useEffect(() => {
         onSearchChanged(query);
-    }, [query]);
+    }, [query, onSearchChanged]);
 
     return (
         <Box style={{ display: "flex", justifyContent: "space-between" }}>

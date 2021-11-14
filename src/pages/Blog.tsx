@@ -41,7 +41,7 @@ export const Blog = () => {
         } else if (!sub && subscribed) {
             setSubscribed(false);
         }
-    }, [sub]);
+    }, [sub, subscribed]);
 
     const handlePaginationChange = (
         event: React.ChangeEvent<unknown>,

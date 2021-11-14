@@ -1,3 +1,4 @@
+import EventIcon from "@mui/icons-material/Event";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -19,9 +20,8 @@ import {
     rtaLogPayment,
     rtaUpdatePost,
 } from "../utils/api";
-import { Invoice, NodeStatus, PostParams } from "../utils/types";
 import { formatDateString } from "../utils/time";
-import EventIcon from "@mui/icons-material/Event";
+import { Invoice, NodeStatus, PostParams } from "../utils/types";
 
 export const Post = () => {
     const { postId } = useParams<PostParams>();
@@ -75,22 +75,22 @@ export const Post = () => {
         if (post && !post.user.node) {
             setPostNodeStatus("Not found.");
         }
-    }, [post]);
-
-    const createInvoice = async () => {
-        if (!user) {
-            throw new Error("Cannot create invoice without a user.");
-        }
-
-        const response = await rtaCreateInvoice(postId, accessToken);
-        setInvoice({
-            payreq: response.payreq,
-            hash: response.hash,
-            amount: response.amount,
-        });
-    };
+    }, [post, accessToken]);
 
     useEffect(() => {
+        const createInvoice = async () => {
+            if (!user) {
+                throw new Error("Cannot create invoice without a user.");
+            }
+
+            const response = await rtaCreateInvoice(postId, accessToken);
+            setInvoice({
+                payreq: response.payreq,
+                hash: response.hash,
+                amount: response.amount,
+            });
+        };
+
         if (
             post &&
             user &&
@@ -107,9 +107,11 @@ export const Post = () => {
         user,
         paid,
         invoice,
-        createInvoice,
         postNodeStatus,
         checkedAccess,
+        isCreator,
+        accessToken,
+        postId,
     ]);
 
     useEffect(() => {
@@ -143,7 +145,7 @@ export const Post = () => {
                 }
             };
         }
-    }, [post]);
+    }, [post, accessToken]);
 
     const editPost = (): void => {
         if (isCreator) {

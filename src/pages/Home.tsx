@@ -19,13 +19,6 @@ export const Home = () => {
     const [page, setPage] = useState<number>(1);
     const { posts, totalPages } = usePosts(page, free, search);
 
-    const destroySession = async (): Promise<void> => {
-        await deleteRefreshToken();
-        setLndToken("");
-        setAccessToken("");
-        setUser(null);
-    };
-
     const handlePaginationChange = (
         event: React.ChangeEvent<unknown>,
         value: number
@@ -34,10 +27,17 @@ export const Home = () => {
     };
 
     useEffect(() => {
+        const destroySession = async (): Promise<void> => {
+            await deleteRefreshToken();
+            setLndToken("");
+            setAccessToken("");
+            setUser(null);
+        };
+
         if (logout) {
             destroySession();
         }
-    }, [logout]);
+    }, [logout, setAccessToken, setLndToken, setUser]);
 
     return (
         <>

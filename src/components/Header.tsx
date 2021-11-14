@@ -33,7 +33,7 @@ export const Header = () => {
                 }
             });
         }
-    }, [user, accessToken]);
+    }, [user, accessToken, setLndToken, setUser]);
 
     return (
         <Box style={styles.headerContainer as React.CSSProperties}>

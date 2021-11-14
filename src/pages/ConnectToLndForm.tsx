@@ -12,7 +12,6 @@ export const ConnectToLndForm = () => {
     const [macaroonInputValue, setMacaroonInputValue] = useState<string>("");
 
     const accessToken = useStore((state) => state.accessToken);
-    const lndToken = useStore((state) => state.lndToken);
     const setLndToken = useStore((state) => state.setLndToken);
 
     const [redirect, setRedirect] = useState<string>("");

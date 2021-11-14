@@ -12,7 +12,7 @@ export const useAccessToken = (): string => {
         setAccessToken(res === "Invalid refresh token." ? "" : res)
       );
     }
-  }, [accessToken]);
+  }, [accessToken, setAccessToken]);
 
   return accessToken;
 };

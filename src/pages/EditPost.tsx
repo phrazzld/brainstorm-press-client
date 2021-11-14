@@ -1,6 +1,8 @@
 import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import Skeleton from "@mui/material/Skeleton";
+import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import {
@@ -18,9 +20,6 @@ import { useAccessToken } from "../hooks/useAccessToken";
 import { usePost } from "../hooks/usePost";
 import { rtaUpdatePost } from "../utils/api";
 import { PostParams } from "../utils/types";
-import Switch from "@mui/material/Switch";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 
 export const EditPost = () => {
     const { postId } = useParams<PostParams>();
