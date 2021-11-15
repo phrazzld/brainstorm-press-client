@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Pagination from "@mui/material/Pagination";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { PostsFilter } from "../components/PostsFilter";
 import { PostsList } from "../components/PostsList";
@@ -70,6 +71,9 @@ export const Blog = () => {
 
     return (
         <div id="blog-container">
+            <Helmet>
+                <title>{`${publicUserInfo?.blog} - Brainstorm Press`}</title>
+            </Helmet>
             <Typography variant="h1" component="div" gutterBottom>
                 {publicUserInfo?.blog}
             </Typography>

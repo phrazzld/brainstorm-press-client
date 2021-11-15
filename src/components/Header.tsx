@@ -53,6 +53,7 @@ export const Header = () => {
                             <Link to="/posts/new" style={styles.link}>
                                 <Tooltip title="Create">
                                     <IconButton
+                                        id="create-post-header-button"
                                         size="large"
                                         edge="start"
                                         color="inherit"
@@ -65,6 +66,7 @@ export const Header = () => {
                             <Link to="/drafts" style={styles.link}>
                                 <Tooltip title="Drafts">
                                     <IconButton
+                                        id="drafts-header-button"
                                         size="large"
                                         edge="start"
                                         color="inherit"
@@ -77,6 +79,7 @@ export const Header = () => {
                             <Link to="/subscriptions" style={styles.link}>
                                 <Tooltip title="Subscriptions">
                                     <IconButton
+                                        id="subs-header-button"
                                         size="large"
                                         edge="start"
                                         color="inherit"
@@ -89,6 +92,7 @@ export const Header = () => {
                             <Link to="/settings" style={styles.link}>
                                 <Tooltip title="Settings">
                                     <IconButton
+                                        id="settings-header-button"
                                         size="large"
                                         edge="start"
                                         color="inherit"

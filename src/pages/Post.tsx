@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { convertFromRaw, Editor, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import QRCode from "react-qr-code";
 import { Link, Redirect, useParams } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
@@ -343,6 +344,11 @@ export const Post = () => {
 
     return (
         <div id="post-container">
+            <Helmet>
+                <title>
+                    {`${post?.title} - ${post?.user.username} - Brainstorm Press`}
+                </title>
+            </Helmet>
             {loading && <LoadingPostSkeleton />}
 
             {showPaywall && <Paywall />}

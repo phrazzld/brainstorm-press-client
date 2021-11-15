@@ -81,6 +81,7 @@ export const PostsFilter = (props: Props) => {
                     <SearchIcon color="info" />
                 </SearchIconWrapper>
                 <StyledInputBase
+                    id="search-bar"
                     placeholder="Search..."
                     inputProps={{ "aria-label": "search" }}
                     value={searchInputValue}
@@ -91,6 +92,7 @@ export const PostsFilter = (props: Props) => {
                 <FormControlLabel
                     control={
                         <Switch
+                            id="free-posts-search-toggle"
                             checked={free}
                             onChange={handleFreeChange}
                             inputProps={{ "aria-label": "controlled" }}
