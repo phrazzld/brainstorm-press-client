@@ -3,7 +3,6 @@ import { MemoryRouter, Route } from "react-router";
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useBlogPosts } from "../hooks/useBlogPosts";
 import { usePublicUserInfo } from "../hooks/usePublicUserInfo";
-import { useSubs } from "../hooks/useSubs";
 import { useStore } from "../store/zstore";
 import { Post, User } from "../utils/types";
 import { Blog } from "./Blog";
@@ -12,7 +11,6 @@ jest.mock("../hooks/usePublicUserInfo");
 jest.mock("../hooks/useAccessToken");
 jest.mock("../hooks/useBlogPosts");
 jest.mock("../store/zstore");
-jest.mock("../hooks/useSubs");
 
 describe("<Blog />", () => {
     // Create test user
@@ -68,7 +66,6 @@ describe("<Blog />", () => {
         useStore.mockReturnValue({
             user: user,
         });
-        useSubs.mockReturnValue([]);
 
         render(
             <MemoryRouter initialEntries={[`/users/TestUser/blog`]}>

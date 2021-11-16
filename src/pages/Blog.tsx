@@ -11,10 +11,10 @@ import { PostsList } from "../components/PostsList";
 import { useAccessToken } from "../hooks/useAccessToken";
 import { useBlogPosts } from "../hooks/useBlogPosts";
 import { usePublicUserInfo } from "../hooks/usePublicUserInfo";
-import { useSubs } from "../hooks/useSubs";
 import { useStore } from "../store/zstore";
-import { rtaSubscribe, rtaUnsubscribe } from "../utils/api";
+import { rtaGetSubs, rtaSubscribe, rtaUnsubscribe } from "../utils/api";
 import { Colors } from "../utils/Colors";
+import { Subscription } from "../utils/types";
 
 type BlogParams = {
     username: string;
@@ -32,17 +32,39 @@ export const Blog = () => {
     const { posts, totalPages } = useBlogPosts(username, page, free, search);
 
     const isAuthor = publicUserInfo?._id === user?._id;
-    const subs = useSubs();
-    const sub = subs?.find((sub) => sub.author === publicUserInfo?._id);
+    const [subs, setSubs] = useState<Array<Subscription>>([]);
+    const [sub, setSub] = useState<Subscription | null>(null);
     const [subscribed, setSubscribed] = useState<boolean>(!!sub);
 
+    // Fetch subscriptions on mount, and when the user subscribes and unsubscribes
     useEffect(() => {
-        if (sub && !subscribed) {
+        if (accessToken) {
+            rtaGetSubs(accessToken).then((res: Array<Subscription>) =>
+                setSubs([...res])
+            );
+        }
+    }, [accessToken, subscribed]);
+
+    // Find the subscription for the current author when reader's subs are loaded
+    useEffect(() => {
+        if (subs) {
+            const s = subs.find((s) => s.author === publicUserInfo?._id);
+            if (s) {
+                setSub({ ...s });
+            } else {
+                setSub(null);
+            }
+        }
+    }, [subs]);
+
+    // Change subscribed state when sub changes
+    useEffect(() => {
+        if (sub) {
             setSubscribed(true);
-        } else if (!sub && subscribed) {
+        } else {
             setSubscribed(false);
         }
-    }, [sub, subscribed]);
+    }, [sub]);
 
     const handlePaginationChange = (
         event: React.ChangeEvent<unknown>,

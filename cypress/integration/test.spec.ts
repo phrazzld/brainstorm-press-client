@@ -69,17 +69,80 @@ describe("Unauthenticated", () => {
 });
 
 describe("Authenticated", () => {
+  const TEST_USER = {
+    username: "cypress-tester",
+    email: "cypress@test.net",
+    password: "test-password",
+  };
+
+  // Create a user before this test suite
+  before(() => {
+    cy.visit(BASE_URL);
+    cy.contains("Login").click();
+    cy.contains("Sign Up").click();
+    // Fill out form
+    cy.get("#username")
+      .type(TEST_USER.username)
+      .should("have.value", TEST_USER.username);
+    cy.get("#email")
+      .type(TEST_USER.email)
+      .should("have.value", TEST_USER.email);
+    cy.get("#password")
+      .type(TEST_USER.password)
+      .should("have.value", TEST_USER.password);
+    // Submit form
+    cy.get("button").contains("Sign Up").click();
+    cy.contains("Logout").click();
+    // Should be redirected to homepage after signup
+    cy.url().should("eq", `${BASE_URL}/`);
+  });
+
+  // Delete the user after this test suite
+  after(() => {
+    cy.visit(BASE_URL);
+    // Login
+    cy.contains("Login").click();
+    cy.get("#email")
+      .type(TEST_USER.email)
+      .should("have.value", TEST_USER.email);
+    cy.get("#password")
+      .type(TEST_USER.password)
+      .should("have.value", TEST_USER.password);
+    cy.get("button").contains("Log In").click();
+    // Go to settings page
+    cy.url().should("eq", `${BASE_URL}/`);
+    cy.get("#settings-header-button").click();
+    // Delete user
+    cy.contains("Delete Account").click();
+    cy.contains("Are you sure you want to delete your account?");
+    cy.get("#delete-account").click();
+    // Should get redirected to homepage after deleting account
+    cy.url().should("eq", `${BASE_URL}/`);
+    // Confirm the user cannot login
+    cy.contains("Login").click();
+    cy.get("#email")
+      .type(TEST_USER.email)
+      .should("have.value", TEST_USER.email);
+    cy.get("#password")
+      .type(TEST_USER.password)
+      .should("have.value", TEST_USER.password);
+    cy.get("button").contains("Log In").click();
+    cy.contains("Invalid credentials");
+  });
+
   beforeEach(() => {
     cy.visit(BASE_URL);
     cy.contains("Login").click();
+    // Fill out for
     cy.get("#email")
-      .type("alice@test.net")
-      .should("have.value", "alice@test.net");
-    cy.get("#password").type("alice").should("have.value", "alice");
+      .type(TEST_USER.email)
+      .should("have.value", TEST_USER.email);
+    cy.get("#password")
+      .type(TEST_USER.password)
+      .should("have.value", TEST_USER.password);
+    // Submit form
     cy.get("button").contains("Log In").click();
-  });
-
-  it("should redirect you to the home screen after login", () => {
+    // Should be redirected to homepage after login
     cy.url().should("eq", `${BASE_URL}/`);
   });
 
@@ -90,7 +153,7 @@ describe("Authenticated", () => {
     cy.get("#settings-header-button").should("exist");
   });
 
-  it("should log you out when you click the logout button in the header", () => {
+  it("logout and login via the header should work", () => {
     cy.contains("Logout").click();
     cy.url().should("eq", `${BASE_URL}/`);
     cy.contains("Login").should("exist");
@@ -99,12 +162,29 @@ describe("Authenticated", () => {
     cy.get("#drafts-header-button").should("not.exist");
     cy.get("#subs-header-button").should("not.exist");
     cy.get("#settings-header-button").should("not.exist");
+    cy.contains("Login").click();
+    cy.get("#email")
+      .type(TEST_USER.email)
+      .should("have.value", TEST_USER.email);
+    cy.get("#password")
+      .type(TEST_USER.password)
+      .should("have.value", TEST_USER.password);
+    cy.get("button").contains("Log In").click();
+    cy.url().should("eq", `${BASE_URL}/`);
   });
 
   describe("subscriptions", () => {
-    it(
-      "subscribes to an author when you click the subscribe button on their blog"
-    );
+    it("subscribes to an author when you click the subscribe button on their blog", () => {
+      cy.get(".post-card a")
+        .first()
+        .invoke("text")
+        .then((text) => {
+          cy.get(".post-card a").first().click();
+          cy.url().should("include", `/users/${text}/blog`);
+          cy.contains("Subscribe").click();
+          cy.contains("Unsubscribe");
+        });
+    });
 
     it(
       "subs page should show a feed of posts from authors you're subscribed to"

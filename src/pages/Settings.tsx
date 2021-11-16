@@ -64,7 +64,7 @@ export const Settings = () => {
         setSubscriptionPrice(newPrice);
     };
 
-    const confirmAccountDeletion = (): void => {
+    const promptToDeleteAccount = (): void => {
         setShowDeleteAccountDialog(true);
     };
 
@@ -252,9 +252,10 @@ export const Settings = () => {
             <br />
 
             <Button
+                id="prompt-to-delete-account"
                 variant="outlined"
                 color="error"
-                onClick={confirmAccountDeletion}
+                onClick={promptToDeleteAccount}
             >
                 Delete Account
             </Button>
@@ -286,7 +287,9 @@ export const Settings = () => {
                         >
                             Cancel
                         </Button>
-                        <Button onClick={deleteAccount}>Delete Account</Button>
+                        <Button id="delete-account" onClick={deleteAccount}>
+                            Delete Account
+                        </Button>
                     </DialogActions>
                 </DialogContent>
             </Dialog>
