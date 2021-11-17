@@ -1,4 +1,56 @@
 const BASE_URL = "http://localhost:3000";
+const ALICE = {
+  LND: {
+    HOST: "127.0.0.1:10001",
+    CERT:
+      "2d2d2d2d2d424547494e2043455254494649434154452d2d2d2d2d0a4d4949434a6a43434163796741774942416749514f744f7161464a695257733157517934663836585944414b42676771686b6a4f50515144416a41784d5238770a485159445651514b45785a73626d5167595856306232646c626d56795958526c5a43426a5a584a304d51347744415944565151444577566862476c6a5a5441650a467730794d5445774d6a49774d5449784d446861467730794d6a45794d5463774d5449784d4468614d444578487a416442674e5642416f54466d78755a4342680a645852765a3256755a584a686447566b49474e6c636e5178446a414d42674e5642414d544257467361574e6c4d466b77457759484b6f5a497a6a3043415159490a4b6f5a497a6a30444151634451674145464f41416551756a465a466335394b7877483158384759626d5752366a6b6856744679666a6d4273356773574e5249430a63655666336f4450394f4162514f6b37526a786c3766476e36316e487953665872766b4e37614f4278544342776a414f42674e56485138424166384542414d430a41715177457759445652306c42417777436759494b775942425155484177457744775944565230544151482f42415577417745422f7a416442674e56485134450a46675155444e45545172495649446368576a6261784649366f55437566513877617759445652305242475177596f4946595778705932574343577876593246730a6147397a644949465957787059325743446e4276624746794c5734304c57467361574e6c67675231626d6c3467677031626d6c346347466a61325630676764690a64575a6a623235756877522f4141414268784141414141414141414141414141414141414141414268775373464141464d416f4743437147534d343942414d430a413067414d4555434951444b48427175585272366a6165443442306c774667436945534c64576d386b79366141796952364556746d51496762696162706c67540a79592b346c3736447a71574832454d536e635a4c594f77574e44506e7946554d4157303d0a2d2d2d2d2d454e442043455254494649434154452d2d2d2d2d0a",
+    MACAROON:
+      "0201036c6e640267030a10fd411edacb4d02ecaebc7cb2ba90bccd1201301a0c0a04696e666f1204726561641a170a08696e766f69636573120472656164120577726974651a160a076d657373616765120472656164120577726974651a100a086f6666636861696e120472656164000006202922dcca3b07acbe09572a2aa949b6273de9b0e0d17df43658c98c69f4650a75",
+  },
+};
+
+before(() => {
+  // Cleanup: disconnect Alice's LND node
+  cy.visit(BASE_URL);
+  cy.contains("Login").click();
+  cy.get("#email")
+    .type("alice@test.net")
+    .should("have.value", "alice@test.net");
+  cy.get("#password").type("alice").should("have.value", "alice");
+  cy.get("button").contains("Log In").click();
+  cy.get("#settings-header-button").click();
+  cy.contains("Disconnect LND Node").click();
+
+  // Connect Alice's LND node
+  cy.contains("Connect to LND").click();
+  cy.url().should("include", "/connect-to-lnd");
+  cy.get("#host").type(ALICE.LND.HOST).should("have.value", ALICE.LND.HOST);
+  cy.get("#tls-hex-cert")
+    .click()
+    .then(($input) => {
+      $input.text(ALICE.LND.CERT);
+      $input.val(ALICE.LND.CERT);
+      cy.get("#tls-hex-cert").type(" {backspace}");
+    })
+    .should("have.value", ALICE.LND.CERT);
+  cy.get("#macaroon")
+    .click()
+    .then(($input) => {
+      $input.text(ALICE.LND.MACAROON);
+      $input.val(ALICE.LND.MACAROON);
+      cy.get("#macaroon").type(" {backspace}");
+    })
+    .should("have.value", ALICE.LND.MACAROON);
+  cy.contains(
+    "lncli bakemacaroon info:read offchain:read invoices:read invoices:write message:read message:write"
+  );
+  cy.contains("Cancel");
+  cy.contains("Submit").click();
+  cy.url().should("include", "/settings");
+  cy.contains("Disconnect LND Node");
+  cy.contains("Balance:");
+  cy.contains("Logout").click();
+});
 
 describe("Unauthenticated", () => {
   beforeEach(() => {
@@ -75,30 +127,9 @@ describe("Authenticated", () => {
     password: "test-password",
   };
 
-  // Create a user before this test suite
+  // Clean up state, and create a user before this test suite
   before(() => {
-    cy.visit(BASE_URL);
-    cy.contains("Login").click();
-    cy.contains("Sign Up").click();
-    // Fill out form
-    cy.get("#username")
-      .type(TEST_USER.username)
-      .should("have.value", TEST_USER.username);
-    cy.get("#email")
-      .type(TEST_USER.email)
-      .should("have.value", TEST_USER.email);
-    cy.get("#password")
-      .type(TEST_USER.password)
-      .should("have.value", TEST_USER.password);
-    // Submit form
-    cy.get("button").contains("Sign Up").click();
-    cy.contains("Logout").click();
-    // Should be redirected to homepage after signup
-    cy.url().should("eq", `${BASE_URL}/`);
-  });
-
-  // Delete the user after this test suite
-  after(() => {
+    // Clean up state
     cy.visit(BASE_URL);
     // Login
     cy.contains("Login").click();
@@ -128,6 +159,26 @@ describe("Authenticated", () => {
       .should("have.value", TEST_USER.password);
     cy.get("button").contains("Log In").click();
     cy.contains("Invalid credentials");
+
+    // Create test user
+    cy.visit(BASE_URL);
+    cy.contains("Login").click();
+    cy.contains("Sign Up").click();
+    // Fill out form
+    cy.get("#username")
+      .type(TEST_USER.username)
+      .should("have.value", TEST_USER.username);
+    cy.get("#email")
+      .type(TEST_USER.email)
+      .should("have.value", TEST_USER.email);
+    cy.get("#password")
+      .type(TEST_USER.password)
+      .should("have.value", TEST_USER.password);
+    // Submit form
+    cy.get("button").contains("Sign Up").click();
+    cy.contains("Logout").click();
+    // Should be redirected to homepage after signup
+    cy.url().should("eq", `${BASE_URL}/`);
   });
 
   beforeEach(() => {
@@ -211,15 +262,11 @@ describe("Authenticated", () => {
     it("edits a published post");
   });
 
-  describe("settings", () => {
-    it("settings page should let you view and edit your user info");
-
-    it("settings page should let you connect and disconnect your LND node");
-
-    it("settings page should let you delete your account");
-  });
+  it("settings page should let you view and edit your user info");
 
   describe("LND", () => {
+    it("settings page should let you connect and disconnect your LND node");
+
     it("premium posts are paywalled with a Lightning invoice");
 
     it(
