@@ -14,6 +14,8 @@ Corresponding API code [here](https://github.com/phrazzld/brainstorm-press-expre
 
 `node_modules/.bin/cypress open` will run end-to-end tests built with [Cypress](https://www.cypress.io/).
 
+End-to-end tests depend on network access to the MongoDB Atlas cluster, as well as a locally running instance of Brainstorm Press's API and a locally running Lightning Network (like [Polar](https://lightningpolar.com/)).
+
 ## Acknowledgements
 
 This project is largely based on the [Lightning Labs Builder's Guide](https://docs.lightning.engineering/lapps/guides). Huge shoutout to Lightning Labs.
