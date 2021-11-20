@@ -75,7 +75,13 @@ export const PostsFilter = (props: Props) => {
     }, [query, onSearchChanged]);
 
     return (
-        <Box style={{ display: "flex", justifyContent: "space-between" }}>
+        <Box
+            style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: 10,
+            }}
+        >
             <Search>
                 <SearchIconWrapper>
                     <SearchIcon color="info" />

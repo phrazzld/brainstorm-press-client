@@ -1,6 +1,7 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -114,7 +115,17 @@ export const Header = () => {
                             to={{ pathname: "/", state: { logout: true } }}
                             style={styles.link}
                         >
-                            <Button color="inherit">Logout</Button>
+                            <Tooltip title="Logout">
+                                <IconButton
+                                    id="logout-header-button"
+                                    size="large"
+                                    edge="start"
+                                    color="inherit"
+                                    aria-label="logout"
+                                >
+                                    <LogoutIcon />
+                                </IconButton>
+                            </Tooltip>
                         </Link>
                     )}
                 </Toolbar>

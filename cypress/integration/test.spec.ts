@@ -49,7 +49,7 @@ before(() => {
   cy.url().should("include", "/settings");
   cy.contains("Disconnect LND Node");
   cy.contains("Balance:");
-  cy.contains("Logout").click();
+  cy.get("#logout-header-button").click();
 });
 
 describe("Unauthenticated", () => {
@@ -176,7 +176,7 @@ describe("Authenticated", () => {
       .should("have.value", TEST_USER.password);
     // Submit form
     cy.get("button").contains("Sign Up").click();
-    cy.contains("Logout").click();
+    cy.get("#logout-header-button").click();
     // Should be redirected to homepage after signup
     cy.url().should("eq", `${BASE_URL}/`);
   });
@@ -205,10 +205,10 @@ describe("Authenticated", () => {
   });
 
   it("logout and login via the header should work", () => {
-    cy.contains("Logout").click();
+    cy.get("#logout-header-button").click();
     cy.url().should("eq", `${BASE_URL}/`);
     cy.contains("Login").should("exist");
-    cy.contains("Logout").should("not.exist");
+    cy.get("#logout-header-button").should("not.exist");
     cy.get("#create-post-header-button").should("not.exist");
     cy.get("#drafts-header-button").should("not.exist");
     cy.get("#subs-header-button").should("not.exist");
