@@ -118,8 +118,8 @@ export const Settings = () => {
         }
     }, [user, blogTitle, email, subscriptionPrice]);
 
-    const goToConnectToLightning = (): void => {
-        setRedirect("/connect-to-lightning");
+    const goToConnectToLn = (): void => {
+        setRedirect("/connect-to-ln");
     };
 
     const closeSnackbarAction = (
@@ -228,7 +228,7 @@ export const Settings = () => {
                 {!lnToken && (
                     <Button
                         variant="outlined"
-                        onClick={goToConnectToLightning}
+                        onClick={goToConnectToLn}
                         style={{ marginRight: 15 }}
                     >
                         Connect to Lightning

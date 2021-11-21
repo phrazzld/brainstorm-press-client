@@ -36,7 +36,7 @@ before(() => {
 
   // Connect Alice's LN node
   cy.contains("Connect to Lightning").click();
-  cy.url().should("include", "/connect-to-lightning");
+  cy.url().should("include", "/connect-to-ln");
   cy.get("#host").type(ALICE.LN.HOST).should("have.value", ALICE.LN.HOST);
   cy.get("#tls-hex-cert")
     .click()
