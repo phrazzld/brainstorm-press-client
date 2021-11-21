@@ -4,15 +4,15 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useStore } from "../store/zstore";
-import { rtaConnectToLnd } from "../utils/api";
+import { rtaConnectToLn } from "../utils/api";
 
-export const ConnectToLndForm = () => {
+export const ConnectToLnForm = () => {
     const [hostInputValue, setHostInputValue] = useState<string>("");
     const [certInputValue, setCertInputValue] = useState<string>("");
     const [macaroonInputValue, setMacaroonInputValue] = useState<string>("");
 
     const accessToken = useStore((state) => state.accessToken);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const setLnToken = useStore((state) => state.setLnToken);
 
     const [redirect, setRedirect] = useState<string>("");
 
@@ -28,14 +28,14 @@ export const ConnectToLndForm = () => {
         setMacaroonInputValue(event.target.value);
     };
 
-    const connectToLnd = async (): Promise<void> => {
+    const connectToLn = async (): Promise<void> => {
         const body = {
             host: hostInputValue,
             cert: certInputValue,
             macaroon: macaroonInputValue,
         };
-        const res = await rtaConnectToLnd(body, accessToken);
-        setLndToken(res.token);
+        const res = await rtaConnectToLn(body, accessToken);
+        setLnToken(res.token);
         setRedirect("/settings");
     };
 
@@ -48,7 +48,7 @@ export const ConnectToLndForm = () => {
     }
 
     return (
-        <div id="connect-to-lnd-form">
+        <div id="connect-to-ln-form">
             <div id="host-input-container">
                 <TextField
                     id="host"
@@ -69,6 +69,7 @@ export const ConnectToLndForm = () => {
                     value={certInputValue}
                     onChange={handleCertInputChange}
                     style={styles.formField}
+                    maxRows={5}
                     multiline
                     fullWidth
                     required
@@ -89,13 +90,13 @@ export const ConnectToLndForm = () => {
 
                 <Typography variant="subtitle1" gutterBottom>
                     lncli bakemacaroon info:read offchain:read invoices:read
-                    invoices:write message:read message:write
+                    invoices:write
                 </Typography>
             </div>
-            <div id="connect-to-lnd-submit-container">
+            <div id="connect-to-ln-submit-container">
                 <Button
                     variant="contained"
-                    onClick={connectToLnd}
+                    onClick={connectToLn}
                     style={styles.button}
                 >
                     Submit

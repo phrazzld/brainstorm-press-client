@@ -4,8 +4,8 @@ import { User } from "../utils/types";
 type Store = {
   accessToken: string;
   setAccessToken: (accessToken: string) => void;
-  lndToken: string;
-  setLndToken: (lndToken: string) => void;
+  lnToken: string;
+  setLnToken: (lnToken: string) => void;
   user: User | null;
   setUser: (user: User | null) => void;
 };
@@ -14,8 +14,8 @@ export const useStore = create<Store>((set) => ({
   accessToken: "",
   setAccessToken: (accessToken: string) => set({ accessToken: accessToken }),
 
-  lndToken: "",
-  setLndToken: (lndToken: string) => set({ lndToken: lndToken }),
+  lnToken: "",
+  setLnToken: (lnToken: string) => set({ lnToken: lnToken }),
 
   user: null,
   setUser: (user: User | null) => set({ user: user }),

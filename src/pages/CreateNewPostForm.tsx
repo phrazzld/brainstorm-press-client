@@ -89,7 +89,7 @@ export const CreateNewPostForm = () => {
 
     return (
         <div id="edit-post-form">
-            <Typography variant="h2" gutterBottom>
+            <Typography variant="h3" gutterBottom>
                 Create New Post
             </Typography>
             <TextField

@@ -1,8 +1,7 @@
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -19,7 +18,7 @@ export const Header = () => {
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
     const accessToken = useStore((state) => state.accessToken);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const setLnToken = useStore((state) => state.setLnToken);
     const location = useLocation();
 
     const showLogin: boolean =
@@ -30,11 +29,11 @@ export const Header = () => {
             rtaGetCurrentUser(accessToken).then((res) => {
                 if (res && typeof res === "object") {
                     setUser(res);
-                    setLndToken(res.node?.token || "");
+                    setLnToken(res.node?.token || "");
                 }
             });
         }
-    }, [user, accessToken, setLndToken, setUser]);
+    }, [user, accessToken, setLnToken, setUser]);
 
     return (
         <Box style={styles.headerContainer as React.CSSProperties}>
@@ -64,19 +63,6 @@ export const Header = () => {
                                     </IconButton>
                                 </Tooltip>
                             </Link>
-                            <Link to="/drafts" style={styles.link}>
-                                <Tooltip title="Drafts">
-                                    <IconButton
-                                        id="drafts-header-button"
-                                        size="large"
-                                        edge="start"
-                                        color="inherit"
-                                        aria-label="drafts"
-                                    >
-                                        <FileCopyOutlinedIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </Link>
                             <Link to="/subscriptions" style={styles.link}>
                                 <Tooltip title="Subscriptions">
                                     <IconButton
@@ -86,20 +72,20 @@ export const Header = () => {
                                         color="inherit"
                                         aria-label="subscriptions"
                                     >
-                                        <BookmarkBorderIcon />
+                                        <FileCopyOutlinedIcon />
                                     </IconButton>
                                 </Tooltip>
                             </Link>
-                            <Link to="/settings" style={styles.link}>
-                                <Tooltip title="Settings">
+                            <Link to="/profile" style={styles.link}>
+                                <Tooltip title="Profile">
                                     <IconButton
-                                        id="settings-header-button"
+                                        id="profile-header-button"
                                         size="large"
                                         edge="start"
                                         color="inherit"
                                         aria-label="settings"
                                     >
-                                        <SettingsOutlinedIcon />
+                                        <AccountCircleOutlinedIcon />
                                     </IconButton>
                                 </Tooltip>
                             </Link>
@@ -148,6 +134,7 @@ const styles = {
         position: "sticky",
         top: 0,
         zIndex: 100,
+        marginBottom: 20,
     },
     link: {
         textDecoration: "none",

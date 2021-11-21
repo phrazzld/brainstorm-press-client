@@ -55,7 +55,7 @@ export const Blog = () => {
                 setSub(null);
             }
         }
-    }, [subs]);
+    }, [subs, publicUserInfo]);
 
     // Change subscribed state when sub changes
     useEffect(() => {
@@ -96,11 +96,8 @@ export const Blog = () => {
             <Helmet>
                 <title>{`${publicUserInfo?.blog} - Brainstorm Press`}</title>
             </Helmet>
-            <Typography variant="h1" component="div" gutterBottom>
+            <Typography variant="h3" component="div" gutterBottom>
                 {publicUserInfo?.blog}
-            </Typography>
-            <Typography variant="h5" component="div" gutterBottom>
-                {publicUserInfo?.username}
             </Typography>
             {!isAuthor && !subscribed && (
                 <Button onClick={subscribe}>Subscribe</Button>

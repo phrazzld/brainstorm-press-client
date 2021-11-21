@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { getNodeInfo } from "../utils/api";
 import { NodeInfo } from "../utils/types";
 
-export const useNodeInfo = (lndToken: string): NodeInfo | null => {
+export const useNodeInfo = (lnToken: string): NodeInfo | null => {
   const [nodeInfo, setNodeInfo] = useState<NodeInfo | null>(null);
 
   useEffect(() => {
-    if (lndToken) {
-      getNodeInfo(lndToken).then((res) => setNodeInfo(res));
+    if (lnToken) {
+      getNodeInfo(lnToken).then((res) => setNodeInfo(res));
     } else {
       setNodeInfo(null);
     }
-  }, [lndToken]);
+  }, [lnToken]);
 
   return nodeInfo;
 };

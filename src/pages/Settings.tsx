@@ -1,4 +1,5 @@
 import CloseIcon from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,23 +9,22 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { validate } from "bitcoin-address-validation";
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useAccessToken } from "../hooks/useAccessToken";
-import { useNodeInfo } from "../hooks/useNodeInfo";
 import { useStore } from "../store/zstore";
 import { disconnectNode, rtaDeleteUser, rtaUpdateUser } from "../utils/api";
-import { NodeInfo } from "../utils/types";
 
 export const Settings = () => {
     const user = useStore((state) => state.user);
     const setUser = useStore((state) => state.setUser);
     const accessToken = useAccessToken();
     const setAccessToken = useStore((state) => state.setAccessToken);
-    const lndToken = useStore((state) => state.lndToken);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const lnToken = useStore((state) => state.lnToken);
+    const setLnToken = useStore((state) => state.setLnToken);
 
     const [saved, setSaved] = useState(false);
 
@@ -44,8 +44,6 @@ export const Settings = () => {
     const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState<
         boolean
     >(false);
-
-    const nodeInfo: NodeInfo | null = useNodeInfo(lndToken);
 
     const handleEmailChange = (event: any): void => {
         setEmail(event.target.value);
@@ -76,7 +74,7 @@ export const Settings = () => {
         await rtaDeleteUser(user._id, accessToken);
         setUser(null);
         setAccessToken("");
-        setLndToken("");
+        setLnToken("");
         setRedirect("/");
     };
 
@@ -120,8 +118,8 @@ export const Settings = () => {
         }
     }, [user, blogTitle, email, subscriptionPrice]);
 
-    const goToConnectToLND = (): void => {
-        setRedirect("/connect-to-lnd");
+    const goToConnectToLightning = (): void => {
+        setRedirect("/connect-to-lightning");
     };
 
     const closeSnackbarAction = (
@@ -140,7 +138,7 @@ export const Settings = () => {
 
     return (
         <div id="settings-container">
-            <Typography variant="h1" gutterBottom>
+            <Typography variant="h3" gutterBottom>
                 Settings
             </Typography>
 
@@ -177,14 +175,16 @@ export const Settings = () => {
             <br />
             <br />
 
-            <TextField
-                id="edit-subscription-price"
-                label="Monthly Subscription Price (sats)"
-                variant="outlined"
-                onChange={handleSubscriptionPriceChange}
-                value={subscriptionPrice}
-                fullWidth
-            />
+            <Tooltip title="Monthly price readers pay to access your premium posts">
+                <TextField
+                    id="edit-subscription-price"
+                    label="Premium Pass Price (sats)"
+                    variant="outlined"
+                    onChange={handleSubscriptionPriceChange}
+                    value={subscriptionPrice}
+                    fullWidth
+                />
+            </Tooltip>
 
             <br />
             <br />
@@ -216,49 +216,49 @@ export const Settings = () => {
             <br />
             <br />
 
-            <Button variant="contained" onClick={submitEdits}>
-                Save Changes
-            </Button>
-
-            <br />
-            <br />
-
-            {nodeInfo && (
-                <Typography variant="body1" gutterBottom>
-                    Balance: {Number(nodeInfo.balance).toLocaleString()} sats
-                </Typography>
-            )}
-
-            {!lndToken && (
-                <Button variant="outlined" onClick={goToConnectToLND}>
-                    Connect to LND
-                </Button>
-            )}
-
-            {lndToken && (
+            <Box style={{ display: "flex", flex: 1, flexDirection: "row" }}>
                 <Button
+                    variant="contained"
+                    onClick={submitEdits}
+                    style={{ marginRight: 15 }}
+                >
+                    Save Changes
+                </Button>
+
+                {!lnToken && (
+                    <Button
+                        variant="outlined"
+                        onClick={goToConnectToLightning}
+                        style={{ marginRight: 15 }}
+                    >
+                        Connect to Lightning
+                    </Button>
+                )}
+
+                {lnToken && (
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                            disconnectNode(lnToken);
+                            setLnToken("");
+                        }}
+                        style={{ marginRight: 15 }}
+                    >
+                        Disconnect Lightning Node
+                    </Button>
+                )}
+
+                <Button
+                    id="prompt-to-delete-account"
                     variant="outlined"
                     color="error"
-                    onClick={() => {
-                        disconnectNode(lndToken);
-                        setLndToken("");
-                    }}
+                    onClick={promptToDeleteAccount}
+                    style={{ marginRight: 15 }}
                 >
-                    Disconnect LND Node
+                    Delete Account
                 </Button>
-            )}
-
-            <br />
-            <br />
-
-            <Button
-                id="prompt-to-delete-account"
-                variant="outlined"
-                color="error"
-                onClick={promptToDeleteAccount}
-            >
-                Delete Account
-            </Button>
+            </Box>
 
             <Snackbar
                 open={saved}

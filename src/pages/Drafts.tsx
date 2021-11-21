@@ -1,4 +1,5 @@
 import Pagination from "@mui/material/Pagination";
+import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { PostsList } from "../components/PostsList";
 import { useDrafts } from "../hooks/useDrafts";
@@ -16,7 +17,9 @@ export const Drafts = () => {
 
     return (
         <div id="drafts-container">
-            <h3>Drafts</h3>
+            <Typography variant="h3" gutterBottom>
+                Drafts
+            </Typography>
             <PostsList posts={posts} />
             <Pagination
                 count={totalPages}

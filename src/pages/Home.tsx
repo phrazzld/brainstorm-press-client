@@ -12,7 +12,7 @@ export const Home = () => {
     const { logout } = location.state || false;
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const setLnToken = useStore((state) => state.setLnToken);
 
     const [search, setSearch] = useState<string>("");
     const [free, setFree] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export const Home = () => {
     useEffect(() => {
         const destroySession = async (): Promise<void> => {
             await deleteRefreshToken();
-            setLndToken("");
+            setLnToken("");
             setAccessToken("");
             setUser(null);
         };
@@ -37,7 +37,7 @@ export const Home = () => {
         if (logout) {
             destroySession();
         }
-    }, [logout, setAccessToken, setLndToken, setUser]);
+    }, [logout, setAccessToken, setLnToken, setUser]);
 
     return (
         <>

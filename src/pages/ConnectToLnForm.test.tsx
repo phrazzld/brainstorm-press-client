@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { ConnectToLndForm } from "./ConnectToLndForm";
+import { ConnectToLnForm } from "./ConnectToLnForm";
 
-describe("<ConnectToLndForm />", () => {
+describe("<ConnectToLnForm />", () => {
     beforeEach(() => {
-        render(<ConnectToLndForm />);
+        render(<ConnectToLnForm />);
     });
 
     describe("presence", () => {

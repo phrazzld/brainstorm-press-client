@@ -59,7 +59,7 @@ describe("<Home />", () => {
         useStore.mockReturnValue({
             setUser: jest.fn(),
             setAccessToken: jest.fn(),
-            setLndToken: jest.fn(),
+            setLnToken: jest.fn(),
         });
         usePosts.mockReturnValue(posts);
 

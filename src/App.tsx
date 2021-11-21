@@ -7,13 +7,14 @@ import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Blog } from "./pages/Blog";
-import { ConnectToLndForm } from "./pages/ConnectToLndForm";
+import { ConnectToLnForm } from "./pages/ConnectToLnForm";
 import { CreateNewPostForm } from "./pages/CreateNewPostForm";
 import { Drafts } from "./pages/Drafts";
 import { EditPost } from "./pages/EditPost";
 import { Home } from "./pages/Home";
 import { LogIn } from "./pages/LogIn";
 import { Post } from "./pages/Post";
+import { Profile } from "./pages/Profile";
 import { ResetPassword } from "./pages/ResetPassword";
 import { SendResetPasswordEmail } from "./pages/SendResetPasswordEmail";
 import { Settings } from "./pages/Settings";
@@ -54,13 +55,19 @@ function App() {
                         </Helmet>
                         <SendResetPasswordEmail />
                     </Route>
-                    <Route path="/connect-to-lnd">
+                    <Route path="/connect-to-ln">
                         <Helmet>
                             <title>
                                 Connect To Lightning - Brainstorm Press
                             </title>
                         </Helmet>
-                        <ConnectToLndForm />
+                        <ConnectToLnForm />
+                    </Route>
+                    <Route path="/profile">
+                        <Helmet>
+                            <title>Profile - Brainstorm Press</title>
+                        </Helmet>
+                        <Profile />
                     </Route>
                     <Route path="/settings">
                         <Helmet>

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
-import { formatDateString } from "../utils/time";
+import { formatDateString } from "../utils/format";
 import { Post } from "../utils/types";
 import { PostCard } from "./PostCard";
 

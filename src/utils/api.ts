@@ -2,10 +2,10 @@ import {
   ApiError,
   AuthenticateUserRequestBody,
   AuthResponse,
-  ConnectToLndBody,
+  ConnectToLnBody,
   CreateUserRequestBody,
   Invoice,
-  LndNode,
+  LnNode,
   LogPaymentRequestBody,
   NodeInfo,
   NodeStatus,
@@ -74,11 +74,11 @@ export const rtaCreatePost = async (
   return await res.json();
 };
 
-export const disconnectNode = async (lndToken: string): Promise<Response> => {
+export const disconnectNode = async (lnToken: string): Promise<Response> => {
   return await fetch("/api/nodes", {
     method: "DELETE",
     headers: {
-      Authorization: lndToken,
+      Authorization: lnToken,
     },
   });
 };
@@ -197,8 +197,8 @@ export const rtaGetPost = async (
   return await res.json();
 };
 
-const connectToLnd = async (
-  body: ConnectToLndBody,
+const connectToLn = async (
+  body: ConnectToLnBody,
   accessToken: string
 ): Promise<Response> => {
   return await fetch("/api/nodes", {
@@ -211,28 +211,25 @@ const connectToLnd = async (
   });
 };
 
-export const rtaConnectToLnd = async (
-  body: ConnectToLndBody,
+export const rtaConnectToLn = async (
+  body: ConnectToLnBody,
   accessToken: string
-): Promise<LndNode> => {
-  console.log("rtaConnectToLnd, body:", body);
-  console.log("accessToken:", accessToken);
-  const res = await rta(connectToLnd, body, accessToken);
-  console.log("res:", res);
+): Promise<LnNode> => {
+  const res = await rta(connectToLn, body, accessToken);
 
   if (!res.ok) {
-    throw new Error("Failed to connect to LND.");
+    throw new Error("Failed to connect to LN.");
   }
 
   return await res.json();
 };
 
-export const getNodeInfo = async (lndToken: string): Promise<NodeInfo> => {
+export const getNodeInfo = async (lnToken: string): Promise<NodeInfo> => {
   const response = await fetch("/api/nodes", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: lndToken,
+      Authorization: lnToken,
     },
   });
   return await response.json();

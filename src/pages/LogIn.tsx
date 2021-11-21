@@ -24,7 +24,7 @@ export const LogIn = () => {
 
     const setUser = useStore((state) => state.setUser);
     const setAccessToken = useStore((state) => state.setAccessToken);
-    const setLndToken = useStore((state) => state.setLndToken);
+    const setLnToken = useStore((state) => state.setLnToken);
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
@@ -42,7 +42,7 @@ export const LogIn = () => {
             setUser(response.user);
             setAccessToken(response.accessToken);
             if (response.user.node) {
-                setLndToken(response.user.node.token);
+                setLnToken(response.user.node.token);
             }
             setRedirect("/");
         }

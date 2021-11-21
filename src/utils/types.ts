@@ -7,7 +7,7 @@ export type PostRequestBody = {
   published: boolean;
 };
 
-export type ConnectToLndBody = {
+export type ConnectToLnBody = {
   host: string;
   cert: string;
   macaroon: string;
@@ -70,7 +70,7 @@ export type Post = {
   updatedAt: Date;
 };
 
-export type LndNode = {
+export type LnNode = {
   _id: string;
   token: string;
   host: string;
@@ -87,7 +87,7 @@ export type User = {
   email: string;
   blog: string;
   btcAddress?: string;
-  node?: LndNode;
+  node?: LnNode;
   subs: Array<Subscription>;
   subscriptionPrice: number;
   createdAt: Date;

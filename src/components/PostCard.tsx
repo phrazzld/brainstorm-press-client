@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { formatDateString } from "../utils/time";
+import { formatDateString } from "../utils/format";
 import { Post } from "../utils/types";
 import { PriceChip } from "./PriceChip";
 

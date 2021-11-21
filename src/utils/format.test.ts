@@ -1,4 +1,4 @@
-import { formatDateString } from "./time";
+import { formatDateString } from "./format";
 
 describe("formatDateString", () => {
   it("should format a date string to 'MMMM DD, YYYY'", () => {

@@ -1,6 +1,6 @@
-import EventIcon from "@mui/icons-material/Event";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
@@ -21,7 +21,7 @@ import {
     rtaLogPayment,
     rtaUpdatePost,
 } from "../utils/api";
-import { formatDateString } from "../utils/time";
+import { formatDateString } from "../utils/format";
 import { Invoice, NodeStatus, PostParams } from "../utils/types";
 
 export const Post = () => {
@@ -95,6 +95,7 @@ export const Post = () => {
         if (
             post &&
             user &&
+            post.user.subscriptionPrice > 0 &&
             !paid &&
             !invoice &&
             !isCreator &&
@@ -180,10 +181,10 @@ export const Post = () => {
     const LoadingPostSkeleton = () => {
         return (
             <>
-                <Typography variant="h1" gutterBottom>
+                <Typography variant="h3" gutterBottom>
                     <Skeleton />
                 </Typography>
-                <Typography variant="h2" gutterBottom>
+                <Typography variant="h4" gutterBottom>
                     <Skeleton />
                 </Typography>
                 <Typography variant="body1" gutterBottom>
@@ -198,7 +199,7 @@ export const Post = () => {
     const Paywall = () => {
         return (
             <>
-                <Typography variant="h1" component="div" gutterBottom>
+                <Typography variant="h3" component="div" gutterBottom>
                     {post?.title}
                 </Typography>
                 <Paper
@@ -254,7 +255,8 @@ export const Post = () => {
         (isCreator ||
             paid ||
             !post.premium ||
-            postNodeStatus === "Not found.") &&
+            postNodeStatus === "Not found." ||
+            post.user.subscriptionPrice === 0) &&
         !editing
     );
 
@@ -265,34 +267,71 @@ export const Post = () => {
 
         return (
             <>
-                <Typography variant="h1" component="div" gutterBottom>
+                <Typography variant="h3" component="div" gutterBottom>
                     {post.title}
                 </Typography>
-                <Typography variant="h2" component="div" gutterBottom>
-                    Written By: {post.user.username}
-                </Typography>
+
                 <div
                     style={{
                         display: "flex",
                         flex: 1,
                         alignItems: "center",
-                        marginBottom: 30,
+                        justifyContent: "space-between",
                     }}
                 >
-                    <EventIcon
+                    <div
                         style={{
-                            color: "rgba(0, 0, 0, 0.6)",
-                            marginRight: 10,
+                            display: "flex",
+                            flex: 1,
+                            alignItems: "center",
                         }}
-                    />
-                    <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        component="p"
                     >
-                        {formatDateString(post.createdAt.toString())}
-                    </Typography>
+                        <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            component="p"
+                        >
+                            <Link
+                                to={`/users/${post.user.username}/blog`}
+                                style={{ textDecoration: "none" }}
+                            >
+                                {post.user.username}
+                            </Link>{" "}
+                            &#183;{" "}
+                            {formatDateString(
+                                post.createdAt.toString(),
+                                "short"
+                            )}
+                        </Typography>
+                    </div>
+                    {isCreator && (
+                        <div className="post-actions">
+                            {!post?.published && (
+                                <Button
+                                    className="publish-post"
+                                    onClick={publishPost}
+                                >
+                                    Publish
+                                </Button>
+                            )}
+                            <Button className="edit-post" onClick={editPost}>
+                                Edit
+                            </Button>
+                            <Button
+                                className="delete-post"
+                                onClick={deletePost}
+                            >
+                                Delete
+                            </Button>
+                        </div>
+                    )}
                 </div>
+
+                <Divider
+                    variant="middle"
+                    style={{ marginTop: 20, marginBottom: 20 }}
+                />
+
                 <Typography variant="body1" component="div" gutterBottom>
                     <Editor
                         ref={editor}
@@ -302,24 +341,6 @@ export const Post = () => {
                     />
                 </Typography>
             </>
-        );
-    };
-
-    const Actions = () => {
-        return (
-            <div className="post-actions">
-                <Button className="delete-post" onClick={deletePost}>
-                    Delete
-                </Button>
-                <Button className="edit-post" onClick={editPost}>
-                    Edit
-                </Button>
-                {!post?.published && (
-                    <Button className="publish-post" onClick={publishPost}>
-                        Publish
-                    </Button>
-                )}
-            </div>
         );
     };
 
@@ -356,7 +377,6 @@ export const Post = () => {
             {showPost && (
                 <>
                     <PostContent />
-                    {isCreator && <Actions />}
                 </>
             )}
         </div>
