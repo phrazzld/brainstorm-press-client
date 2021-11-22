@@ -5,12 +5,14 @@ import "@fontsource/roboto/700.css";
 import React from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { Blog } from "./pages/Blog";
 import { ConnectToLnForm } from "./pages/ConnectToLnForm";
 import { CreateNewPostForm } from "./pages/CreateNewPostForm";
 import { Drafts } from "./pages/Drafts";
 import { EditPost } from "./pages/EditPost";
+import { Faq } from "./pages/Faq";
 import { Home } from "./pages/Home";
 import { LogIn } from "./pages/LogIn";
 import { Post } from "./pages/Post";
@@ -38,6 +40,12 @@ function App() {
                             <title>Log In - Brainstorm Press</title>
                         </Helmet>
                         <LogIn />
+                    </Route>
+                    <Route path="/faq">
+                        <Helmet>
+                            <title>FAQ - Brainstorm Press</title>
+                        </Helmet>
+                        <Faq />
                     </Route>
                     <Route path="/reset-password/:userId/:token">
                         <Helmet>
@@ -113,6 +121,7 @@ function App() {
                     </Route>
                 </Switch>
             </div>
+            <Footer />
         </Router>
     );
 }
@@ -122,6 +131,7 @@ const styles = {
         width: "75%",
         marginLeft: "auto",
         marginRight: "auto",
+        marginBottom: "50px",
     },
 };
 

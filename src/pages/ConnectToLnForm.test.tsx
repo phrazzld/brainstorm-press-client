@@ -19,7 +19,7 @@ describe("<ConnectToLnForm />", () => {
 
         it("should render the command for generating the appropriate macaroon", () => {
             const macaroonCommand =
-                "lncli bakemacaroon info:read offchain:read invoices:read invoices:write message:read message:write";
+                "lncli bakemacaroon info:read offchain:read invoices:read invoices:write";
             expect(screen.getByText(macaroonCommand)).toBeInTheDocument();
         });
     });
