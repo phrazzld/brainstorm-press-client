@@ -1,6 +1,5 @@
 import GitHubIcon from "@mui/icons-material/GitHub";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import TwitterIcon from "@mui/icons-material/Twitter";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
@@ -25,24 +24,6 @@ export const Footer = () => {
                             style={styles.footerButton}
                         >
                             <GitHubIcon />
-                        </IconButton>
-                    </a>
-                </Tooltip>
-
-                <Tooltip title="Contact us">
-                    <a
-                        href="https://twitter.com/phrazzld"
-                        style={{ textDecoration: "none" }}
-                    >
-                        <IconButton
-                            id="contact-us"
-                            size="small"
-                            edge="start"
-                            color="inherit"
-                            aria-label="contact-us"
-                            style={styles.footerButton}
-                        >
-                            <TwitterIcon />
                         </IconButton>
                     </a>
                 </Tooltip>

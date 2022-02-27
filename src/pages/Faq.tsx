@@ -39,8 +39,7 @@ const questions = [
     },
     {
         question: "How do I report bugs or suggest features?",
-        answer:
-            "Feel free to open an issue on our GitHub, or contact us on Twitter.",
+        answer: "Feel free to open an issue on our GitHub.",
     },
 ];
 
