@@ -21,6 +21,11 @@ import {
 
 const UNAUTHORIZED = [401, 403];
 
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://brainstorm-press-api.herokuapp.com"
+    : "";
+
 // rta = regenerate token and
 // Assumes accessToken is the last arg
 const rta = async (fn: any, ...args: any): Promise<any> => {
@@ -36,7 +41,7 @@ const rta = async (fn: any, ...args: any): Promise<any> => {
 };
 
 export const regenerateAccessToken = async (): Promise<string> => {
-  const response = await fetch("/api/tokens/access", {
+  const response = await fetch(`${BASE_URL}/api/tokens/access`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -51,7 +56,7 @@ const createPost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch("/api/posts", {
+  return await fetch(`${BASE_URL}/api/posts`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -75,7 +80,7 @@ export const rtaCreatePost = async (
 };
 
 export const disconnectNode = async (lnToken: string): Promise<Response> => {
-  return await fetch("/api/nodes", {
+  return await fetch(`${BASE_URL}/api/nodes`, {
     method: "DELETE",
     headers: {
       Authorization: lnToken,
@@ -88,7 +93,7 @@ export const getPosts = async (
   free?: boolean,
   search?: string
 ): Promise<PaginatedResponse> => {
-  let endpoint = `/api/posts?page=${page}`;
+  let endpoint = `${BASE_URL}/api/posts?page=${page}`;
   if (free) {
     endpoint += `&free=true`;
   }
@@ -107,7 +112,7 @@ export const getUserPosts = async (
   free?: boolean,
   search?: string
 ): Promise<PaginatedResponse> => {
-  let endpoint = `/api/posts/users/${username}?page=${page}`;
+  let endpoint = `${BASE_URL}/api/posts/users/${username}?page=${page}`;
   if (free) {
     endpoint += `&free=true`;
   }
@@ -125,12 +130,15 @@ const getDrafts = async (
   page: number,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/users/${username}/drafts?page=${page}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  return await fetch(
+    `${BASE_URL}/api/posts/users/${username}/drafts?page=${page}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 };
 
 export const rtaGetDrafts = async (
@@ -151,7 +159,7 @@ const getPostsFromSubs = async (
   page: number,
   accessToken: string
 ): Promise<Response> => {
-  return fetch(`/api/posts/subscriptions?page=${page}`, {
+  return fetch(`${BASE_URL}/api/posts/subscriptions?page=${page}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -176,7 +184,7 @@ export const getPost = async (
   id: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/${id}`, {
+  return await fetch(`${BASE_URL}/api/posts/${id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -201,7 +209,7 @@ const connectToLn = async (
   body: ConnectToLnBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch("/api/nodes", {
+  return await fetch(`${BASE_URL}/api/nodes`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -225,7 +233,7 @@ export const rtaConnectToLn = async (
 };
 
 export const getNodeInfo = async (lnToken: string): Promise<NodeInfo> => {
-  const response = await fetch("/api/nodes", {
+  const response = await fetch(`${BASE_URL}/api/nodes`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -239,7 +247,7 @@ const getNodeStatus = async (
   id: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/nodes/${id}`, {
+  return await fetch(`${BASE_URL}/api/nodes/${id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -266,7 +274,7 @@ const updateUser = async (
   body: UserRequestBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/users/${userId}`, {
+  return await fetch(`${BASE_URL}/api/users/${userId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -291,7 +299,7 @@ export const rtaUpdateUser = async (
 export const createUser = async (
   body: CreateUserRequestBody
 ): Promise<AuthResponse | ApiError> => {
-  const response = await fetch("/api/users", {
+  const response = await fetch(`${BASE_URL}/api/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -304,7 +312,7 @@ export const createUser = async (
 export const loginUser = async (
   body: AuthenticateUserRequestBody
 ): Promise<AuthResponse | ApiError> => {
-  const response = await fetch("/api/users/session", {
+  const response = await fetch(`${BASE_URL}/api/users/session`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -318,7 +326,7 @@ const getUser = async (
   username: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/users/${username}`, {
+  return await fetch(`${BASE_URL}/api/users/${username}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -340,7 +348,7 @@ export const rtaGetUser = async (
 };
 
 const getCurrentUser = async (accessToken: string): Promise<Response> => {
-  return await fetch("/api/users", {
+  return await fetch(`${BASE_URL}/api/users`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -365,7 +373,7 @@ const createInvoice = async (
   postId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/${postId}/invoice`, {
+  return await fetch(`${BASE_URL}/api/posts/${postId}/invoice`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -391,7 +399,7 @@ const getPayment = async (
   postId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/${postId}/payments`, {
+  return await fetch(`${BASE_URL}/api/posts/${postId}/payments`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -421,7 +429,7 @@ const checkPremiumAccess = async (
   authorId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/users/${authorId}/access`, {
+  return await fetch(`${BASE_URL}/api/users/${authorId}/access`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -451,7 +459,7 @@ const logPayment = async (
   body: LogPaymentRequestBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/users/${userId}/payments`, {
+  return await fetch(`${BASE_URL}/api/users/${userId}/payments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -478,7 +486,7 @@ const updatePost = async (
   body: PostRequestBody,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/${postId}`, {
+  return await fetch(`${BASE_URL}/api/posts/${postId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -504,7 +512,7 @@ const deletePost = async (
   postId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/posts/${postId}`, {
+  return await fetch(`${BASE_URL}/api/posts/${postId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -524,7 +532,7 @@ export const rtaDeletePost = async (
 };
 
 export const deleteRefreshToken = async (): Promise<Response> => {
-  return await fetch("/api/tokens/refresh", {
+  return await fetch(`${BASE_URL}/api/tokens/refresh`, {
     method: "DELETE",
   });
 };
@@ -532,7 +540,7 @@ export const deleteRefreshToken = async (): Promise<Response> => {
 export const sendResetPasswordEmail = async (
   email: string
 ): Promise<Response> => {
-  return await fetch("/api/reset-password/", {
+  return await fetch(`${BASE_URL}/api/reset-password/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -546,7 +554,7 @@ export const resetPassword = async (
   userId: string,
   token: string
 ): Promise<Response> => {
-  return await fetch(`/api/reset-password/${userId}/${token}`, {
+  return await fetch(`${BASE_URL}/api/reset-password/${userId}/${token}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -559,7 +567,7 @@ const deleteUser = async (
   userId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/users/${userId}`, {
+  return await fetch(`${BASE_URL}/api/users/${userId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -579,7 +587,7 @@ export const rtaDeleteUser = async (
 };
 
 const getSubs = async (accessToken: string): Promise<Response> => {
-  return fetch("/api/subscriptions", {
+  return fetch(`${BASE_URL}/api/subscriptions`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -607,7 +615,7 @@ const subscribe = async (
   authorId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch("/api/subscriptions", {
+  return await fetch(`${BASE_URL}/api/subscriptions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -634,7 +642,7 @@ const unsubscribe = async (
   subId: string,
   accessToken: string
 ): Promise<Response> => {
-  return await fetch(`/api/subscriptions/${subId}`, {
+  return await fetch(`${BASE_URL}/api/subscriptions/${subId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${accessToken}`,

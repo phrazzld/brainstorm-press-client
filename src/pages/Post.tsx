@@ -127,8 +127,12 @@ export const Post = () => {
 
     useEffect(() => {
         if (post) {
+            const wsUrl =
+                process.env.NODE_ENV === "production"
+                    ? "brainstorm-press-api.herokuapp.com"
+                    : "localhost:4000";
             // TODO: Use wss
-            const webSocket = new WebSocket("ws://localhost:4000/api/events");
+            const webSocket = new WebSocket(`ws://${wsUrl}/api/events`);
             webSocket.onopen = () => {
                 console.debug("Connected to web socket.");
             };
