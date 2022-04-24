@@ -109,9 +109,9 @@ function App() {
           </Route>
           <Route path="/">
             <Helmet>
-              <title>Subscriptions - Brainstorm Press</title>
+              <title>Home - Brainstorm Press</title>
             </Helmet>
-            <Subs />
+            <Home />
           </Route>
         </Switch>
       </div>
