@@ -21,7 +21,10 @@ import {
 
 const UNAUTHORIZED = [401, 403];
 
-const BASE_URL = process.env.BASE_URL || "";
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "brainstorm-press-api.herokuapp.com"
+    : "";
 
 // rta = regenerate token and
 // Assumes accessToken is the last arg
