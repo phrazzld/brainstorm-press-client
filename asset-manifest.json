@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/brainstorm-press-client/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/brainstorm-press-client/static/js/main.f31edd07.chunk.js",
+    "main.js.map": "/brainstorm-press-client/static/js/main.f31edd07.chunk.js.map",
+    "runtime-main.js": "/brainstorm-press-client/static/js/runtime-main.a649b4ed.js",
+    "runtime-main.js.map": "/brainstorm-press-client/static/js/runtime-main.a649b4ed.js.map",
+    "static/css/2.2a8583d9.chunk.css": "/brainstorm-press-client/static/css/2.2a8583d9.chunk.css",
+    "static/js/2.9b9a857a.chunk.js": "/brainstorm-press-client/static/js/2.9b9a857a.chunk.js",
+    "static/js/2.9b9a857a.chunk.js.map": "/brainstorm-press-client/static/js/2.9b9a857a.chunk.js.map",
+    "static/js/3.0167adeb.chunk.js": "/brainstorm-press-client/static/js/3.0167adeb.chunk.js",
+    "static/js/3.0167adeb.chunk.js.map": "/brainstorm-press-client/static/js/3.0167adeb.chunk.js.map",
+    "index.html": "/brainstorm-press-client/index.html",
+    "static/css/2.2a8583d9.chunk.css.map": "/brainstorm-press-client/static/css/2.2a8583d9.chunk.css.map",
+    "static/css/main.6dea0f05.chunk.css.map": "/brainstorm-press-client/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.9b9a857a.chunk.js.LICENSE.txt": "/brainstorm-press-client/static/js/2.9b9a857a.chunk.js.LICENSE.txt",
+    "static/media/300.css": "/brainstorm-press-client/static/media/roboto-vietnamese-300-normal.af9afdc1.woff2",
+    "static/media/400.css": "/brainstorm-press-client/static/media/roboto-vietnamese-400-normal.c0bec65d.woff2",
+    "static/media/500.css": "/brainstorm-press-client/static/media/roboto-vietnamese-500-normal.b8e494da.woff2",
+    "static/media/700.css": "/brainstorm-press-client/static/media/roboto-vietnamese-700-normal.3096f18a.woff2"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a649b4ed.js",
+    "static/css/2.2a8583d9.chunk.css",
+    "static/js/2.9b9a857a.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.f31edd07.chunk.js"
+  ]
+}
