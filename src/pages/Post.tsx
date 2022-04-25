@@ -124,7 +124,7 @@ export const Post = () => {
     if (post) {
       const wsUrl =
         process.env.NODE_ENV === "production"
-          ? "https://brainstorm-press-api.herokuapp.com"
+          ? "brainstorm-press-api.herokuapp.com"
           : "localhost:4000";
       const webSocket = new WebSocket(`wss://${wsUrl}/api/events`);
       webSocket.onopen = () => {
