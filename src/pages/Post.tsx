@@ -126,8 +126,7 @@ export const Post = () => {
         process.env.NODE_ENV === "production"
           ? "https://brainstorm-press-api.herokuapp.com"
           : "localhost:4000";
-      // TODO: Use wss
-      const webSocket = new WebSocket(`ws://${wsUrl}/api/events`);
+      const webSocket = new WebSocket(`wss://${wsUrl}/api/events`);
       webSocket.onopen = () => {
         console.debug("Connected to web socket.");
       };
