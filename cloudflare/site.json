@@ -1,0 +1,8 @@
+{
+  "repo": "moomooskycow/brainstorm-press-client",
+  "source_commit": "ce0d6594342569113dfc8a1d881b117a62a88d16",
+  "source_folder": ".",
+  "project_prefix": "brainstorm-press-client",
+  "before_url": "https://moomooskycow.github.io/brainstorm-press-client/",
+  "build_kind": "static"
+}
